@@ -1,0 +1,19 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="vpsBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6d28d9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#vpsBg)" rx="20"/>
+
+  <!-- VPS text -->
+  <text x="50" y="140" font-family="Arial, sans-serif" font-size="90" font-weight="bold" fill="white" letter-spacing="-2">vps</text>
+
+  <!-- Arrow icon -->
+  <g transform="translate(140, 80)">
+    <!-- Top right corner of bracket -->
+    <path d="M 0 0 L 25 0 L 25 25" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
