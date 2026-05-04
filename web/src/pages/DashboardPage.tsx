@@ -30,14 +30,14 @@ export function DashboardPage() {
   // Plan targets for Company and Team
   const kpiTargets = {
     company: {
-      customerPlanTarget: 140,
-      activeCustomerPlanTarget: 100,
-      commissionPlanTarget: 2000000000,
-      tradingValuePlanTarget: 120000000000,
-      navPlanTarget: 300000000000,
-      aumPlanTarget: 700000000000,
-      staffPlanTarget: 9,
-      managerCustomerPlanTarget: 18,
+      customerPlanTarget: 155,
+      activeCustomerPlanTarget: 115,
+      commissionPlanTarget: 3000000000,
+      tradingValuePlanTarget: 200000000000,
+      navPlanTarget: 400000000000,
+      aumPlanTarget: 950000000000,
+      staffPlanTarget: 11,
+      managerCustomerPlanTarget: 25,
     },
     team: {
       customerPlanTarget: 160,
