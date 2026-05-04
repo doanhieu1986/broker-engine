@@ -8,6 +8,8 @@ export interface UserProfile {
   subtitle: string;
   role: Role;
   avatarUrl: string;
+  brokerCode?: string;
+  managedBrokerCodes?: string[];
 }
 
 interface UserContextType {
@@ -19,15 +21,19 @@ interface UserContextType {
 const USERS: Record<Role, UserProfile> = {
   Manager: {
     name: 'Nguyễn Quản Lý',
-    subtitle: 'Quản lý - VPS Securities',
+    subtitle: 'Quản lý & Broker - VPS Securities',
     role: 'Manager',
     avatarUrl: 'https://ui-avatars.com/api/?name=Manager&background=7C3AED&color=fff',
+    brokerCode: 'BRK000',
+    managedBrokerCodes: ['BRK001', 'BRK002', 'BRK003', 'BRK004', 'BRK005', 'BRK006', 'BRK007', 'BRK008', 'BRK009', 'BRK010'],
   },
   Broker: {
-    name: 'Trần Văn Broker',
+    name: 'Nguyễn Minh Tuấn',
     subtitle: 'Broker - VPS Securities',
     role: 'Broker',
     avatarUrl: 'https://ui-avatars.com/api/?name=Broker&background=0EA5E9&color=fff',
+    brokerCode: 'BRK001',
+    managedBrokerCodes: ['BRK001'],
   },
 };
 

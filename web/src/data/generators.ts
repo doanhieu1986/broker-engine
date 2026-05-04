@@ -224,6 +224,7 @@ const regions = ['Hà Nội', 'Thành phố Hồ Chí Minh', 'Đà Nẵng', 'H�
 const classifications: Array<'VIP' | 'Mass' | 'Dormant' | 'Newbie'> = ['VIP', 'Mass', 'Dormant', 'Newbie'];
 const stocks = ['VNM', 'HPG', 'FPT', 'BID', 'ACB', 'MBB', 'CTG', 'VIC', 'MSN', 'VJC'];
 const brokerMapping = [
+  { code: 'BRK000', name: 'Nguyễn Quản Lý' },
   { code: 'BRK001', name: 'Nguyễn Minh Tuấn' },
   { code: 'BRK002', name: 'Trần Thị Hoa' },
   { code: 'BRK003', name: 'Phạm Văn Đức' },
@@ -380,7 +381,19 @@ export function generateCustomer(): Customer {
   const gender = faker.datatype.boolean() ? 'Nam' : 'Nữ';
   const vietnameseName = getVietnameseName();
 
-  const nav = faker.number.int({ min: 100000000, max: 5000000000 });
+  // Create large variance in NAV - 10% VIP customers with very high values
+  const rand = faker.number.int({ min: 1, max: 100 });
+  let nav: number;
+  if (rand <= 10) {
+    // 10% VIP customers: 10B - 50B
+    nav = faker.number.int({ min: 10000000000, max: 50000000000 });
+  } else if (rand <= 30) {
+    // 20% High-tier customers: 2B - 8B
+    nav = faker.number.int({ min: 2000000000, max: 8000000000 });
+  } else {
+    // 70% Regular customers: 50M - 1.5B
+    nav = faker.number.int({ min: 50000000, max: 1500000000 });
+  }
   const aum = faker.number.int({ min: Math.floor(nav * 1.5), max: Math.floor(nav * 3) });
   const investedRatio = faker.number.float({ min: 0.3, max: 0.7, fractionDigits: 2 });
   const investedValue = Math.floor(aum * investedRatio);
@@ -556,10 +569,10 @@ export function generateStaff(brokerCode: string, brokerName: string): Staff {
   ];
   const positions = [
     'Nhân viên bán hàng',
-    'Trưởng phòng kinh doanh',
+    'Trưởng phòng TVĐT',
     'Quản lý khối bán hàng',
     'Chuyên viên tư vấn',
-    'Giám đốc chi nhánh',
+    'Giám đốc TVĐT',
     'Trưởng nhóm kinh doanh',
   ];
 

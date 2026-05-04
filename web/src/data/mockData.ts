@@ -25,19 +25,62 @@ export interface AppNotification {
   isRead: boolean;
 }
 
-// Generate mock customers
-export const mockCustomers: Customer[] = Array.from({ length: 150 }, () => generateCustomer());
+// Generate mock customers with assigned ranking for variance
+export const mockCustomers: Customer[] = Array.from({ length: 150 }, (_, index) => {
+  const customer = generateCustomer();
+  // Create hierarchy: top 10 have significant but not extreme differences
+  if (index < 10) {
+    // Top 10: 50B down to 40B with steady decline
+    customer.nav = Math.floor((50 - index * 1) * 1000000000);
+  } else if (index < 30) {
+    // Next 20: 3-8B NAV (closer to top 10)
+    customer.nav = Math.floor(3000000000 + Math.random() * 5000000000);
+  } else {
+    // Rest: regular with 100M-1B NAV
+    customer.nav = Math.floor(100000000 + Math.random() * 900000000);
+  }
+  // Recalculate AUM based on new NAV
+  customer.aum = Math.floor(customer.nav * (1.5 + Math.random() * 1.5));
+  return customer;
+});
 
 // Generate mock staff
 export const mockStaff: Staff[] = generateMockStaff();
 
-// Generate transactions for customers
-export const mockTransactions: Transaction[] = mockCustomers.flatMap((customer) =>
-  Array.from(
-    { length: Math.floor(Math.random() * 50) },
-    () => generateTransaction(customer.id)
-  )
-);
+// Generate transactions for customers with massive variance based on NAV
+export const mockTransactions: Transaction[] = mockCustomers.flatMap((customer) => {
+  // Create massive transaction volume variance - use NAV as multiplier
+  const navInBillions = customer.nav / 1000000000;
+  let transactionCount: number;
+
+  if (customer.nav > 30000000000) {
+    // Top tier customers (30B+): proportional to NAV
+    transactionCount = Math.floor(navInBillions * 400);
+  } else if (customer.nav > 10000000000) {
+    // High tier (10-30B): proportional to NAV
+    transactionCount = Math.floor(navInBillions * 300);
+  } else if (customer.nav > 1000000000) {
+    // Mid tier (1-10B): proportional to NAV
+    transactionCount = Math.floor(navInBillions * 200);
+  } else {
+    // Regular (< 1B): proportional to NAV
+    transactionCount = Math.floor(navInBillions * 300);
+  }
+
+  // Ensure at least some transactions
+  transactionCount = Math.max(transactionCount, 1);
+
+  return Array.from(
+    { length: transactionCount },
+    () => {
+      const transaction = generateTransaction(customer.id);
+      // Adjust commission multiplier for high NAV customers (minimal multiplier)
+      transaction.commission = Math.floor(transaction.commission * (1 + navInBillions * 0.01));
+      transaction.amount = Math.floor(transaction.amount * (1 + navInBillions * 0.01));
+      return transaction;
+    }
+  );
+});
 
 // Generate KPIs
 export const mockKPIs: KPI[] = Array.from({ length: 8 }, () => generateKPI());
@@ -344,19 +387,47 @@ export const mockMarketNews: MarketNews[] = [
   },
 ];
 
-// Curated broker data for dashboard insights
-export const mockBrokerChartData = [
-  { name: 'Nguyễn Minh Tuấn', hoaHong: 4.8, soLenh: 4200, khachHang: 42, duNoMargin: 85 },
-  { name: 'Trần Thị Hoa', hoaHong: 2.1, soLenh: 1850, khachHang: 28, duNoMargin: 42 },
-  { name: 'Phạm Văn Đức', hoaHong: 1.9, soLenh: 1720, khachHang: 25, duNoMargin: 38 },
-  { name: 'Lê Quang Minh', hoaHong: 1.7, soLenh: 1580, khachHang: 22, duNoMargin: 35 },
-  { name: 'Võ Thị Mai', hoaHong: 1.5, soLenh: 1420, khachHang: 20, duNoMargin: 32 },
-  { name: 'Hoàng Văn Long', hoaHong: 1.3, soLenh: 1280, khachHang: 18, duNoMargin: 28 },
-  { name: 'Đặng Thị Linh', hoaHong: 1.1, soLenh: 1100, khachHang: 15, duNoMargin: 24 },
-  { name: 'Bùi Minh Khoa', hoaHong: 0.9, soLenh: 980, khachHang: 13, duNoMargin: 20 },
-  { name: 'Hồ Thị Thanh', hoaHong: 0.7, soLenh: 820, khachHang: 10, duNoMargin: 16 },
-  { name: 'Dương Văn Hải', hoaHong: 0.5, soLenh: 650, khachHang: 8, duNoMargin: 12 },
-];
+// Calculate broker data dynamically from customers and transactions
+function calculateBrokerChartData() {
+  const brokerMetrics: Record<string, {
+    code: string;
+    name: string;
+    hoaHong: number;
+    soLenh: number;
+    khachHang: number;
+    duNoMargin: number;
+  }> = {};
+
+  // Initialize broker metrics from customers
+  mockCustomers.forEach(customer => {
+    if (!brokerMetrics[customer.brokerCode]) {
+      brokerMetrics[customer.brokerCode] = {
+        code: customer.brokerCode,
+        name: customer.brokerName,
+        hoaHong: 0,
+        soLenh: 0,
+        khachHang: 0,
+        duNoMargin: 0,
+      };
+    }
+    brokerMetrics[customer.brokerCode].khachHang += 1;
+    brokerMetrics[customer.brokerCode].duNoMargin += customer.nav > 2000000000 ? Math.floor(customer.nav / 100000000) : Math.floor(customer.nav / 200000000);
+  });
+
+  // Aggregate transactions by broker
+  mockTransactions.forEach(transaction => {
+    const customer = mockCustomers.find(c => c.id === transaction.customerId);
+    if (customer && brokerMetrics[customer.brokerCode]) {
+      brokerMetrics[customer.brokerCode].hoaHong += transaction.commission / 1000000000;
+      brokerMetrics[customer.brokerCode].soLenh += 1;
+    }
+  });
+
+  // Return sorted by hoaHong (descending)
+  return Object.values(brokerMetrics).sort((a, b) => b.hoaHong - a.hoaHong);
+}
+
+export const mockBrokerChartData = calculateBrokerChartData();
 
 // Mock notifications for inbox
 export const mockNotifications: AppNotification[] = [

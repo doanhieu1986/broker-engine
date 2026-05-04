@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DataTable } from '../components/shared/DataTable';
 import { mockCustomers } from '../data/mockData';
+import { useUser } from '../context/UserContext';
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function CustomersPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { role, user } = useUser();
   const [pageTab, setPageTab] = useState('list');
   const [selectedActionTitle, setSelectedActionTitle] = useState<string | null>(null);
   const [selectedRegion, setSelectedRegion] = useState('');
@@ -25,8 +27,34 @@ export function CustomersPage() {
     }
   }, [location.state?.selectedCustomer]);
 
-  // Filter customers
+  // Filter customers based on role
   let filteredCustomers = mockCustomers;
+
+  // Filter by role: Manager sees own customers + managed brokers' customers, Broker sees own customers
+  if (role === 'Manager' && user.managedBrokerCodes) {
+    const brokerMap: Record<string, string> = {
+      'BRK000': 'Nguyễn Quản Lý',
+      'BRK001': 'Nguyễn Minh Tuấn',
+      'BRK002': 'Trần Thị Hoa',
+      'BRK003': 'Phạm Văn Đức',
+      'BRK004': 'Lê Quang Minh',
+      'BRK005': 'Võ Thị Mai',
+      'BRK006': 'Hoàng Văn Long',
+      'BRK007': 'Đặng Thị Linh',
+      'BRK008': 'Bùi Minh Khoa',
+      'BRK009': 'Hồ Thị Thanh',
+      'BRK010': 'Dương Văn Hải',
+    };
+    // Include own customers (BRK000) + managed brokers' customers
+    const allowedBrokerCodes = ['BRK000', ...user.managedBrokerCodes];
+    filteredCustomers = filteredCustomers.filter(c =>
+      allowedBrokerCodes.some(code => c.brokerName === brokerMap[code])
+    );
+  } else if (role === 'Broker') {
+    filteredCustomers = filteredCustomers.filter(c => c.brokerName === user.name);
+  }
+
+  // Apply user filters
   if (selectedRegion) {
     filteredCustomers = filteredCustomers.filter(c => c.region === selectedRegion);
   }
