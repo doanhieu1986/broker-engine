@@ -107,16 +107,30 @@ export function DashboardPage() {
   const managerCustomerMissing = Math.max(0, targets.managerCustomerPlanTarget - managerOwnCustomers);
 
   // Top brokers data for manager view
-  const topBrokersByRevenue = [...mockBrokerChartData]
+  // Period multiplier for broker data aggregation
+  const periodMultiplier = periodFilter === 'month' ? 1 : periodFilter === 'quarter' ? 3 : 6;
+  const brokerDataByPeriod = mockBrokerChartData.map(broker => ({
+    ...broker,
+    hoaHong: Math.round(broker.hoaHong * periodMultiplier),
+    soLenh: Math.round(broker.soLenh * periodMultiplier),
+    khachHang: Math.round(broker.khachHang * periodMultiplier),
+    duNoMargin: Math.round(broker.duNoMargin * periodMultiplier),
+    hoaHongKH: Math.round(broker.hoaHongKH * periodMultiplier),
+    soLenhKH: Math.round(broker.soLenhKH * periodMultiplier),
+    khachHangKH: Math.round(broker.khachHangKH * periodMultiplier),
+    duNoMarginKH: Math.round(broker.duNoMarginKH * periodMultiplier),
+  }));
+
+  const topBrokersByRevenue = [...brokerDataByPeriod]
     .sort((a, b) => b.hoaHong - a.hoaHong);
 
-  const topBrokersByOrders = [...mockBrokerChartData]
+  const topBrokersByOrders = [...brokerDataByPeriod]
     .sort((a, b) => b.soLenh - a.soLenh);
 
-  const topBrokersByCustomers = [...mockBrokerChartData]
+  const topBrokersByCustomers = [...brokerDataByPeriod]
     .sort((a, b) => b.khachHang - a.khachHang);
 
-  const topBrokersByMarginDebt = [...mockBrokerChartData]
+  const topBrokersByMarginDebt = [...brokerDataByPeriod]
     .sort((a, b) => b.duNoMargin - a.duNoMargin);
 
   // Chart data - 12 months with seasonal variation
