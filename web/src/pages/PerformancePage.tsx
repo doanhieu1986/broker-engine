@@ -33,10 +33,13 @@ export function PerformancePage() {
     {
       key: 'activeAccountsRatio',
       label: 'Tài khoản active (%)',
+      sortable: true,
+      render: (value: number) => value.toFixed(2),
     },
     {
       key: 'tradingFrequency',
       label: 'Tần suất giao dịch',
+      sortable: true,
       render: (value: number) => value.toFixed(2),
     },
   ];

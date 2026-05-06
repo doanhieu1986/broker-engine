@@ -1,4 +1,4 @@
-import { BarChart3, Users, FileText, TrendingUp, Settings, Home } from 'lucide-react';
+import { Users, FileText, TrendingUp, Settings, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUser, type Role } from '../../context/UserContext';
 
@@ -39,11 +39,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       label: 'Hiệu suất',
       icon: <TrendingUp size={20} />,
       href: '/performance',
-    },
-    {
-      label: 'Phân tích',
-      icon: <BarChart3 size={20} />,
-      href: '/analytics',
     },
   ];
 

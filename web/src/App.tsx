@@ -4,7 +4,6 @@ import { DashboardPage } from './pages/DashboardPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { PerformancePage } from './pages/PerformancePage';
-import { AnalyticsPage } from './pages/AnalyticsPage';
 import { BrokerDetailPage } from './pages/BrokerDetailPage';
 import { UserProvider } from './context/UserContext';
 
@@ -19,7 +18,6 @@ function App() {
             <Route path="/brokers/:brokerCode" element={<BrokerDetailPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/performance" element={<PerformancePage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
           </Routes>
         </Layout>
       </Router>
