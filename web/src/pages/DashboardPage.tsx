@@ -234,30 +234,67 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* KPI Type Segment Control */}
-      <div className="inline-flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
-        <button
-          onClick={() => setKpiType('company')}
-          className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-            kpiType === 'company'
-              ? 'bg-white dark:bg-slate-900 text-accent-600 dark:text-accent-400 shadow-md'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
-          }`}
-        >
-          <Building2 size={16} />
-          <span>Công ty</span>
-        </button>
-        <button
-          onClick={() => setKpiType('team')}
-          className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-            kpiType === 'team'
-              ? 'bg-white dark:bg-slate-900 text-accent-600 dark:text-accent-400 shadow-md'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
-          }`}
-        >
-          <Users size={16} />
-          <span>Đội nhóm</span>
-        </button>
+      {/* Top Controls: KPI Type + Period Filter */}
+      <div className="flex items-center justify-between">
+        {/* KPI Type Segment Control */}
+        <div className="inline-flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+          <button
+            onClick={() => setKpiType('company')}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+              kpiType === 'company'
+                ? 'bg-white dark:bg-slate-900 text-accent-600 dark:text-accent-400 shadow-md'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
+            }`}
+          >
+            <Building2 size={16} />
+            <span>Công ty</span>
+          </button>
+          <button
+            onClick={() => setKpiType('team')}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+              kpiType === 'team'
+                ? 'bg-white dark:bg-slate-900 text-accent-600 dark:text-accent-400 shadow-md'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
+            }`}
+          >
+            <Users size={16} />
+            <span>Đội nhóm</span>
+          </button>
+        </div>
+
+        {/* Period Filter */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setPeriodFilter('month')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+              periodFilter === 'month'
+                ? 'bg-accent-500 text-white'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }`}
+          >
+            Tháng
+          </button>
+          <button
+            onClick={() => setPeriodFilter('quarter')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+              periodFilter === 'quarter'
+                ? 'bg-accent-500 text-white'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }`}
+          >
+            Quý
+          </button>
+          <button
+            onClick={() => setPeriodFilter('year')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+              periodFilter === 'year'
+                ? 'bg-accent-500 text-white'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }`}
+          >
+            Năm
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -360,40 +397,6 @@ export function DashboardPage() {
           planCompletion={managerCustomerCompletion}
           amountMissing={managerCustomerMissing}
         />
-      </div>
-
-      {/* Period Filter */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setPeriodFilter('month')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            periodFilter === 'month'
-              ? 'bg-accent-500 text-white'
-              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-          }`}
-        >
-          Tháng
-        </button>
-        <button
-          onClick={() => setPeriodFilter('quarter')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            periodFilter === 'quarter'
-              ? 'bg-accent-500 text-white'
-              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-          }`}
-        >
-          Quý
-        </button>
-        <button
-          onClick={() => setPeriodFilter('year')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            periodFilter === 'year'
-              ? 'bg-accent-500 text-white'
-              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-          }`}
-        >
-          Năm
-        </button>
       </div>
 
       {/* Charts */}
