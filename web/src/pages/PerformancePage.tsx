@@ -49,18 +49,42 @@ export function PerformancePage() {
   const CHART_HIGHLIGHT = '#7c3aed';
   const AXIS_LABEL = '#cbd5e1';
 
-  // Broker performance data
+  // Broker performance data with targets
   const topBrokersByRevenue = [...mockBrokerChartData]
-    .sort((a, b) => b.hoaHong - a.hoaHong);
+    .sort((a, b) => b.hoaHong - a.hoaHong)
+    .map(b => ({
+      ...b,
+      actual: Math.min(b.hoaHong, b.hoaHongKH),
+      gap: Math.max(0, b.hoaHongKH - b.hoaHong),
+      completion: Math.round((b.hoaHong / b.hoaHongKH) * 100),
+    }));
 
   const topBrokersByOrders = [...mockBrokerChartData]
-    .sort((a, b) => b.soLenh - a.soLenh);
+    .sort((a, b) => b.soLenh - a.soLenh)
+    .map(b => ({
+      ...b,
+      actual: Math.min(b.soLenh, b.soLenhKH),
+      gap: Math.max(0, b.soLenhKH - b.soLenh),
+      completion: Math.round((b.soLenh / b.soLenhKH) * 100),
+    }));
 
   const topBrokersByCustomers = [...mockBrokerChartData]
-    .sort((a, b) => b.khachHang - a.khachHang);
+    .sort((a, b) => b.khachHang - a.khachHang)
+    .map(b => ({
+      ...b,
+      actual: Math.min(b.khachHang, b.khachHangKH),
+      gap: Math.max(0, b.khachHangKH - b.khachHang),
+      completion: Math.round((b.khachHang / b.khachHangKH) * 100),
+    }));
 
   const topBrokersByMarginDebt = [...mockBrokerChartData]
-    .sort((a, b) => b.duNoMargin - a.duNoMargin);
+    .sort((a, b) => b.duNoMargin - a.duNoMargin)
+    .map(b => ({
+      ...b,
+      actual: Math.min(b.duNoMargin, b.duNoMarginKH),
+      gap: Math.max(0, b.duNoMarginKH - b.duNoMargin),
+      completion: Math.round((b.duNoMargin / b.duNoMarginKH) * 100),
+    }));
 
   // Customer performance data
   const filteredCustomers = role === 'Broker'
@@ -156,7 +180,7 @@ export function PerformancePage() {
             {/* Broker Revenue Chart */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Doanh thu phí hoa hồng theo Broker
+                Doanh thu phí hoa hồng môi giới theo Broker
               </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={topBrokersByRevenue} layout="vertical">
@@ -170,13 +194,17 @@ export function PerformancePage() {
                       borderRadius: '8px',
                       color: '#1f2937'
                     }}
-                    formatter={(value: any) => typeof value === 'number' ? `${(value / 1000000000).toFixed(2)} tỷ đ` : ''}
+                    formatter={(value: any, name: any) => {
+                      if (name === 'Còn lại (KH)') return '';
+                      return typeof value === 'number' ? `${(value / 1000000000).toFixed(2)} tỷ đ` : '';
+                    }}
+                    labelFormatter={(label: any) => {
+                      const broker = topBrokersByRevenue.find((b: any) => b.name === label);
+                      return broker ? `${broker.name} - ${broker.completion}%` : label;
+                    }}
                   />
-                  <Bar dataKey="hoaHong" name="Hoa hồng (tỷ đ)">
-                    {topBrokersByRevenue.map((_, i) => (
-                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
-                    ))}
-                  </Bar>
+                  <Bar dataKey="hoaHong" name="Doanh thu thực tế" stackId="revenue" fill="#3b82f6" />
+                  <Bar dataKey="gap" name="Còn lại (KH)" stackId="revenue" fill="#d1d5db" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -198,13 +226,17 @@ export function PerformancePage() {
                       borderRadius: '8px',
                       color: '#1f2937'
                     }}
-                    formatter={(value: any) => `${value} lệnh`}
+                    formatter={(value: any, name: any) => {
+                      if (name === 'Còn lại (KH)') return '';
+                      return `${value} lệnh`;
+                    }}
+                    labelFormatter={(label: any) => {
+                      const broker = topBrokersByOrders.find((b: any) => b.name === label);
+                      return broker ? `${broker.name} - ${broker.completion}%` : label;
+                    }}
                   />
-                  <Bar dataKey="soLenh" name="Số lệnh">
-                    {topBrokersByOrders.map((_, i) => (
-                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
-                    ))}
-                  </Bar>
+                  <Bar dataKey="soLenh" name="Lệnh thực tế" stackId="orders" fill="#10b981" />
+                  <Bar dataKey="gap" name="Còn lại (KH)" stackId="orders" fill="#d1d5db" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -229,13 +261,17 @@ export function PerformancePage() {
                       borderRadius: '8px',
                       color: '#1f2937'
                     }}
-                    formatter={(value: any) => `${value} khách`}
+                    formatter={(value: any, name: any) => {
+                      if (name === 'Còn lại (KH)') return '';
+                      return `${value} khách`;
+                    }}
+                    labelFormatter={(label: any) => {
+                      const broker = topBrokersByCustomers.find((b: any) => b.name === label);
+                      return broker ? `${broker.name} - ${broker.completion}%` : label;
+                    }}
                   />
-                  <Bar dataKey="khachHang" name="Số khách hàng">
-                    {topBrokersByCustomers.map((_, i) => (
-                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
-                    ))}
-                  </Bar>
+                  <Bar dataKey="khachHang" name="Khách hàng thực tế" stackId="customers" fill="#f59e0b" />
+                  <Bar dataKey="gap" name="Còn lại (KH)" stackId="customers" fill="#d1d5db" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -257,13 +293,17 @@ export function PerformancePage() {
                       borderRadius: '8px',
                       color: '#1f2937'
                     }}
-                    formatter={(value: any) => typeof value === 'number' ? `${(value / 1000000000).toFixed(2)} tỷ đ` : ''}
+                    formatter={(value: any, name: any) => {
+                      if (name === 'Còn lại (KH)') return '';
+                      return typeof value === 'number' ? `${(value / 1000000000).toFixed(2)} tỷ đ` : '';
+                    }}
+                    labelFormatter={(label: any) => {
+                      const broker = topBrokersByMarginDebt.find((b: any) => b.name === label);
+                      return broker ? `${broker.name} - ${broker.completion}%` : label;
+                    }}
                   />
-                  <Bar dataKey="duNoMargin" name="Dư nợ margin (tỷ đ)">
-                    {topBrokersByMarginDebt.map((_, i) => (
-                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
-                    ))}
-                  </Bar>
+                  <Bar dataKey="duNoMargin" name="Dư nợ thực tế" stackId="margin" fill="#ef4444" />
+                  <Bar dataKey="gap" name="Còn lại (KH)" stackId="margin" fill="#d1d5db" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
