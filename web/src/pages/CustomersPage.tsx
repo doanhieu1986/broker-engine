@@ -3,13 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { DataTable } from '../components/shared/DataTable';
 import { mockCustomers } from '../data/mockData';
 import { useUser } from '../context/UserContext';
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 export function CustomersPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { role, user } = useUser();
-  const [pageTab, setPageTab] = useState('list');
+  const [pageTab, setPageTab] = useState('overview');
   const [selectedActionTitle, setSelectedActionTitle] = useState<string | null>(null);
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedClassification, setSelectedClassification] = useState('');
@@ -72,6 +72,39 @@ export function CustomersPage() {
 
   const regions = Array.from(new Set(mockCustomers.map(c => c.region)));
   const classifications = Array.from(new Set(mockCustomers.map(c => c.classification)));
+
+  // Overview tab data
+  const classificationData = [
+    { name: 'VIP', value: filteredCustomers.filter(c => c.classification === 'VIP').length },
+    { name: 'Mass', value: filteredCustomers.filter(c => c.classification === 'Mass').length },
+    { name: 'Newbie', value: filteredCustomers.filter(c => c.classification === 'Newbie').length },
+    { name: 'Dormant', value: filteredCustomers.filter(c => c.classification === 'Dormant').length },
+  ];
+
+  const statusData = [
+    { name: 'Prospect', value: filteredCustomers.filter(c => c.classification === 'Newbie' && !c.activeStatus).length },
+    { name: 'Active', value: filteredCustomers.filter(c => c.activeStatus && c.classification !== 'Dormant').length },
+    { name: 'Inactive', value: filteredCustomers.filter(c => !c.activeStatus && c.classification !== 'Newbie' && c.classification !== 'Dormant').length },
+    { name: 'Dormant', value: filteredCustomers.filter(c => c.classification === 'Dormant').length },
+    { name: 'Churn', value: Math.max(1, Math.round(filteredCustomers.length * 0.05)) },
+  ];
+
+  const brokerMap: Record<string, number> = {};
+  filteredCustomers.forEach(c => {
+    brokerMap[c.brokerName] = (brokerMap[c.brokerName] || 0) + 1;
+  });
+  const brokerDistData = Object.entries(brokerMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  const CLASSIFICATION_COLORS = ['#7c3aed', '#9ca3af', '#22c55e', '#f59e0b'];
+  const STATUS_COLORS: Record<string, string> = {
+    'Prospect': '#3b82f6',
+    'Active': '#22c55e',
+    'Inactive': '#9ca3af',
+    'Dormant': '#f59e0b',
+    'Churn': '#ef4444',
+  };
 
   const columns = [
     {
@@ -153,6 +186,16 @@ export function CustomersPage() {
       <div className="bg-white dark:bg-slate-950 rounded-lg shadow">
         <div className="flex gap-6 px-6 py-0 border-b border-slate-200 dark:border-slate-700">
           <button
+            onClick={() => setPageTab('overview')}
+            className={`py-3 px-1 border-b-2 font-semibold transition-colors ${
+              pageTab === 'overview'
+                ? 'border-accent-500 text-accent-500'
+                : 'border-transparent text-slate-500 hover:text-slate-300'
+            }`}
+          >
+            Tổng quan nền khách hàng
+          </button>
+          <button
             onClick={() => setPageTab('list')}
             className={`py-3 px-1 border-b-2 font-semibold transition-colors ${
               pageTab === 'list'
@@ -174,6 +217,95 @@ export function CustomersPage() {
           </button>
         </div>
       </div>
+
+      {/* Overview Tab */}
+      {pageTab === 'overview' && (
+        <div className="space-y-6">
+          {/* Row 1: Classification + Status Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Classification Pie Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Cơ cấu phân loại khách hàng
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={classificationData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    label={({ name, percent = 0 }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    dataKey="value"
+                  >
+                    {classificationData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={CLASSIFICATION_COLORS[index % CLASSIFICATION_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value: any) => `${value} khách hàng`} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Status Bar Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Phân bố trạng thái khách hàng
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={statusData}>
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                  <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => `${value} khách hàng`}
+                  />
+                  <Bar dataKey="value" name="Số khách hàng">
+                    {statusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Row 2: Broker Distribution Chart */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Phân bố khách hàng theo Broker
+            </h3>
+            <ResponsiveContainer width="100%" height={brokerDistData.length * 50 + 50}>
+              <BarChart data={brokerDistData} layout="vertical">
+                <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                <XAxis type="number" stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                <YAxis dataKey="name" type="category" stroke="#9ca3af" width={140} tick={{ fontSize: 11 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#f9fafb',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    color: '#1f2937'
+                  }}
+                  formatter={(value: any) => `${value} khách hàng`}
+                />
+                <Bar dataKey="value" name="Số khách hàng">
+                  {brokerDistData.map((_, i) => (
+                    <Cell key={`cell-${i}`} fill={i === 0 ? '#7c3aed' : '#9ca3af'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       {/* Customer List Tab */}
       {pageTab === 'list' && (
