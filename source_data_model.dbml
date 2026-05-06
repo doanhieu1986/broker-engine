@@ -1,0 +1,505 @@
+// Broker VPS Management System - Source Data Models
+// Các bảng từ các hệ thống nguồn nội bộ và bên ngoài
+// Cập nhật: 2026-05-05
+
+// ============ 1. CORE BANKING / TRADING SYSTEM ============
+
+Table src_banking_accounts {
+  account_id UUID [pk]
+  account_number VARCHAR(10) [unique]
+  customer_id UUID
+  account_type ENUM('Margin','Cash','Derivative')
+  status ENUM('Active','Suspended','Closed')
+  opening_date DATE
+  closing_date DATE [nullable]
+  cash_balance BIGINT "Số dư tiền mặt (VND)"
+  buying_power BIGINT "Sức mua (VND)"
+  debt_balance BIGINT "Dư nợ (VND)"
+  nav BIGINT "Giá trị tài sản ròng (VND)"
+  aum BIGINT "Tài sản quản lý (VND)"
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Tài khoản giao dịch từ hệ thống ngân hàng"
+}
+
+Table src_banking_orders {
+  order_id UUID [pk]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  account_number VARCHAR(10)
+  symbol VARCHAR(10)
+  exchange ENUM('HOSE','HNX','UPCOM')
+  trade_type ENUM('Buy','Sell')
+  order_type ENUM('LO','MP','ATC','ATO') "LO=Limit Order, MP=Market Price"
+  quantity INT
+  price_per_unit BIGINT "VND"
+  total_amount BIGINT "Giá trị lệnh = quantity × price (VND)"
+  fee BIGINT "Phí môi giới (VND)"
+  tax BIGINT "Thuế (VND)"
+  order_status ENUM('Pending','Submitted','Matched','Cancelled','Rejected')
+  order_time TIMESTAMP
+  matched_time TIMESTAMP [nullable]
+  note TEXT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Lệnh giao dịch từ hệ thống broker"
+}
+
+Table src_banking_transactions {
+  transaction_id UUID [pk]
+  order_id UUID [ref: > src_banking_orders.order_id]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  transaction_type ENUM('Buy','Sell','Deposit','Withdrawal','Fee','Interest','Dividend')
+  transaction_date DATE
+  settlement_date DATE "Ngày thanh toán (T+2)"
+  symbol VARCHAR(10) [nullable]
+  quantity INT [nullable]
+  price_per_unit BIGINT [nullable]
+  gross_amount BIGINT "Giá trị trước phí"
+  fee BIGINT "Phí"
+  tax BIGINT "Thuế"
+  net_amount BIGINT "Giá trị thực tế"
+  balance_after BIGINT
+  status ENUM('Pending','Settled','Failed')
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Chi tiết giao dịch từ hệ thống thanh toán"
+}
+
+Table src_banking_positions {
+  position_id UUID [pk]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  symbol VARCHAR(10)
+  exchange ENUM('HOSE','HNX','UPCOM')
+  quantity INT "Số lượng nắm giữ"
+  avg_cost BIGINT "Giá vốn trung bình (VND/cổ)"
+  total_cost BIGINT "Tổng giá vốn = quantity × avg_cost"
+  current_price BIGINT "Giá hiện tại (VND/cổ)"
+  market_value BIGINT "Giá trị thị trường = quantity × current_price"
+  unrealized_pnl BIGINT "Lãi/lỗ chưa thực hiện"
+  snapshot_date DATE
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Danh mục đang nắm giữ"
+}
+
+Table src_banking_market_quotes {
+  quote_id UUID [pk]
+  symbol VARCHAR(10)
+  exchange ENUM('HOSE','HNX','UPCOM')
+  trade_date DATE
+  session ENUM('ATO','Morning','Afternoon','ATC')
+  open_price BIGINT
+  high_price BIGINT
+  low_price BIGINT
+  close_price BIGINT
+  ref_price BIGINT "Giá tham chiếu ngày trước"
+  total_volume BIGINT "Khối lượng khớp lệnh"
+  total_value BIGINT "Giá trị khớp lệnh (VND)"
+  buyer_volume BIGINT
+  seller_volume BIGINT
+  foreign_buy_volume BIGINT
+  foreign_sell_volume BIGINT
+  quote_time TIMESTAMP
+  created_at TIMESTAMP
+  Note: "Báo giá thị trường từ HOSE/HNX"
+}
+
+// ============ 2. CRM NỘI BỘ VPS ============
+
+Table src_crm_customers {
+  customer_id UUID [pk]
+  customer_code VARCHAR(20) [unique]
+  full_name VARCHAR(100)
+  gender ENUM('Male','Female','Other')
+  dob DATE
+  id_type ENUM('CCCD','CMND','Passport')
+  id_number VARCHAR(20) [unique]
+  id_issued_date DATE
+  id_issued_place VARCHAR(100)
+  nationality VARCHAR(50)
+  phone VARCHAR(15) [unique]
+  email VARCHAR(100) [unique]
+  address VARCHAR(255)
+  city VARCHAR(50)
+  state_province VARCHAR(50)
+  postal_code VARCHAR(10)
+  occupation VARCHAR(100)
+  income_range ENUM('<50M','50-100M','100-500M','>500M')
+  risk_profile ENUM('Conservative','Moderate','Aggressive')
+  preferred_contact_channel ENUM('Email','Phone','SMS','Zalo','None')
+  preferred_contact_time VARCHAR(20) "e.g., 9-17h"
+  registration_date DATE
+  status ENUM('Active','Inactive','Suspended','Closed')
+  remarks TEXT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Khách hàng từ CRM VPS"
+}
+
+Table src_crm_support_cases {
+  case_id UUID [pk]
+  customer_id UUID [ref: > src_crm_customers.customer_id]
+  case_number VARCHAR(50) [unique]
+  case_type ENUM('Complaint','Request','Question','Feedback')
+  case_category VARCHAR(100) "e.g., Trading, Technical, Account, Fee"
+  priority ENUM('Low','Medium','High','Urgent')
+  status ENUM('Open','In-Progress','Resolved','Closed','Reopened')
+  description TEXT
+  assigned_to_broker_id UUID [nullable]
+  assigned_date DATE [nullable]
+  created_date TIMESTAMP
+  resolved_date TIMESTAMP [nullable]
+  resolution_note TEXT [nullable]
+  satisfaction_rating INT [nullable] "1-5 scale"
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Case hỗ trợ khách hàng từ CRM"
+}
+
+Table src_crm_customer_interactions {
+  interaction_id UUID [pk]
+  customer_id UUID [ref: > src_crm_customers.customer_id]
+  interaction_type ENUM('Inbound Call','Outbound Call','Email','Chat','SMS','In-Person','WhatsApp')
+  interaction_date TIMESTAMP
+  duration_seconds INT [nullable]
+  channel ENUM('Phone','Email','Online Chat','Face-to-Face','Mobile App')
+  topic VARCHAR(200)
+  notes TEXT
+  outcome VARCHAR(100)
+  next_action TEXT [nullable]
+  follow_up_date DATE [nullable]
+  created_at TIMESTAMP
+  Note: "Lịch sử tương tác khách hàng từ CRM"
+}
+
+Table src_crm_care_activities {
+  activity_id UUID [pk]
+  customer_id UUID [ref: > src_crm_customers.customer_id]
+  activity_date DATE
+  activity_type ENUM('Birthday Greeting','Product Recommendation','Trading Advice','Margin Alert','Quarterly Review','Other')
+  channel ENUM('Phone','Email','SMS','Zalo','WeChat','In-Person')
+  initiated_by_broker_id UUID
+  activity_description TEXT
+  sentiment ENUM('Positive','Neutral','Negative')
+  feedback_received TEXT [nullable]
+  notes TEXT
+  created_at TIMESTAMP
+  Note: "Nhật ký chăm sóc khách hàng từ CRM"
+}
+
+// ============ 3. HR SYSTEM ============
+
+Table src_hr_employees {
+  employee_id UUID [pk]
+  employee_code VARCHAR(20) [unique]
+  full_name VARCHAR(100)
+  email VARCHAR(100) [unique]
+  phone VARCHAR(15)
+  id_number VARCHAR(20)
+  dob DATE
+  gender ENUM('Male','Female','Other')
+  address VARCHAR(255)
+  department_id UUID
+  position_id UUID
+  role_name VARCHAR(50) "e.g., Director, Manager, Broker, Cộng tác viên"
+  employment_type ENUM('Full-time','Part-time','Contractor','Consultant')
+  hire_date DATE
+  official_date DATE [nullable] "Ngày chính thức hóa"
+  manager_id UUID [nullable]
+  salary_grade VARCHAR(20)
+  status ENUM('Active','On-Leave','Suspended','Terminated')
+  termination_date DATE [nullable]
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Nhân viên broker từ HR System"
+}
+
+Table src_hr_organizational_structure {
+  org_unit_id UUID [pk]
+  org_unit_name VARCHAR(100)
+  org_unit_code VARCHAR(20) [unique]
+  parent_unit_id UUID [nullable]
+  unit_type ENUM('Company','Division','Department','Team','Branch')
+  manager_id UUID [ref: > src_hr_employees.employee_id]
+  location VARCHAR(100)
+  region VARCHAR(50)
+  active_status BOOLEAN
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Cơ cấu tổ chức công ty"
+}
+
+Table src_hr_assignments {
+  assignment_id UUID [pk]
+  employee_id UUID [ref: > src_hr_employees.employee_id]
+  customer_id UUID "FK to src_crm_customers"
+  assignment_date DATE
+  unassignment_date DATE [nullable]
+  assignment_type ENUM('Primary','Secondary')
+  nav_assigned BIGINT [nullable]
+  reason_assigned VARCHAR(200)
+  reason_unassigned VARCHAR(200) [nullable]
+  status ENUM('Active','Terminated')
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Lịch sử phân công khách hàng cho broker"
+}
+
+// ============ 4. KPI PLANNING SYSTEM ============
+
+Table src_kpi_targets {
+  plan_id UUID [pk]
+  period_start DATE
+  period_end DATE
+  period_type ENUM('Monthly','Quarterly','Yearly')
+  scope_type ENUM('Company','Division','Team','Individual')
+  scope_id VARCHAR(50)
+  scope_name VARCHAR(100)
+  kpi_code VARCHAR(50)
+  kpi_name VARCHAR(200) "e.g., New Accounts Opened, Total Commission"
+  kpi_definition TEXT
+  target_value DECIMAL(20,4)
+  uom VARCHAR(20) "Unit of Measurement (e.g., accounts, VND, %)"
+  weight_pct DECIMAL(5,2)
+  baseline_previous_period DECIMAL(20,4) [nullable]
+  created_by_user_id UUID
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Kế hoạch KPI từ hệ thống planning"
+}
+
+Table src_kpi_actuals {
+  actual_id UUID [pk]
+  plan_id UUID [ref: > src_kpi_targets.plan_id]
+  snapshot_date DATE
+  actual_value DECIMAL(20,4)
+  achievement_pct DECIMAL(6,2)
+  variance DECIMAL(20,4)
+  variance_pct DECIMAL(6,2)
+  notes TEXT [nullable]
+  updated_by_user_id UUID [nullable]
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Giá trị thực tế KPI theo snapshot"
+}
+
+Table src_kpi_historical_trends {
+  trend_id UUID [pk]
+  kpi_code VARCHAR(50)
+  scope_type ENUM('Company','Division','Team','Individual')
+  scope_id VARCHAR(50)
+  period_month VARCHAR(7) "e.g., 2025-05"
+  actual_value DECIMAL(20,4)
+  target_value DECIMAL(20,4)
+  achievement_pct DECIMAL(6,2)
+  trend_pct_vs_previous DECIMAL(6,2)
+  snapshot_date DATE
+  Note: "Lịch sử xu hướng KPI hàng tháng"
+}
+
+// ============ 5. AUTH / IAM SYSTEM ============
+
+Table src_iam_users {
+  user_id UUID [pk]
+  username VARCHAR(50) [unique]
+  email VARCHAR(100) [unique]
+  full_name VARCHAR(100)
+  phone VARCHAR(15)
+  employee_id UUID [nullable]
+  broker_code VARCHAR(10) [nullable] "FK to src_hr_employees or dim_broker"
+  password_hash VARCHAR(255)
+  password_last_changed TIMESTAMP [nullable]
+  password_expiry_date DATE [nullable]
+  status ENUM('Active','Inactive','Locked','Disabled')
+  is_2fa_enabled BOOLEAN
+  last_login_at TIMESTAMP [nullable]
+  last_login_ip VARCHAR(45)
+  login_attempt_count INT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Người dùng hệ thống từ IAM"
+}
+
+Table src_iam_roles {
+  role_id UUID [pk]
+  role_code VARCHAR(50) [unique]
+  role_name VARCHAR(100)
+  role_description TEXT
+  is_active BOOLEAN
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Vai trò trong hệ thống"
+}
+
+Table src_iam_user_roles {
+  user_role_id UUID [pk]
+  user_id UUID [ref: > src_iam_users.user_id]
+  role_id UUID [ref: > src_iam_roles.role_id]
+  assigned_date DATE
+  revoked_date DATE [nullable]
+  assigned_by_user_id UUID
+  created_at TIMESTAMP
+  Note: "Gán vai trò cho người dùng"
+}
+
+Table src_iam_permissions {
+  permission_id UUID [pk]
+  permission_code VARCHAR(50) [unique]
+  permission_name VARCHAR(100)
+  resource VARCHAR(100) "e.g., Customer, Order, Report"
+  action VARCHAR(50) "e.g., View, Create, Edit, Delete"
+  description TEXT
+  created_at TIMESTAMP
+  Note: "Quyền hạn trong hệ thống"
+}
+
+Table src_iam_role_permissions {
+  role_permission_id UUID [pk]
+  role_id UUID [ref: > src_iam_roles.role_id]
+  permission_id UUID [ref: > src_iam_permissions.permission_id]
+  granted_date DATE
+  revoked_date DATE [nullable]
+  Note: "Gán quyền cho vai trò"
+}
+
+Table src_iam_audit_logs {
+  log_id UUID [pk]
+  user_id UUID [ref: > src_iam_users.user_id]
+  action VARCHAR(100)
+  resource VARCHAR(100)
+  resource_id VARCHAR(100)
+  details TEXT
+  ip_address VARCHAR(45)
+  timestamp TIMESTAMP
+  status ENUM('Success','Failure')
+  Note: "Audit log hệ thống"
+}
+
+// ============ 6. MARGIN MANAGEMENT SYSTEM ============
+
+Table src_margin_accounts {
+  margin_account_id UUID [pk]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  account_number VARCHAR(10)
+  customer_id UUID
+  broker_code VARCHAR(10)
+  status ENUM('Monitoring','Warning','Call Margin','Force Sell')
+  total_asset_value BIGINT "Tổng giá trị tài sản (VND)"
+  total_debt BIGINT "Tổng nợ margin (VND)"
+  equity BIGINT "Vốn chủ = Tài sản - Nợ (VND)"
+  margin_ratio_current DECIMAL(5,2) "%"
+  margin_ratio_maintenance DECIMAL(5,2) "Ngưỡng duy trì (%)"
+  margin_ratio_force_sell DECIMAL(5,2) "Ngưỡng bán cưỡng chế (%)"
+  margin_call_amount BIGINT [nullable] "Số tiền cần bổ sung (VND)"
+  margin_call_date DATE [nullable]
+  margin_call_due_date DATE [nullable]
+  force_sell_amount BIGINT [nullable]
+  expected_force_sell_date DATE [nullable]
+  margin_debt_interest_rate DECIMAL(5,2) "%/year"
+  snapshot_date DATE
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Trạng thái margin từ hệ thống margin management"
+}
+
+Table src_margin_events {
+  event_id UUID [pk]
+  margin_account_id UUID [ref: > src_margin_accounts.margin_account_id]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  event_type ENUM('Monitoring','Warning','Call Margin','Force Sell','Call Resolved','Partial Sell','Full Liquidation')
+  event_date DATE
+  event_time TIMESTAMP
+  prev_ratio DECIMAL(5,2)
+  new_ratio DECIMAL(5,2)
+  trigger_reason TEXT
+  action_taken VARCHAR(200)
+  resolved_date DATE [nullable]
+  notes TEXT
+  created_at TIMESTAMP
+  Note: "Sự kiện margin (change of status)"
+}
+
+Table src_margin_collateral {
+  collateral_id UUID [pk]
+  margin_account_id UUID [ref: > src_margin_accounts.margin_account_id]
+  symbol VARCHAR(10)
+  quantity INT
+  current_price BIGINT
+  market_value BIGINT
+  haircut_rate DECIMAL(5,2) "Tỷ lệ chiết khấu (%)"
+  collateral_value BIGINT "market_value × (1 - haircut_rate)"
+  snapshot_date DATE
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  Note: "Chứng chỉ thế chấp margin"
+}
+
+// ============ 7. EXTERNAL DATA SOURCES ============
+
+Table src_external_vsd_data {
+  vsd_id UUID [pk]
+  customer_id UUID [nullable]
+  id_number VARCHAR(20)
+  symbol VARCHAR(10)
+  quantity INT
+  ownership_date DATE
+  holding_source ENUM('Buy','Dividend','Right')
+  vsd_status ENUM('Confirmed','Pending','Liquidated')
+  update_date DATE "T+1 sau ngày giao dịch"
+  snapshot_date DATE
+  created_at TIMESTAMP
+  Note: "Dữ liệu sở hữu từ VSD (Trung tâm Lưu ký)"
+}
+
+Table src_external_hose_data {
+  hose_id UUID [pk]
+  symbol VARCHAR(10)
+  trade_date DATE
+  session ENUM('ATO','Morning','Afternoon','ATC')
+  open_price BIGINT
+  high_price BIGINT
+  low_price BIGINT
+  close_price BIGINT
+  ref_price BIGINT
+  total_volume BIGINT
+  total_value BIGINT
+  foreign_buy_volume BIGINT
+  foreign_sell_volume BIGINT
+  index_impact DECIMAL(10,4) [nullable]
+  update_time TIMESTAMP
+  Note: "Giá cổ phiếu HOSE (realtime / EOD)"
+}
+
+Table src_external_hnx_data {
+  hnx_id UUID [pk]
+  symbol VARCHAR(10)
+  trade_date DATE
+  session ENUM('ATO','Morning','Afternoon','ATC')
+  open_price BIGINT
+  high_price BIGINT
+  low_price BIGINT
+  close_price BIGINT
+  ref_price BIGINT
+  total_volume BIGINT
+  total_value BIGINT
+  foreign_buy_volume BIGINT
+  foreign_sell_volume BIGINT
+  update_time TIMESTAMP
+  Note: "Giá cổ phiếu HNX / UPCOM (realtime / EOD)"
+}
+
+Table src_external_market_news {
+  news_id UUID [pk]
+  title VARCHAR(500)
+  content TEXT
+  source ENUM('VSD','HOSE','HNX','Financial News','Broker Recommendation')
+  category VARCHAR(100)
+  published_date TIMESTAMP
+  related_symbols TEXT[]
+  recommendation ENUM('Buy','Hold','Sell') [nullable]
+  sentiment_score DECIMAL(3,2) [nullable]
+  is_featured BOOLEAN
+  url VARCHAR(500) [nullable]
+  created_at TIMESTAMP
+  Note: "Tin tức và khuyến nghị thị trường"
+}

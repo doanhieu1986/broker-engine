@@ -1,0 +1,374 @@
+// Broker VPS - Source Data Models (Simplified for dbdiagram.io)
+// Updated: 2026-05-05
+
+// ============ 1. CORE BANKING / TRADING SYSTEM ============
+
+Table src_banking_accounts {
+  account_id UUID [pk]
+  account_number VARCHAR(10) [unique]
+  customer_id UUID
+  account_type ENUM('Margin','Cash','Derivative')
+  status ENUM('Active','Suspended','Closed')
+  opening_date DATE
+  closing_date DATE
+  cash_balance BIGINT
+  buying_power BIGINT
+  debt_balance BIGINT
+  nav BIGINT
+  aum BIGINT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_banking_orders {
+  order_id UUID [pk]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  symbol VARCHAR(10)
+  exchange ENUM('HOSE','HNX','UPCOM')
+  trade_type ENUM('Buy','Sell')
+  order_type ENUM('LO','MP','ATC','ATO')
+  quantity INT
+  price_per_unit BIGINT
+  total_amount BIGINT
+  fee BIGINT
+  tax BIGINT
+  order_status ENUM('Pending','Submitted','Matched','Cancelled','Rejected')
+  order_time TIMESTAMP
+  matched_time TIMESTAMP
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_banking_transactions {
+  transaction_id UUID [pk]
+  order_id UUID [ref: > src_banking_orders.order_id]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  transaction_type ENUM('Buy','Sell','Deposit','Withdrawal','Fee','Interest','Dividend')
+  transaction_date DATE
+  settlement_date DATE
+  symbol VARCHAR(10)
+  quantity INT
+  price_per_unit BIGINT
+  gross_amount BIGINT
+  fee BIGINT
+  tax BIGINT
+  net_amount BIGINT
+  balance_after BIGINT
+  status ENUM('Pending','Settled','Failed')
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_banking_positions {
+  position_id UUID [pk]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  symbol VARCHAR(10)
+  exchange ENUM('HOSE','HNX','UPCOM')
+  quantity INT
+  avg_cost BIGINT
+  total_cost BIGINT
+  current_price BIGINT
+  market_value BIGINT
+  unrealized_pnl BIGINT
+  snapshot_date DATE
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_banking_market_quotes {
+  quote_id UUID [pk]
+  symbol VARCHAR(10)
+  exchange ENUM('HOSE','HNX','UPCOM')
+  trade_date DATE
+  session ENUM('ATO','Morning','Afternoon','ATC')
+  open_price BIGINT
+  high_price BIGINT
+  low_price BIGINT
+  close_price BIGINT
+  ref_price BIGINT
+  total_volume BIGINT
+  total_value BIGINT
+  foreign_buy_volume BIGINT
+  foreign_sell_volume BIGINT
+  quote_time TIMESTAMP
+  created_at TIMESTAMP
+}
+
+// ============ 2. CRM ============
+
+Table src_crm_customers {
+  customer_id UUID [pk]
+  customer_code VARCHAR(20) [unique]
+  full_name VARCHAR(100)
+  gender ENUM('Male','Female','Other')
+  dob DATE
+  id_type ENUM('CCCD','CMND','Passport')
+  id_number VARCHAR(20) [unique]
+  phone VARCHAR(15) [unique]
+  email VARCHAR(100) [unique]
+  address VARCHAR(255)
+  city VARCHAR(50)
+  registration_date DATE
+  status ENUM('Active','Inactive','Suspended','Closed')
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_crm_support_cases {
+  case_id UUID [pk]
+  customer_id UUID [ref: > src_crm_customers.customer_id]
+  case_number VARCHAR(50) [unique]
+  case_type ENUM('Complaint','Request','Question','Feedback')
+  priority ENUM('Low','Medium','High','Urgent')
+  status ENUM('Open','In_Progress','Resolved','Closed','Reopened')
+  description TEXT
+  assigned_to_broker_id UUID
+  created_date TIMESTAMP
+  resolved_date TIMESTAMP
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_crm_customer_interactions {
+  interaction_id UUID [pk]
+  customer_id UUID [ref: > src_crm_customers.customer_id]
+  interaction_type ENUM('Inbound_Call','Outbound_Call','Email','Chat','SMS')
+  interaction_date TIMESTAMP
+  channel ENUM('Phone','Email','Chat','Face_to_Face','Mobile_App')
+  topic VARCHAR(200)
+  notes TEXT
+  created_at TIMESTAMP
+}
+
+Table src_crm_care_activities {
+  activity_id UUID [pk]
+  customer_id UUID [ref: > src_crm_customers.customer_id]
+  activity_date DATE
+  activity_type ENUM('Birthday','Recommendation','Trading_Advice','Margin_Alert')
+  channel ENUM('Phone','Email','SMS','Zalo','In_Person')
+  initiated_by_broker_id UUID
+  sentiment ENUM('Positive','Neutral','Negative')
+  created_at TIMESTAMP
+}
+
+// ============ 3. HR SYSTEM ============
+
+Table src_hr_organizational_structure {
+  org_unit_id UUID [pk]
+  org_unit_name VARCHAR(100)
+  org_unit_code VARCHAR(20) [unique]
+  parent_unit_id UUID
+  unit_type ENUM('Company','Division','Department','Team','Branch')
+  manager_id UUID
+  location VARCHAR(100)
+  region VARCHAR(50)
+  created_at TIMESTAMP
+}
+
+Table src_hr_employees {
+  employee_id UUID [pk]
+  employee_code VARCHAR(20) [unique]
+  full_name VARCHAR(100)
+  email VARCHAR(100) [unique]
+  phone VARCHAR(15)
+  dob DATE
+  gender ENUM('Male','Female','Other')
+  role_name VARCHAR(50)
+  employment_type ENUM('Full_time','Part_time','Contractor')
+  hire_date DATE
+  official_date DATE
+  manager_id UUID
+  status ENUM('Active','On_Leave','Suspended','Terminated')
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_hr_assignments {
+  assignment_id UUID [pk]
+  employee_id UUID [ref: > src_hr_employees.employee_id]
+  customer_id UUID [ref: > src_crm_customers.customer_id]
+  assignment_date DATE
+  unassignment_date DATE
+  assignment_type ENUM('Primary','Secondary')
+  nav_assigned BIGINT
+  status ENUM('Active','Terminated')
+  created_at TIMESTAMP
+}
+
+// ============ 4. KPI PLANNING ============
+
+Table src_kpi_targets {
+  plan_id UUID [pk]
+  period_start DATE
+  period_end DATE
+  period_type ENUM('Monthly','Quarterly','Yearly')
+  scope_type ENUM('Company','Division','Team','Individual')
+  scope_id VARCHAR(50)
+  scope_name VARCHAR(100)
+  kpi_code VARCHAR(50)
+  kpi_name VARCHAR(200)
+  target_value DECIMAL(20,4)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_kpi_actuals {
+  actual_id UUID [pk]
+  plan_id UUID [ref: > src_kpi_targets.plan_id]
+  snapshot_date DATE
+  actual_value DECIMAL(20,4)
+  achievement_pct DECIMAL(6,2)
+  variance DECIMAL(20,4)
+  created_at TIMESTAMP
+}
+
+Table src_kpi_historical_trends {
+  trend_id UUID [pk]
+  kpi_code VARCHAR(50)
+  scope_type ENUM('Company','Division','Team','Individual')
+  scope_id VARCHAR(50)
+  period_month VARCHAR(7)
+  actual_value DECIMAL(20,4)
+  target_value DECIMAL(20,4)
+  achievement_pct DECIMAL(6,2)
+}
+
+// ============ 5. AUTH / IAM ============
+
+Table src_iam_roles {
+  role_id UUID [pk]
+  role_code VARCHAR(50) [unique]
+  role_name VARCHAR(100)
+  is_active BOOLEAN
+  created_at TIMESTAMP
+}
+
+Table src_iam_permissions {
+  permission_id UUID [pk]
+  permission_code VARCHAR(50) [unique]
+  permission_name VARCHAR(100)
+  resource VARCHAR(100)
+  action VARCHAR(50)
+  created_at TIMESTAMP
+}
+
+Table src_iam_role_permissions {
+  role_permission_id UUID [pk]
+  role_id UUID [ref: > src_iam_roles.role_id]
+  permission_id UUID [ref: > src_iam_permissions.permission_id]
+  granted_date DATE
+}
+
+Table src_iam_users {
+  user_id UUID [pk]
+  username VARCHAR(50) [unique]
+  email VARCHAR(100) [unique]
+  full_name VARCHAR(100)
+  employee_id UUID
+  broker_code VARCHAR(10)
+  status ENUM('Active','Inactive','Locked','Disabled')
+  is_2fa_enabled BOOLEAN
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table src_iam_user_roles {
+  user_role_id UUID [pk]
+  user_id UUID [ref: > src_iam_users.user_id]
+  role_id UUID [ref: > src_iam_roles.role_id]
+  assigned_date DATE
+}
+
+Table src_iam_audit_logs {
+  log_id UUID [pk]
+  user_id UUID [ref: > src_iam_users.user_id]
+  action VARCHAR(100)
+  resource VARCHAR(100)
+  timestamp TIMESTAMP
+  status ENUM('Success','Failure')
+}
+
+// ============ 6. MARGIN MANAGEMENT ============
+
+Table src_margin_accounts {
+  margin_account_id UUID [pk]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  customer_id UUID
+  broker_code VARCHAR(10)
+  status ENUM('Monitoring','Warning','Call_Margin','Force_Sell')
+  total_asset_value BIGINT
+  total_debt BIGINT
+  equity BIGINT
+  margin_ratio_current DECIMAL(5,2)
+  margin_call_date DATE
+  snapshot_date DATE
+  created_at TIMESTAMP
+}
+
+Table src_margin_events {
+  event_id UUID [pk]
+  margin_account_id UUID [ref: > src_margin_accounts.margin_account_id]
+  account_id UUID [ref: > src_banking_accounts.account_id]
+  event_type ENUM('Monitoring','Warning','Call_Margin','Force_Sell')
+  event_date DATE
+  event_time TIMESTAMP
+  trigger_reason TEXT
+  created_at TIMESTAMP
+}
+
+Table src_margin_collateral {
+  collateral_id UUID [pk]
+  margin_account_id UUID [ref: > src_margin_accounts.margin_account_id]
+  symbol VARCHAR(10)
+  quantity INT
+  market_value BIGINT
+  snapshot_date DATE
+  created_at TIMESTAMP
+}
+
+// ============ 7. EXTERNAL DATA ============
+
+Table src_external_vsd_data {
+  vsd_id UUID [pk]
+  customer_id UUID
+  symbol VARCHAR(10)
+  quantity INT
+  ownership_date DATE
+  update_date DATE
+  created_at TIMESTAMP
+}
+
+Table src_external_hose_data {
+  hose_id UUID [pk]
+  symbol VARCHAR(10)
+  trade_date DATE
+  session ENUM('ATO','Morning','Afternoon','ATC')
+  open_price BIGINT
+  high_price BIGINT
+  low_price BIGINT
+  close_price BIGINT
+  total_volume BIGINT
+  update_time TIMESTAMP
+}
+
+Table src_external_hnx_data {
+  hnx_id UUID [pk]
+  symbol VARCHAR(10)
+  trade_date DATE
+  session ENUM('ATO','Morning','Afternoon','ATC')
+  open_price BIGINT
+  high_price BIGINT
+  low_price BIGINT
+  close_price BIGINT
+  total_volume BIGINT
+  update_time TIMESTAMP
+}
+
+Table src_external_market_news {
+  news_id UUID [pk]
+  title VARCHAR(500)
+  content TEXT
+  source ENUM('VSD','HOSE','HNX','Financial_News')
+  published_date TIMESTAMP
+  created_at TIMESTAMP
+}
