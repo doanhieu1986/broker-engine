@@ -1,40 +1,12 @@
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter } from 'recharts';
-import { mockPerformanceReports } from '../data/mockData';
+import { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { mockPerformanceReports, mockCustomers, mockTransactions, mockBrokerChartData } from '../data/mockData';
 import { DataTable } from '../components/shared/DataTable';
+import { useUser } from '../context/UserContext';
 
 export function PerformancePage() {
-
-  // Aggregate data by period
-  const performanceByPeriod = mockPerformanceReports.reduce((acc: any, report) => {
-    const existing = acc.find((p: any) => p.period === report.period);
-    if (existing) {
-      existing.totalCommission += report.totalCommission;
-      existing.totalOrders += report.totalOrders;
-      existing.newAccounts += report.newAccountsOpened;
-      existing.brokerCount += 1;
-    } else {
-      acc.push({
-        period: report.period,
-        totalCommission: report.totalCommission,
-        totalOrders: report.totalOrders,
-        newAccounts: report.newAccountsOpened,
-        brokerCount: 1,
-      });
-    }
-    return acc;
-  }, []);
-
-  // Top brokers by commission
-  const topBrokers = [...mockPerformanceReports]
-    .sort((a, b) => b.totalCommission - a.totalCommission)
-    .slice(0, 10);
-
-  // Scatter data - Commission vs Orders
-  const scatterData = mockPerformanceReports.map(report => ({
-    x: report.totalOrders,
-    y: report.totalCommission / 1000000000,
-    brokerName: report.brokerName,
-  }));
+  const { role, user } = useUser();
+  const [performanceTab, setPerformanceTab] = useState<'overview' | 'brokers' | 'customers'>('overview');
 
   const columns = [
     {
@@ -69,6 +41,49 @@ export function PerformancePage() {
     },
   ];
 
+  // Colors for charts
+  const CHART_BASE = '#9ca3af';
+  const CHART_HIGHLIGHT = '#7c3aed';
+  const AXIS_LABEL = '#cbd5e1';
+
+  // Broker performance data
+  const topBrokersByRevenue = [...mockBrokerChartData]
+    .sort((a, b) => b.hoaHong - a.hoaHong);
+
+  const topBrokersByOrders = [...mockBrokerChartData]
+    .sort((a, b) => b.soLenh - a.soLenh);
+
+  const topBrokersByCustomers = [...mockBrokerChartData]
+    .sort((a, b) => b.khachHang - a.khachHang);
+
+  const topBrokersByMarginDebt = [...mockBrokerChartData]
+    .sort((a, b) => b.duNoMargin - a.duNoMargin);
+
+  // Customer performance data
+  const filteredCustomers = role === 'Broker'
+    ? mockCustomers.filter(c => c.brokerName === user.name)
+    : mockCustomers;
+
+  const customerMetrics = filteredCustomers.map(customer => {
+    const customerTransactions = mockTransactions.filter(t => t.customerId === customer.id);
+    const totalCommissionCustomer = customerTransactions.reduce((sum, t) => sum + t.commission, 0);
+    const totalTradingValueCustomer = customerTransactions.reduce((sum, t) => sum + t.amount, 0);
+
+    return {
+      name: customer.name,
+      hoaHong: totalCommissionCustomer / 1000000000,
+      soLenh: customerTransactions.length,
+      nav: customer.nav / 1000000000,
+      aum: customer.aum / 1000000000,
+      giaTriGiaoDich: totalTradingValueCustomer / 1000000000,
+    };
+  });
+
+  const topCustomersByRevenue = [...customerMetrics].sort((a, b) => b.hoaHong - a.hoaHong).slice(0, 10);
+  const topCustomersByOrders = [...customerMetrics].sort((a, b) => b.soLenh - a.soLenh).slice(0, 10);
+  const topCustomersByNav = [...customerMetrics].sort((a, b) => b.nav - a.nav).slice(0, 10);
+  const topCustomersByAum = [...customerMetrics].sort((a, b) => b.aum - a.aum).slice(0, 10);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -80,91 +95,46 @@ export function PerformancePage() {
         </div>
       </div>
 
-      {/* Period Performance */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Hiệu suất theo kỳ
-        </h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={performanceByPeriod.slice(0, 6)}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="period" stroke="#9ca3af" />
-            <YAxis stroke="#9ca3af" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#111827',
-                border: '1px solid #374151',
-                borderRadius: '8px'
-              }}
-            />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="totalCommission"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              name="Hoa hồng"
-              yAxisId="left"
-            />
-            <Line
-              type="monotone"
-              dataKey="totalOrders"
-              stroke="#10b981"
-              strokeWidth={2}
-              name="Số lệnh"
-              yAxisId="right"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      {/* Tab Navigation */}
+      <div className="flex gap-2 border-b border-slate-200 dark:border-slate-800">
+        <button
+          onClick={() => setPerformanceTab('overview')}
+          className={`px-4 py-3 font-medium text-sm transition-all border-b-2 ${
+            performanceTab === 'overview'
+              ? 'border-accent-600 text-accent-600 dark:text-accent-400'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
+          }`}
+        >
+          Tổng quan
+        </button>
+        {role === 'Manager' && (
+          <button
+            onClick={() => setPerformanceTab('brokers')}
+            className={`px-4 py-3 font-medium text-sm transition-all border-b-2 ${
+              performanceTab === 'brokers'
+                ? 'border-accent-600 text-accent-600 dark:text-accent-400'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
+            }`}
+          >
+            Hiệu suất theo Broker (Top 10)
+          </button>
+        )}
+        <button
+          onClick={() => setPerformanceTab('customers')}
+          className={`px-4 py-3 font-medium text-sm transition-all border-b-2 ${
+            performanceTab === 'customers'
+              ? 'border-accent-600 text-accent-600 dark:text-accent-400'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
+          }`}
+        >
+          Hiệu suất theo khách hàng (Top 10)
+        </button>
       </div>
 
-      {/* Commission vs Orders Scatter */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Mối quan hệ: Số lệnh vs Hoa hồng
-        </h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="x" name="Số lệnh" stroke="#9ca3af" />
-            <YAxis dataKey="y" name="Hoa hồng (tỷ đ)" stroke="#9ca3af" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#111827',
-                border: '1px solid #374151',
-                borderRadius: '8px'
-              }}
-              cursor={{ strokeDasharray: '3 3' }}
-            />
-            <Scatter name="Broker" data={scatterData} fill="#3b82f6" />
-          </ScatterChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Top Brokers */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Top 10 Broker theo hoa hồng
-        </h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={topBrokers}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="brokerName" stroke="#9ca3af" angle={-45} textAnchor="end" height={100} />
-            <YAxis stroke="#9ca3af" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#111827',
-                border: '1px solid #374151',
-                borderRadius: '8px'
-              }}
-              formatter={(value: any) => (value / 1000000000).toFixed(2)}
-            />
-            <Bar dataKey="totalCommission" fill="#3b82f6" name="Hoa hồng (tỷ đ)" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Performance Table */}
+      {/* Overview Tab */}
+      {performanceTab === 'overview' && (
+        <div className="space-y-6">
+          {/* Performance Table */}
       <DataTable
         title="Chi tiết hiệu suất từng broker"
         columns={columns}
@@ -172,6 +142,254 @@ export function PerformancePage() {
         searchFields={['brokerName']}
         onExport={() => alert('Export feature coming soon')}
       />
+        </div>
+      )}
+
+      {/* Broker Performance Tab */}
+      {performanceTab === 'brokers' && role === 'Manager' && (
+        <div className="space-y-6">
+          {/* Row 1: Revenue and Orders */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Broker Revenue Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Doanh thu phí hoa hồng theo Broker
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topBrokersByRevenue} layout="vertical">
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => typeof value === 'number' ? `${(value / 1000000000).toFixed(2)} tỷ đ` : ''}
+                  />
+                  <Bar dataKey="hoaHong" name="Hoa hồng (tỷ đ)">
+                    {topBrokersByRevenue.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Broker Trading Orders Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Số lệnh giao dịch theo Broker
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topBrokersByOrders} layout="vertical">
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => `${value} lệnh`}
+                  />
+                  <Bar dataKey="soLenh" name="Số lệnh">
+                    {topBrokersByOrders.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Row 2: Customers and Margin Debt */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Broker Customers Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Số khách hàng theo Broker
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topBrokersByCustomers} layout="vertical">
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => `${value} khách`}
+                  />
+                  <Bar dataKey="khachHang" name="Số khách hàng">
+                    {topBrokersByCustomers.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Margin Debt Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Dư nợ margin theo Broker
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topBrokersByMarginDebt} layout="vertical">
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => typeof value === 'number' ? `${(value / 1000000000).toFixed(2)} tỷ đ` : ''}
+                  />
+                  <Bar dataKey="duNoMargin" name="Dư nợ margin (tỷ đ)">
+                    {topBrokersByMarginDebt.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Customer Performance Tab */}
+      {performanceTab === 'customers' && (
+        <div className="space-y-6">
+          {/* Row 1: Revenue and Orders */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Customer Revenue Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Doanh thu phí hoa hồng theo khách hàng
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topCustomersByRevenue} layout="vertical">
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => typeof value === 'number' ? `${value.toFixed(2)} tỷ đ` : ''}
+                  />
+                  <Bar dataKey="hoaHong" name="Hoa hồng (tỷ đ)">
+                    {topCustomersByRevenue.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Customer Trading Orders Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Số lệnh giao dịch theo khách hàng
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topCustomersByOrders} layout="vertical">
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => `${value} lệnh`}
+                  />
+                  <Bar dataKey="soLenh" name="Số lệnh">
+                    {topCustomersByOrders.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Row 2: NAV and AUM */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Customer NAV Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                NAV theo khách hàng
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topCustomersByNav} layout="vertical">
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => `${value.toFixed(2)} tỷ đ`}
+                  />
+                  <Bar dataKey="nav" name="NAV (tỷ đ)">
+                    {topCustomersByNav.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Customer AUM Chart */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                AUM theo khách hàng
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topCustomersByAum} layout="vertical">
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => `${value.toFixed(2)} tỷ đ`}
+                  />
+                  <Bar dataKey="aum" name="AUM (tỷ đ)">
+                    {topCustomersByAum.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
