@@ -15,7 +15,6 @@ const formatCompactNumber = (num: number): string => {
 };
 
 export function DashboardPage() {
-  const navigate = useNavigate();
   const { role, user } = useUser();
   const [kpiType, setKpiType] = useState<'company' | 'team'>('team');
   const [performanceTab, setPerformanceTab] = useState<'customers' | 'brokers'>(
@@ -645,7 +644,7 @@ export function DashboardPage() {
                               borderRadius: '8px',
                               color: '#1f2937'
                             }}
-                            formatter={(value: any, name: string) => {
+                            formatter={(value: any, name: any) => {
                               if (name === 'Còn lại (KH)') return '';
                               return typeof value === 'number' ? `${value.toFixed(2)} tỷ đ` : '';
                             }}
@@ -688,7 +687,7 @@ export function DashboardPage() {
                               borderRadius: '8px',
                               color: '#1f2937'
                             }}
-                            formatter={(value: any, name: string) => {
+                            formatter={(value: any, name: any) => {
                               if (name === 'Còn lại (KH)') return '';
                               return typeof value === 'number' ? `${value} lệnh` : '';
                             }}
@@ -734,7 +733,7 @@ export function DashboardPage() {
                               borderRadius: '8px',
                               color: '#1f2937'
                             }}
-                            formatter={(value: any, name: string) => {
+                            formatter={(value: any, name: any) => {
                               if (name === 'Còn lại (KH)') return '';
                               return typeof value === 'number' ? `${value} khách` : '';
                             }}
@@ -777,7 +776,7 @@ export function DashboardPage() {
                               borderRadius: '8px',
                               color: '#1f2937'
                             }}
-                            formatter={(value: any, name: string) => {
+                            formatter={(value: any, name: any) => {
                               if (name === 'Còn lại (KH)') return '';
                               return typeof value === 'number' ? `${value.toFixed(0)} tỷ đ` : '';
                             }}
