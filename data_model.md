@@ -74,7 +74,7 @@ hobbies             TEXT[]
 region              VARCHAR(50)   Khu vực/tỉnh thành
 account_open_date   DATE
 broker_code         VARCHAR(10)   FK → dim_broker
-classification      ENUM('VIP','Mass','Dormant','Newbie')
+classification      ENUM('VIP','Affluent','Mass Affluent','Mass')
 risk_appetite       ENUM('Cao','Thấp','Cân bằng')
 preferred_products  TEXT[]        ['Chứng khoán','Trái phiếu','Quỹ mở','Phái sinh','Huy động vốn']
 interested_industries TEXT[]
@@ -443,8 +443,8 @@ customer_id         UUID          FK → dim_customer
 snapshot_date       DATE
 
 -- Phân loại hiện tại
-classification_current  ENUM('VIP','Mass','Dormant','Newbie')
-classification_previous ENUM('VIP','Mass','Dormant','Newbie')
+classification_current  ENUM('VIP','Affluent','Mass Affluent','Mass')
+classification_previous ENUM('VIP','Affluent','Mass Affluent','Mass')
 classification_changed_date DATE
 
 -- Churn Risk
@@ -585,7 +585,7 @@ customer_id         UUID          FK → dim_customer
 customer_name       VARCHAR(100)
 dob                 DATE
 days_until_birthday INT
-classification      ENUM('VIP','Mass','Dormant','Newbie')
+classification      ENUM('VIP','Affluent','Mass Affluent','Mass')
 broker_code         VARCHAR(10)
 broker_name         VARCHAR(100)
 phone               VARCHAR(15)
