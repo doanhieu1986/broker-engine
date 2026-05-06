@@ -18,7 +18,9 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const { role, user } = useUser();
   const [kpiType, setKpiType] = useState<'company' | 'team'>('team');
-  const [performanceTab, setPerformanceTab] = useState<'customers' | 'brokers'>('customers');
+  const [performanceTab, setPerformanceTab] = useState<'customers' | 'brokers'>(
+    role === 'Manager' ? 'brokers' : 'customers'
+  );
 
   // Calculate summary metrics
   const totalCustomers = mockCustomers.length;
@@ -435,16 +437,6 @@ export function DashboardPage() {
         <div className="space-y-6 pt-4">
           {/* Tab Navigation */}
           <div className="flex gap-2 border-b border-slate-200 dark:border-slate-800">
-            <button
-              onClick={() => setPerformanceTab('customers')}
-              className={`px-4 py-3 font-medium text-sm transition-all border-b-2 ${
-                performanceTab === 'customers'
-                  ? 'border-accent-600 text-accent-600 dark:text-accent-400'
-                  : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
-              }`}
-            >
-              Hiệu suất theo khách hàng (Top 10)
-            </button>
             {role === 'Manager' && (
               <button
                 onClick={() => setPerformanceTab('brokers')}
@@ -457,6 +449,16 @@ export function DashboardPage() {
                 Hiệu suất theo Broker (Top 10)
               </button>
             )}
+            <button
+              onClick={() => setPerformanceTab('customers')}
+              className={`px-4 py-3 font-medium text-sm transition-all border-b-2 ${
+                performanceTab === 'customers'
+                  ? 'border-accent-600 text-accent-600 dark:text-accent-400'
+                  : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
+              }`}
+            >
+              Hiệu suất theo khách hàng (Top 10)
+            </button>
           </div>
 
           {/* Customer Performance Tab */}
@@ -624,30 +626,40 @@ export function DashboardPage() {
                     Doanh thu phí hoa hồng môi giới theo Broker
                   </h3>
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={topBrokersByRevenue} layout="vertical">
-                      <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                      <XAxis type="number" stroke="#9ca3af" />
-                      <YAxis dataKey="name" type="category" stroke="#9ca3af" width={120} tick={{ fontSize: 12 }} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#f9fafb',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          color: '#1f2937'
-                        }}
-                        formatter={(value: any) => typeof value === 'number' ? `${value.toFixed(2)} tỷ đ` : ''}
-                      />
-                      <Bar dataKey="hoaHong" name="Hoa hồng (tỷ đ)">
-                        {topBrokersByRevenue.map((broker: any, i) => (
-                          <Cell
-                            key={`cell-${i}`}
-                            fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE}
-                            onClick={() => navigate(`/brokers/${broker.code}`)}
-                            style={{ cursor: 'pointer' }}
+                    {(() => {
+                      const chartData = topBrokersByRevenue.map(b => ({
+                        ...b,
+                        actual: Math.min(b.hoaHong, b.hoaHongKH),
+                        gap: Math.max(0, b.hoaHongKH - b.hoaHong),
+                        completion: Math.round((b.hoaHong / b.hoaHongKH) * 100),
+                      }));
+                      return (
+                        <BarChart data={chartData} layout="vertical">
+                          <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                          <XAxis type="number" stroke="#9ca3af" />
+                          <YAxis dataKey="name" type="category" stroke="#9ca3af" width={120} tick={{ fontSize: 12 }} />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: '#f9fafb',
+                              border: '1px solid #e5e7eb',
+                              borderRadius: '8px',
+                              color: '#1f2937'
+                            }}
+                            formatter={(value: any, name: string) => {
+                              if (name === 'Còn lại (KH)') return '';
+                              return typeof value === 'number' ? `${value.toFixed(2)} tỷ đ` : '';
+                            }}
+                            labelFormatter={(label) => {
+                              const entry = chartData.find(d => d.name === label);
+                              if (entry) return `${entry.name} - ${entry.completion}% KH`;
+                              return label;
+                            }}
                           />
-                        ))}
-                      </Bar>
-                    </BarChart>
+                          <Bar dataKey="actual" stackId="a" name="Thực hiện" fill={CHART_HIGHLIGHT} />
+                          <Bar dataKey="gap" stackId="a" name="Còn lại (KH)" fill={CHART_LIGHT} />
+                        </BarChart>
+                      );
+                    })()}
                   </ResponsiveContainer>
                 </div>
 
@@ -657,29 +669,40 @@ export function DashboardPage() {
                     Số lệnh giao dịch theo Broker
                   </h3>
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={topBrokersByOrders} layout="vertical">
-                      <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                      <XAxis type="number" stroke="#9ca3af" />
-                      <YAxis dataKey="name" type="category" stroke="#9ca3af" width={120} tick={{ fontSize: 12 }} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#f9fafb',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          color: '#1f2937'
-                        }}
-                      />
-                      <Bar dataKey="soLenh" name="Số lệnh">
-                        {topBrokersByOrders.map((broker: any, i) => (
-                          <Cell
-                            key={`cell-${i}`}
-                            fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE}
-                            onClick={() => navigate(`/brokers/${broker.code}`)}
-                            style={{ cursor: 'pointer' }}
+                    {(() => {
+                      const chartData = topBrokersByOrders.map(b => ({
+                        ...b,
+                        actual: Math.min(b.soLenh, b.soLenhKH),
+                        gap: Math.max(0, b.soLenhKH - b.soLenh),
+                        completion: Math.round((b.soLenh / b.soLenhKH) * 100),
+                      }));
+                      return (
+                        <BarChart data={chartData} layout="vertical">
+                          <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                          <XAxis type="number" stroke="#9ca3af" />
+                          <YAxis dataKey="name" type="category" stroke="#9ca3af" width={120} tick={{ fontSize: 12 }} />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: '#f9fafb',
+                              border: '1px solid #e5e7eb',
+                              borderRadius: '8px',
+                              color: '#1f2937'
+                            }}
+                            formatter={(value: any, name: string) => {
+                              if (name === 'Còn lại (KH)') return '';
+                              return typeof value === 'number' ? `${value} lệnh` : '';
+                            }}
+                            labelFormatter={(label) => {
+                              const entry = chartData.find(d => d.name === label);
+                              if (entry) return `${entry.name} - ${entry.completion}% KH`;
+                              return label;
+                            }}
                           />
-                        ))}
-                      </Bar>
-                    </BarChart>
+                          <Bar dataKey="actual" stackId="a" name="Thực hiện" fill={CHART_HIGHLIGHT} />
+                          <Bar dataKey="gap" stackId="a" name="Còn lại (KH)" fill={CHART_LIGHT} />
+                        </BarChart>
+                      );
+                    })()}
                   </ResponsiveContainer>
                 </div>
               </div>
@@ -692,29 +715,40 @@ export function DashboardPage() {
                     Số lượng khách hàng mở mới theo Broker
                   </h3>
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={topBrokersByCustomers} layout="vertical">
-                      <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                      <XAxis type="number" stroke="#9ca3af" />
-                      <YAxis dataKey="name" type="category" stroke="#9ca3af" width={120} tick={{ fontSize: 12 }} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#f9fafb',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          color: '#1f2937'
-                        }}
-                      />
-                      <Bar dataKey="khachHang" name="KH mở mới">
-                        {topBrokersByCustomers.map((broker: any, i) => (
-                          <Cell
-                            key={`cell-${i}`}
-                            fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE}
-                            onClick={() => navigate(`/brokers/${broker.code}`)}
-                            style={{ cursor: 'pointer' }}
+                    {(() => {
+                      const chartData = topBrokersByCustomers.map(b => ({
+                        ...b,
+                        actual: Math.min(b.khachHang, b.khachHangKH),
+                        gap: Math.max(0, b.khachHangKH - b.khachHang),
+                        completion: Math.round((b.khachHang / b.khachHangKH) * 100),
+                      }));
+                      return (
+                        <BarChart data={chartData} layout="vertical">
+                          <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                          <XAxis type="number" stroke="#9ca3af" />
+                          <YAxis dataKey="name" type="category" stroke="#9ca3af" width={120} tick={{ fontSize: 12 }} />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: '#f9fafb',
+                              border: '1px solid #e5e7eb',
+                              borderRadius: '8px',
+                              color: '#1f2937'
+                            }}
+                            formatter={(value: any, name: string) => {
+                              if (name === 'Còn lại (KH)') return '';
+                              return typeof value === 'number' ? `${value} khách` : '';
+                            }}
+                            labelFormatter={(label) => {
+                              const entry = chartData.find(d => d.name === label);
+                              if (entry) return `${entry.name} - ${entry.completion}% KH`;
+                              return label;
+                            }}
                           />
-                        ))}
-                      </Bar>
-                    </BarChart>
+                          <Bar dataKey="actual" stackId="a" name="Thực hiện" fill={CHART_HIGHLIGHT} />
+                          <Bar dataKey="gap" stackId="a" name="Còn lại (KH)" fill={CHART_LIGHT} />
+                        </BarChart>
+                      );
+                    })()}
                   </ResponsiveContainer>
                 </div>
 
@@ -724,30 +758,40 @@ export function DashboardPage() {
                     Dư nợ margin theo Broker
                   </h3>
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={topBrokersByMarginDebt} layout="vertical">
-                      <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                      <XAxis type="number" stroke="#9ca3af" />
-                      <YAxis dataKey="name" type="category" stroke="#9ca3af" width={120} tick={{ fontSize: 12 }} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#f9fafb',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          color: '#1f2937'
-                        }}
-                        formatter={(value: any) => typeof value === 'number' ? `${value.toFixed(0)} tỷ đ` : ''}
-                      />
-                      <Bar dataKey="duNoMargin" name="Dư nợ margin (tỷ đ)">
-                        {topBrokersByMarginDebt.map((broker: any, i) => (
-                          <Cell
-                            key={`cell-${i}`}
-                            fill={i === 0 ? CHART_HIGHLIGHT : CHART_BASE}
-                            onClick={() => navigate(`/brokers/${broker.code}`)}
-                            style={{ cursor: 'pointer' }}
+                    {(() => {
+                      const chartData = topBrokersByMarginDebt.map(b => ({
+                        ...b,
+                        actual: Math.min(b.duNoMargin, b.duNoMarginKH),
+                        gap: Math.max(0, b.duNoMarginKH - b.duNoMargin),
+                        completion: Math.round((b.duNoMargin / b.duNoMarginKH) * 100),
+                      }));
+                      return (
+                        <BarChart data={chartData} layout="vertical">
+                          <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                          <XAxis type="number" stroke="#9ca3af" />
+                          <YAxis dataKey="name" type="category" stroke="#9ca3af" width={120} tick={{ fontSize: 12 }} />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: '#f9fafb',
+                              border: '1px solid #e5e7eb',
+                              borderRadius: '8px',
+                              color: '#1f2937'
+                            }}
+                            formatter={(value: any, name: string) => {
+                              if (name === 'Còn lại (KH)') return '';
+                              return typeof value === 'number' ? `${value.toFixed(0)} tỷ đ` : '';
+                            }}
+                            labelFormatter={(label) => {
+                              const entry = chartData.find(d => d.name === label);
+                              if (entry) return `${entry.name} - ${entry.completion}% KH`;
+                              return label;
+                            }}
                           />
-                        ))}
-                      </Bar>
-                    </BarChart>
+                          <Bar dataKey="actual" stackId="a" name="Thực hiện" fill={CHART_HIGHLIGHT} />
+                          <Bar dataKey="gap" stackId="a" name="Còn lại (KH)" fill={CHART_LIGHT} />
+                        </BarChart>
+                      );
+                    })()}
                   </ResponsiveContainer>
                 </div>
               </div>

@@ -396,6 +396,10 @@ function calculateBrokerChartData() {
     soLenh: number;
     khachHang: number;
     duNoMargin: number;
+    hoaHongKH: number;
+    soLenhKH: number;
+    khachHangKH: number;
+    duNoMarginKH: number;
   }> = {};
 
   // Initialize broker metrics from customers
@@ -408,6 +412,10 @@ function calculateBrokerChartData() {
         soLenh: 0,
         khachHang: 0,
         duNoMargin: 0,
+        hoaHongKH: 0,
+        soLenhKH: 0,
+        khachHangKH: 0,
+        duNoMarginKH: 0,
       };
     }
     brokerMetrics[customer.brokerCode].khachHang += 1;
@@ -423,8 +431,18 @@ function calculateBrokerChartData() {
     }
   });
 
+  // Set plan targets for each broker based on actual performance
+  const brokerArray = Object.values(brokerMetrics);
+  brokerArray.forEach(broker => {
+    // Plan targets are 110-150% of actual to simulate realistic targets
+    broker.hoaHongKH = broker.hoaHong * (1.1 + Math.random() * 0.4);
+    broker.soLenhKH = Math.round(broker.soLenh * (1.1 + Math.random() * 0.4));
+    broker.khachHangKH = Math.round(broker.khachHang * (1.2 + Math.random() * 0.3));
+    broker.duNoMarginKH = Math.round(broker.duNoMargin * (1.1 + Math.random() * 0.3));
+  });
+
   // Return sorted by hoaHong (descending)
-  return Object.values(brokerMetrics).sort((a, b) => b.hoaHong - a.hoaHong);
+  return brokerArray.sort((a, b) => b.hoaHong - a.hoaHong);
 }
 
 export const mockBrokerChartData = calculateBrokerChartData();
