@@ -19,6 +19,7 @@ export function DashboardPage() {
   const [performanceTab, setPerformanceTab] = useState<'customers' | 'brokers'>(
     role === 'Manager' ? 'brokers' : 'customers'
   );
+  const [periodFilter, setPeriodFilter] = useState<'month' | 'quarter' | 'year'>('month');
 
   // Calculate summary metrics
   const totalCustomers = mockCustomers.length;
@@ -134,12 +135,63 @@ export function DashboardPage() {
     { month: 'T6/25', revenue: 6100, customers: 215, orders: 615, churnRate: 2.1 },
   ];
 
-  const maxRevenue = Math.max(...monthlyData.map(d => d.revenue));
-  const peakMonth = monthlyData.find(d => d.revenue === maxRevenue)?.month;
+  // Transform data based on period filter
+  const quarterlyData = [
+    {
+      month: 'Q3/24',
+      revenue: monthlyData.slice(0, 3).reduce((sum, d) => sum + d.revenue, 0) / 3,
+      customers: Math.round(monthlyData.slice(0, 3).reduce((sum, d) => sum + d.customers, 0) / 3),
+      orders: Math.round(monthlyData.slice(0, 3).reduce((sum, d) => sum + d.orders, 0) / 3),
+      churnRate: parseFloat((monthlyData.slice(0, 3).reduce((sum, d) => sum + d.churnRate, 0) / 3).toFixed(1)),
+    },
+    {
+      month: 'Q4/24',
+      revenue: monthlyData.slice(3, 6).reduce((sum, d) => sum + d.revenue, 0) / 3,
+      customers: Math.round(monthlyData.slice(3, 6).reduce((sum, d) => sum + d.customers, 0) / 3),
+      orders: Math.round(monthlyData.slice(3, 6).reduce((sum, d) => sum + d.orders, 0) / 3),
+      churnRate: parseFloat((monthlyData.slice(3, 6).reduce((sum, d) => sum + d.churnRate, 0) / 3).toFixed(1)),
+    },
+    {
+      month: 'Q1/25',
+      revenue: monthlyData.slice(6, 9).reduce((sum, d) => sum + d.revenue, 0) / 3,
+      customers: Math.round(monthlyData.slice(6, 9).reduce((sum, d) => sum + d.customers, 0) / 3),
+      orders: Math.round(monthlyData.slice(6, 9).reduce((sum, d) => sum + d.orders, 0) / 3),
+      churnRate: parseFloat((monthlyData.slice(6, 9).reduce((sum, d) => sum + d.churnRate, 0) / 3).toFixed(1)),
+    },
+    {
+      month: 'Q2/25',
+      revenue: monthlyData.slice(9, 12).reduce((sum, d) => sum + d.revenue, 0) / 3,
+      customers: Math.round(monthlyData.slice(9, 12).reduce((sum, d) => sum + d.customers, 0) / 3),
+      orders: Math.round(monthlyData.slice(9, 12).reduce((sum, d) => sum + d.orders, 0) / 3),
+      churnRate: parseFloat((monthlyData.slice(9, 12).reduce((sum, d) => sum + d.churnRate, 0) / 3).toFixed(1)),
+    },
+  ];
+
+  const yearlyData = [
+    {
+      month: '2024',
+      revenue: monthlyData.slice(0, 6).reduce((sum, d) => sum + d.revenue, 0) / 6,
+      customers: Math.round(monthlyData.slice(0, 6).reduce((sum, d) => sum + d.customers, 0) / 6),
+      orders: Math.round(monthlyData.slice(0, 6).reduce((sum, d) => sum + d.orders, 0) / 6),
+      churnRate: parseFloat((monthlyData.slice(0, 6).reduce((sum, d) => sum + d.churnRate, 0) / 6).toFixed(1)),
+    },
+    {
+      month: '2025',
+      revenue: monthlyData.slice(6, 12).reduce((sum, d) => sum + d.revenue, 0) / 6,
+      customers: Math.round(monthlyData.slice(6, 12).reduce((sum, d) => sum + d.customers, 0) / 6),
+      orders: Math.round(monthlyData.slice(6, 12).reduce((sum, d) => sum + d.orders, 0) / 6),
+      churnRate: parseFloat((monthlyData.slice(6, 12).reduce((sum, d) => sum + d.churnRate, 0) / 6).toFixed(1)),
+    },
+  ];
+
+  // Select data based on period filter
+  const chartData = periodFilter === 'month' ? monthlyData : periodFilter === 'quarter' ? quarterlyData : yearlyData;
+
+  const maxRevenue = Math.max(...chartData.map(d => d.revenue));
+  const peakMonth = chartData.find(d => d.revenue === maxRevenue)?.month;
 
   // Unified chart color scheme
   const CHART_BASE = '#9ca3af';
-  const CHART_MUTED = '#cbd5e1';
   const CHART_LIGHT = '#e5e7eb';
   const CHART_HIGHLIGHT = '#7c3aed';
   const AXIS_LABEL = '#cbd5e1';
@@ -195,7 +247,7 @@ export function DashboardPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Tổng khách hàng"
           value={totalCustomers}
@@ -296,6 +348,40 @@ export function DashboardPage() {
         />
       </div>
 
+      {/* Period Filter */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setPeriodFilter('month')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            periodFilter === 'month'
+              ? 'bg-accent-500 text-white'
+              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+          }`}
+        >
+          Tháng
+        </button>
+        <button
+          onClick={() => setPeriodFilter('quarter')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            periodFilter === 'quarter'
+              ? 'bg-accent-500 text-white'
+              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+          }`}
+        >
+          Quý
+        </button>
+        <button
+          onClick={() => setPeriodFilter('year')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            periodFilter === 'year'
+              ? 'bg-accent-500 text-white'
+              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+          }`}
+        >
+          Năm
+        </button>
+      </div>
+
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue and Orders chart */}
@@ -304,7 +390,7 @@ export function DashboardPage() {
             Doanh thu & Số lệnh giao dịch
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={monthlyData}>
+            <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
               <XAxis dataKey="month" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} interval={1} />
               <YAxis stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
@@ -332,7 +418,7 @@ export function DashboardPage() {
               <Line
                 type="monotone"
                 dataKey="revenue"
-                stroke={CHART_BASE}
+                stroke="#ef4444"
                 strokeWidth={2}
                 name="Doanh thu (tỷ đ)"
                 dot={renderCustomDot}
@@ -341,7 +427,7 @@ export function DashboardPage() {
               <Line
                 type="monotone"
                 dataKey="orders"
-                stroke={CHART_MUTED}
+                stroke="#fbbf24"
                 strokeWidth={2}
                 name="Số lệnh"
               />
@@ -355,7 +441,7 @@ export function DashboardPage() {
             Số lượng khách hàng Active & Churn Rate
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={monthlyData}>
+            <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
               <XAxis dataKey="month" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} interval={1} />
               <YAxis yAxisId="left" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
@@ -373,7 +459,7 @@ export function DashboardPage() {
                 yAxisId="left"
                 type="monotone"
                 dataKey="customers"
-                stroke={CHART_BASE}
+                stroke="#fbbf24"
                 strokeWidth={2}
                 name="Số khách hàng"
                 dot={{ r: 4 }}
