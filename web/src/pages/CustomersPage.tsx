@@ -74,21 +74,6 @@ export function CustomersPage() {
   const classifications = Array.from(new Set(mockCustomers.map(c => c.classification)));
 
   // Overview tab data
-  const classificationData = [
-    { name: 'VIP', value: filteredCustomers.filter(c => c.classification === 'VIP').length },
-    { name: 'Affluent', value: filteredCustomers.filter(c => c.classification === 'Affluent').length },
-    { name: 'Mass Affluent', value: filteredCustomers.filter(c => c.classification === 'Mass Affluent').length },
-    { name: 'Mass', value: filteredCustomers.filter(c => c.classification === 'Mass').length },
-  ];
-
-  const statusData = [
-    { name: 'Prospect', value: filteredCustomers.filter(c => c.classification === 'Affluent' && !c.activeStatus).length },
-    { name: 'Active', value: filteredCustomers.filter(c => c.activeStatus && c.classification !== 'Mass Affluent').length },
-    { name: 'Inactive', value: filteredCustomers.filter(c => !c.activeStatus && c.classification !== 'Affluent' && c.classification !== 'Mass Affluent').length },
-    { name: 'Dormant', value: filteredCustomers.filter(c => c.classification === 'Mass Affluent').length },
-    { name: 'Churn', value: Math.max(1, Math.round(filteredCustomers.length * 0.05)) },
-  ];
-
   const brokerMap: Record<string, number> = {};
   filteredCustomers.forEach(c => {
     brokerMap[c.brokerName] = (brokerMap[c.brokerName] || 0) + 1;
@@ -141,7 +126,6 @@ export function CustomersPage() {
     { name: 'Mass', ...classificationsByStatus['Mass'] },
   ];
 
-  const CLASSIFICATION_COLORS = ['#7c3aed', '#22c55e', '#f59e0b', '#3b82f6'];
   const STATUS_COLORS: Record<string, string> = {
     'Prospect': '#3b82f6',
     'Active': '#22c55e',
@@ -266,63 +250,33 @@ export function CustomersPage() {
       {/* Overview Tab */}
       {pageTab === 'overview' && (
         <div className="space-y-6">
-          {/* Row 1: Classification + Status Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Classification Column Chart */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Cơ cấu phân loại khách hàng
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={classificationData}>
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                  <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
-                  <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: any) => `${value} khách hàng`}
-                  />
-                  <Bar dataKey="value" name="Số khách hàng">
-                    {classificationData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={CLASSIFICATION_COLORS[index % CLASSIFICATION_COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Status Bar Chart */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Phân bố trạng thái khách hàng
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={statusData}>
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                  <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
-                  <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: any) => `${value} khách hàng`}
-                  />
-                  <Bar dataKey="value" name="Số khách hàng">
-                    {statusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          {/* Row 1: Stacked Chart - Classification by Status */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Cơ cấu phân loại khách hàng
+            </h3>
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={stackedChartData}>
+                <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#f9fafb',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    color: '#1f2937'
+                  }}
+                  formatter={(value: any) => `${value} khách hàng`}
+                />
+                <Legend />
+                <Bar dataKey="Prospect" stackId="status" fill={STATUS_COLORS['Prospect']} name="Prospect" />
+                <Bar dataKey="Active" stackId="status" fill={STATUS_COLORS['Active']} name="Active" />
+                <Bar dataKey="Inactive" stackId="status" fill={STATUS_COLORS['Inactive']} name="Inactive" />
+                <Bar dataKey="Dormant" stackId="status" fill={STATUS_COLORS['Dormant']} name="Dormant" />
+                <Bar dataKey="Churn" stackId="status" fill={STATUS_COLORS['Churn']} name="Churn" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
           {/* Row 2: Broker Distribution Chart */}
@@ -353,34 +307,6 @@ export function CustomersPage() {
             </ResponsiveContainer>
           </div>
 
-          {/* Row 3: Stacked Chart - Classification by Status */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Kết hợp: Phân loại theo Trạng thái khách hàng
-            </h3>
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={stackedChartData}>
-                <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
-                <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#f9fafb',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    color: '#1f2937'
-                  }}
-                  formatter={(value: any) => `${value} khách hàng`}
-                />
-                <Legend />
-                <Bar dataKey="Prospect" stackId="status" fill={STATUS_COLORS['Prospect']} name="Prospect" />
-                <Bar dataKey="Active" stackId="status" fill={STATUS_COLORS['Active']} name="Active" />
-                <Bar dataKey="Inactive" stackId="status" fill={STATUS_COLORS['Inactive']} name="Inactive" />
-                <Bar dataKey="Dormant" stackId="status" fill={STATUS_COLORS['Dormant']} name="Dormant" />
-                <Bar dataKey="Churn" stackId="status" fill={STATUS_COLORS['Churn']} name="Churn" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
         </div>
       )}
 
