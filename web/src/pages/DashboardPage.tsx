@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StatCard } from '../components/shared/StatCard';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, ReferenceLine } from 'recharts';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
 import { TrendingUp, Users, DollarSign, Zap, BarChart2, Briefcase, UserPlus, UserCheck, Building2 } from 'lucide-react';
 import { mockCustomers, mockTransactions, mockBrokerChartData, mockStaff } from '../data/mockData';
 import { useUser } from '../context/UserContext';
@@ -137,21 +137,12 @@ export function DashboardPage() {
   const maxRevenue = Math.max(...monthlyData.map(d => d.revenue));
   const peakMonth = monthlyData.find(d => d.revenue === maxRevenue)?.month;
 
-  // Classification distribution (VIP-dominant insight)
-  const classificationData = [
-    { name: 'VIP', value: 68 },
-    { name: 'Mass', value: 42 },
-    { name: 'Dormant', value: 25 },
-    { name: 'Newbie', value: 15 },
-  ];
-
   // Unified chart color scheme
   const CHART_BASE = '#9ca3af';
   const CHART_MUTED = '#cbd5e1';
   const CHART_LIGHT = '#e5e7eb';
   const CHART_HIGHLIGHT = '#7c3aed';
   const AXIS_LABEL = '#cbd5e1';
-  const COLORS = [CHART_HIGHLIGHT, CHART_BASE, CHART_MUTED, CHART_LIGHT];
 
   // Custom dot renderer for peak revenue highlighting
   const renderCustomDot = (props: any) => {
@@ -306,7 +297,7 @@ export function DashboardPage() {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue and Orders chart */}
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -399,33 +390,6 @@ export function DashboardPage() {
                 activeDot={{ r: 6 }}
               />
             </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Customer Classification Donut Chart */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Cơ cấu khách hàng
-          </h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={classificationData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent = 0 }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                innerRadius={60}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {classificationData.map((_entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value: any) => `${value} khách hàng`} />
-            </PieChart>
           </ResponsiveContainer>
         </div>
       </div>

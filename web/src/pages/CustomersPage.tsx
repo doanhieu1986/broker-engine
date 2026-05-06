@@ -76,16 +76,16 @@ export function CustomersPage() {
   // Overview tab data
   const classificationData = [
     { name: 'VIP', value: filteredCustomers.filter(c => c.classification === 'VIP').length },
+    { name: 'Affluent', value: filteredCustomers.filter(c => c.classification === 'Affluent').length },
+    { name: 'Mass Affluent', value: filteredCustomers.filter(c => c.classification === 'Mass Affluent').length },
     { name: 'Mass', value: filteredCustomers.filter(c => c.classification === 'Mass').length },
-    { name: 'Newbie', value: filteredCustomers.filter(c => c.classification === 'Newbie').length },
-    { name: 'Dormant', value: filteredCustomers.filter(c => c.classification === 'Dormant').length },
   ];
 
   const statusData = [
-    { name: 'Prospect', value: filteredCustomers.filter(c => c.classification === 'Newbie' && !c.activeStatus).length },
-    { name: 'Active', value: filteredCustomers.filter(c => c.activeStatus && c.classification !== 'Dormant').length },
-    { name: 'Inactive', value: filteredCustomers.filter(c => !c.activeStatus && c.classification !== 'Newbie' && c.classification !== 'Dormant').length },
-    { name: 'Dormant', value: filteredCustomers.filter(c => c.classification === 'Dormant').length },
+    { name: 'Prospect', value: filteredCustomers.filter(c => c.classification === 'Affluent' && !c.activeStatus).length },
+    { name: 'Active', value: filteredCustomers.filter(c => c.activeStatus && c.classification !== 'Mass Affluent').length },
+    { name: 'Inactive', value: filteredCustomers.filter(c => !c.activeStatus && c.classification !== 'Affluent' && c.classification !== 'Mass Affluent').length },
+    { name: 'Dormant', value: filteredCustomers.filter(c => c.classification === 'Mass Affluent').length },
     { name: 'Churn', value: Math.max(1, Math.round(filteredCustomers.length * 0.05)) },
   ];
 
@@ -97,7 +97,51 @@ export function CustomersPage() {
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
 
-  const CLASSIFICATION_COLORS = ['#7c3aed', '#9ca3af', '#22c55e', '#f59e0b'];
+  // Combined stack bar chart data (Classification by Status)
+  const classificationsByStatus = {
+    'VIP': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'Affluent': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'Mass Affluent': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'Mass': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+  };
+
+  // Calculate Churn count (5% of total)
+  const churnCount = Math.max(1, Math.round(filteredCustomers.length * 0.05));
+  let churnAssigned = 0;
+
+  // Determine status for each customer based on statusData logic
+  filteredCustomers.forEach((c) => {
+    const classification = c.classification as keyof typeof classificationsByStatus;
+    let status: keyof typeof classificationsByStatus['VIP'];
+
+    // Use same logic as statusData
+    if (c.classification === 'Mass Affluent') {
+      status = 'Dormant';
+    } else if (c.classification === 'Affluent' && !c.activeStatus) {
+      status = 'Prospect';
+    } else if (c.activeStatus) {
+      status = 'Active';
+    } else {
+      // Inactive classification + inactive status: assign to Churn or Inactive
+      if (churnAssigned < churnCount) {
+        status = 'Churn';
+        churnAssigned++;
+      } else {
+        status = 'Inactive';
+      }
+    }
+
+    classificationsByStatus[classification][status]++;
+  });
+
+  const stackedChartData = [
+    { name: 'VIP', ...classificationsByStatus['VIP'] },
+    { name: 'Affluent', ...classificationsByStatus['Affluent'] },
+    { name: 'Mass Affluent', ...classificationsByStatus['Mass Affluent'] },
+    { name: 'Mass', ...classificationsByStatus['Mass'] },
+  ];
+
+  const CLASSIFICATION_COLORS = ['#7c3aed', '#22c55e', '#f59e0b', '#3b82f6'];
   const STATUS_COLORS: Record<string, string> = {
     'Prospect': '#3b82f6',
     'Active': '#22c55e',
@@ -126,8 +170,9 @@ export function CustomersPage() {
       render: (value: string) => (
         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
           value === 'VIP' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
+          value === 'Affluent' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+          value === 'Mass Affluent' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
           value === 'Mass' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-          value === 'Newbie' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
           'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
         }`}>
           {value}
@@ -223,28 +268,31 @@ export function CustomersPage() {
         <div className="space-y-6">
           {/* Row 1: Classification + Status Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Classification Pie Chart */}
+            {/* Classification Column Chart */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Cơ cấu phân loại khách hàng
               </h3>
               <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={classificationData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    label={({ name, percent = 0 }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    dataKey="value"
-                  >
+                <BarChart data={classificationData}>
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                  <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => `${value} khách hàng`}
+                  />
+                  <Bar dataKey="value" name="Số khách hàng">
                     {classificationData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={CLASSIFICATION_COLORS[index % CLASSIFICATION_COLORS.length]} />
                     ))}
-                  </Pie>
-                  <Tooltip formatter={(value: any) => `${value} khách hàng`} />
-                </PieChart>
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
             </div>
 
@@ -301,6 +349,35 @@ export function CustomersPage() {
                     <Cell key={`cell-${i}`} fill={i === 0 ? '#7c3aed' : '#9ca3af'} />
                   ))}
                 </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Row 3: Stacked Chart - Classification by Status */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Kết hợp: Phân loại theo Trạng thái khách hàng
+            </h3>
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={stackedChartData}>
+                <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#f9fafb',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    color: '#1f2937'
+                  }}
+                  formatter={(value: any) => `${value} khách hàng`}
+                />
+                <Legend />
+                <Bar dataKey="Prospect" stackId="status" fill={STATUS_COLORS['Prospect']} name="Prospect" />
+                <Bar dataKey="Active" stackId="status" fill={STATUS_COLORS['Active']} name="Active" />
+                <Bar dataKey="Inactive" stackId="status" fill={STATUS_COLORS['Inactive']} name="Inactive" />
+                <Bar dataKey="Dormant" stackId="status" fill={STATUS_COLORS['Dormant']} name="Dormant" />
+                <Bar dataKey="Churn" stackId="status" fill={STATUS_COLORS['Churn']} name="Churn" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -1676,8 +1753,9 @@ export function CustomersPage() {
                             <td className="px-6 py-4 text-sm">
                               <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                                 customer.classification === 'VIP' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
+                                customer.classification === 'Affluent' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                customer.classification === 'Mass Affluent' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
                                 customer.classification === 'Mass' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                                customer.classification === 'Newbie' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
                               }`}>
                                 {customer.classification}

@@ -85,7 +85,7 @@ export type Customer = {
   accountNumber: string;
   accountOpenDate: string;
   nav: number;
-  classification: 'VIP' | 'Mass' | 'Dormant' | 'Newbie';
+  classification: 'VIP' | 'Affluent' | 'Mass Affluent' | 'Mass';
   totalBalance: number;
   profit: number;
   totalTrades: number;
@@ -221,7 +221,7 @@ export type NextBestAction = {
 };
 
 const regions = ['Hà Nội', 'Thành phố Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Hải Dương', 'Hưng Yên', 'Quảng Ninh'];
-const classifications: Array<'VIP' | 'Mass' | 'Dormant' | 'Newbie'> = ['VIP', 'Mass', 'Dormant', 'Newbie'];
+const classifications: Array<'VIP' | 'Affluent' | 'Mass Affluent' | 'Mass'> = ['VIP', 'Affluent', 'Mass Affluent', 'Mass'];
 const stocks = ['VNM', 'HPG', 'FPT', 'BID', 'ACB', 'MBB', 'CTG', 'VIC', 'MSN', 'VJC'];
 const brokerMapping = [
   { code: 'BRK000', name: 'Nguyễn Quản Lý' },
@@ -249,7 +249,7 @@ const hobbiesList = ['Du lịch', 'Hiking', 'Đọc sách', 'Chơi thể thao', 
 const idCardIssuedPlaces = ['Công an Hà Nội', 'Công an TP.HCM', 'Công an Đà Nẵng', 'Công an Hải Phòng', 'Công an Cần Thơ'];
 
 function generateNextBestActions(customer: Partial<Customer> & {
-  classification: 'VIP' | 'Mass' | 'Dormant' | 'Newbie';
+  classification: 'VIP' | 'Affluent' | 'Mass Affluent' | 'Mass';
   nav: number;
   aum: number;
   profit: number;
@@ -351,8 +351,8 @@ function generateNextBestActions(customer: Partial<Customer> & {
     });
   }
 
-  // Action 9: Newbie customer care
-  if (customer.classification === 'Newbie') {
+  // Action 9: Affluent customer care
+  if (customer.classification === 'Affluent') {
     actions.push({
       id: faker.string.uuid(),
       title: 'Hỗ trợ giáo dục tài chính',
