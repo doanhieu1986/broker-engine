@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { DataTable } from '../components/shared/DataTable';
 import { mockCustomers } from '../data/mockData';
 import { useUser } from '../context/UserContext';
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Treemap } from 'recharts';
 
 export function CustomersPage() {
   const navigate = useNavigate();
@@ -197,14 +197,16 @@ export function CustomersPage() {
   ];
 
   // Aggregate industry sectors
+  // Aggregate industry sectors
   const industryMap: Record<string, number> = {};
   filteredCustomers.forEach(c => {
     c.industrySectors.forEach(sector => {
       industryMap[sector.name] = (industryMap[sector.name] || 0) + sector.value;
     });
   });
+  const industryTotal = Object.values(industryMap).reduce((sum, val) => sum + val, 0);
   const industryData = Object.entries(industryMap)
-    .map(([name, value]) => ({ name, value }))
+    .map(([name, value]) => ({ name, value: industryTotal > 0 ? Math.round((value / industryTotal) * 100) : 0 }))
     .sort((a, b) => b.value - a.value);
 
   // Aggregate stock types
@@ -214,8 +216,9 @@ export function CustomersPage() {
       stockTypeMap[stock.name] = (stockTypeMap[stock.name] || 0) + stock.value;
     });
   });
+  const stockTypeTotal = Object.values(stockTypeMap).reduce((sum, val) => sum + val, 0);
   const stockTypeData = Object.entries(stockTypeMap)
-    .map(([name, value]) => ({ name, value }))
+    .map(([name, value]) => ({ name, value: stockTypeTotal > 0 ? Math.round((value / stockTypeTotal) * 100) : 0 }))
     .sort((a, b) => b.value - a.value);
 
   const INDUSTRY_COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#06b6d4', '#10b981', '#3b82f6', '#f97316', '#6366f1'];
@@ -497,29 +500,44 @@ export function CustomersPage() {
                 Tỷ trọng nhóm ngành của danh mục
               </h3>
               <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={industryData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}%`}
-                    dataKey="value"
-                  >
-                    {industryData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={INDUSTRY_COLORS[index % INDUSTRY_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: any) => `${value}%`}
-                  />
-                </PieChart>
+                <Treemap
+                  data={industryData}
+                  dataKey="value"
+                  stroke="#fff"
+                  fill="#8884d8"
+                  content={({ x, y, width, height, name, value, index }: any) => (
+                    <g>
+                      <rect
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        fill={INDUSTRY_COLORS[index % INDUSTRY_COLORS.length]}
+                        stroke="#fff"
+                        strokeWidth={2}
+                      />
+                      <text
+                        x={x + width / 2}
+                        y={y + height / 2 - 10}
+                        textAnchor="middle"
+                        fill="#fff"
+                        fontSize={14}
+                        fontWeight="bold"
+                      >
+                        {name}
+                      </text>
+                      <text
+                        x={x + width / 2}
+                        y={y + height / 2 + 10}
+                        textAnchor="middle"
+                        fill="#fff"
+                        fontSize={12}
+                      >
+                        {value}%
+                      </text>
+                    </g>
+                  )}
+                />
               </ResponsiveContainer>
             </div>
 
@@ -528,30 +546,45 @@ export function CustomersPage() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Nhóm cổ phiếu của danh mục
               </h3>
-              <ResponsiveContainer width="100%" height={Math.max(300, stockTypeData.length * 35)}>
-                <BarChart
+              <ResponsiveContainer width="100%" height={300}>
+                <Treemap
                   data={stockTypeData}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                  <XAxis type="number" stroke="#9ca3af" tick={{ fontSize: 12 }} />
-                  <YAxis dataKey="name" type="category" stroke="#9ca3af" width={140} tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: any) => `${value}%`}
-                  />
-                  <Bar dataKey="value" name="Tỷ lệ">
-                    {stockTypeData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={STOCK_COLORS[index % STOCK_COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
+                  dataKey="value"
+                  stroke="#fff"
+                  fill="#8884d8"
+                  content={({ x, y, width, height, name, value, index }: any) => (
+                    <g>
+                      <rect
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        fill={STOCK_COLORS[index % STOCK_COLORS.length]}
+                        stroke="#fff"
+                        strokeWidth={2}
+                      />
+                      <text
+                        x={x + width / 2}
+                        y={y + height / 2 - 10}
+                        textAnchor="middle"
+                        fill="#fff"
+                        fontSize={14}
+                        fontWeight="bold"
+                      >
+                        {name}
+                      </text>
+                      <text
+                        x={x + width / 2}
+                        y={y + height / 2 + 10}
+                        textAnchor="middle"
+                        fill="#fff"
+                        fontSize={12}
+                      >
+                        {value}%
+                      </text>
+                    </g>
+                  )}
+                />
               </ResponsiveContainer>
             </div>
           </div>
