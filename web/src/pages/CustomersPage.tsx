@@ -886,6 +886,14 @@ export function CustomersPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 flex-wrap">
+                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap">Mức độ chấp nhận rủi ro (Max drawdown):</p>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="px-3 py-1 rounded-full font-semibold text-xs bg-accent-600 dark:bg-accent-700 text-white">
+                      -{(selectedCustomer.nav * 0.1 / selectedCustomer.nav * 100).toFixed(0)}%
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 flex-wrap">
                   <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap">Sản phẩm ưu tiên:</p>
                   <div className="flex flex-wrap gap-2">
                     {['Chứng khoán', 'Trái phiếu', 'Quỹ mở', 'Phái sinh', 'Huy động vốn'].map((product) => (
@@ -915,6 +923,31 @@ export function CustomersPage() {
                         }`}
                       >
                         {industry}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap">Top cổ phiếu được theo dõi gần đây:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { symbol: 'SHB', trend: 'up' },
+                      { symbol: 'EIB', trend: 'up' },
+                      { symbol: 'VGB', trend: 'down' },
+                      { symbol: 'PNJ', trend: 'up' },
+                      { symbol: 'MSN', trend: 'up' },
+                      { symbol: 'PLC', trend: 'down' },
+                    ].map(stock => (
+                      <div
+                        key={stock.symbol}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${
+                          stock.trend === 'up'
+                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                            : 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300'
+                        }`}
+                      >
+                        {stock.symbol}
+                        <span className="text-sm">{stock.trend === 'up' ? '↑' : '↓'}</span>
                       </div>
                     ))}
                   </div>
