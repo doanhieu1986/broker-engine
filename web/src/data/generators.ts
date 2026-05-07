@@ -404,10 +404,11 @@ export function generateCustomer(): Customer {
     value: faker.number.int({ min: 5, max: 30 }),
   })).sort((a, b) => b.value - a.value).slice(0, 4);
 
-  const stocks = ['Bluechip', 'Midcap', 'Penny'];
-  const stockTypes = stocks.map(type => ({
-    name: type,
-    value: faker.number.int({ min: 20, max: 40 }),
+  const stockCodes = ['VNM', 'HPG', 'FPT', 'BID', 'ACB', 'MBB', 'CTG', 'VIC', 'MSN', 'VJC'];
+  const selectedStocks = faker.helpers.arrayElements(stockCodes, { min: 3, max: 6 });
+  const stockTypes = selectedStocks.map(code => ({
+    name: code,
+    value: faker.number.int({ min: 10, max: 30 }),
   }));
 
   const selectedPolicies = faker.helpers.arrayElements(policiesList, { min: 2, max: 3 });

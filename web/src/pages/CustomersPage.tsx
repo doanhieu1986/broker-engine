@@ -185,16 +185,41 @@ export function CustomersPage() {
   const profitableCustomers = filteredCustomers.filter(c => c.profit > 0);
   const losingCustomers = filteredCustomers.filter(c => c.profit < 0);
   const avgProfit = profitableCustomers.length > 0
-    ? profitableCustomers.reduce((sum, c) => sum + c.profit, 0) / profitableCustomers.length / 1000000000
+    ? profitableCustomers.reduce((sum, c) => sum + c.profit, 0) / profitableCustomers.length / 1000000
     : 0;
   const avgLoss = losingCustomers.length > 0
-    ? losingCustomers.reduce((sum, c) => sum + Math.abs(c.profit), 0) / losingCustomers.length / 1000000000
+    ? losingCustomers.reduce((sum, c) => sum + Math.abs(c.profit), 0) / losingCustomers.length / 1000000
     : 0;
 
   const profitLossData = [
     { name: 'Đang lãi', value: profitableCustomers.length, color: '#10b981', avgValue: avgProfit },
     { name: 'Đang lỗ', value: losingCustomers.length, color: '#ef4444', avgValue: avgLoss },
   ];
+
+  // Aggregate industry sectors
+  const industryMap: Record<string, number> = {};
+  filteredCustomers.forEach(c => {
+    c.industrySectors.forEach(sector => {
+      industryMap[sector.name] = (industryMap[sector.name] || 0) + sector.value;
+    });
+  });
+  const industryData = Object.entries(industryMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  // Aggregate stock types
+  const stockTypeMap: Record<string, number> = {};
+  filteredCustomers.forEach(c => {
+    c.stockTypes.forEach(stock => {
+      stockTypeMap[stock.name] = (stockTypeMap[stock.name] || 0) + stock.value;
+    });
+  });
+  const stockTypeData = Object.entries(stockTypeMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  const INDUSTRY_COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#06b6d4', '#10b981', '#3b82f6', '#f97316', '#6366f1'];
+  const STOCK_COLORS = ['#7c3aed', '#059669', '#0891b2', '#d97706', '#dc2626', '#2563eb', '#9333ea', '#ea580c'];
 
   const STATUS_COLORS: Record<string, string> = {
     'Prospect': '#60a5fa',
@@ -320,8 +345,8 @@ export function CustomersPage() {
       {/* Overview Tab */}
       {pageTab === 'overview' && (
         <div className="space-y-6">
-          {/* Row 1: Stacked Chart + Status Distribution Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Row 1: Three Charts - Classification, Status, Profit/Loss */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Stacked Chart - Classification by Status */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -378,6 +403,59 @@ export function CustomersPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+
+            {/* Broker Portfolio Profit/Loss Analysis */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Danh mục của Broker - Phân tích Lãi/Lỗ
+              </h3>
+
+              <div className="relative w-full" style={{ height: '300px' }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={profitLossData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={120}
+                      paddingAngle={2}
+                      dataKey="value"
+                      label={({ name, value }) => `${name}: ${value}`}
+                      labelLine={false}
+                    >
+                      {profitLossData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#f9fafb',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        color: '#1f2937'
+                      }}
+                      formatter={(value: any) => `${value} khách hàng`}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+
+                {/* Center Overlay: Metrics */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="text-center space-y-2">
+                    <div>
+                      <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Mức lãi TB</p>
+                      <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{avgProfit.toFixed(2)}M</p>
+                    </div>
+                    <div className="h-px bg-gray-300 dark:bg-gray-600 my-1"></div>
+                    <div>
+                      <p className="text-xs font-semibold text-red-600 dark:text-red-400">Mức lỗ TB</p>
+                      <p className="text-xl font-bold text-red-600 dark:text-red-400">{avgLoss.toFixed(2)}M</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Row 2: Broker Distribution by Status Chart - Only for Manager */}
@@ -411,64 +489,25 @@ export function CustomersPage() {
             </div>
           )}
 
-          {/* Row 3: Broker Portfolio Profit/Loss Analysis */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              Danh mục của Broker - Phân tích Lãi/Lỗ
-            </h3>
-
-            {/* Score Cards Section */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
-                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase mb-2">Khách hàng đang lãi</p>
-                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {profitableCustomers.length}
-                </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">khách hàng</p>
-              </div>
-
-              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
-                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase mb-2">Mức lãi TB</p>
-                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {avgProfit.toFixed(2)}
-                </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">tỷ đ</p>
-              </div>
-
-              <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
-                <p className="text-xs font-semibold text-red-700 dark:text-red-300 uppercase mb-2">Khách hàng đang lỗ</p>
-                <p className="text-3xl font-bold text-red-600 dark:text-red-400">
-                  {losingCustomers.length}
-                </p>
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1">khách hàng</p>
-              </div>
-
-              <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
-                <p className="text-xs font-semibold text-red-700 dark:text-red-300 uppercase mb-2">Mức lỗ TB</p>
-                <p className="text-3xl font-bold text-red-600 dark:text-red-400">
-                  {avgLoss.toFixed(2)}
-                </p>
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1">tỷ đ</p>
-              </div>
-            </div>
-
-            {/* Chart Section */}
-            <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
+          {/* Row 3: Industry Sector and Stock Type Distribution */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Industry Sector Distribution */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Tỷ trọng nhóm ngành của danh mục
+              </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={profitLossData}
+                    data={industryData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={80}
-                    outerRadius={120}
-                    paddingAngle={2}
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}`}
                     labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    dataKey="value"
                   >
-                    {profitLossData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    {industryData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={INDUSTRY_COLORS[index % INDUSTRY_COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip
@@ -478,21 +517,41 @@ export function CustomersPage() {
                       borderRadius: '8px',
                       color: '#1f2937'
                     }}
-                    content={({ active, payload }: any) => {
-                      if (active && payload && payload[0]) {
-                        const entry = payload[0].payload;
-                        return (
-                          <div className="p-2 text-sm">
-                            <p className="font-semibold">{entry.name}</p>
-                            <p>{entry.value} khách hàng</p>
-                            <p>Mức TB: {entry.avgValue.toFixed(2)} tỷ đ</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+                    formatter={(value: any) => `${value}%`}
                   />
                 </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Stock Type Distribution */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Nhóm cổ phiếu của danh mục
+              </h3>
+              <ResponsiveContainer width="100%" height={Math.max(300, stockTypeData.length * 35)}>
+                <BarChart
+                  data={stockTypeData}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
+                  <XAxis type="number" stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" stroke="#9ca3af" width={140} tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    formatter={(value: any) => `${value}%`}
+                  />
+                  <Bar dataKey="value" name="Tỷ lệ">
+                    {stockTypeData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={STOCK_COLORS[index % STOCK_COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
