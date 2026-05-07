@@ -565,6 +565,57 @@ export function CustomersPage() {
               </div>
             </div>
 
+            {/* Financial Health Metrics */}
+            <div className="grid grid-cols-5 gap-3">
+              {/* Buying Power */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Sức mua hiện tại</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white mb-1">
+                  {((selectedCustomer.totalBalance / selectedCustomer.nav) * 100).toFixed(1)}%
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">của tổng tài sản</p>
+              </div>
+
+              {/* Total Margin Debt */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Tổng dư nợ Margin</p>
+                <p className="text-xl font-bold text-red-600 dark:text-red-400 mb-1">
+                  {(selectedCustomer.nav * 0.15 / 1000000000).toFixed(2)}T
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">đang vay</p>
+              </div>
+
+              {/* Upcoming Margin Due */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Margin sắp đến hạn</p>
+                <p className="text-xl font-bold text-orange-600 dark:text-orange-400 mb-1">
+                  {(selectedCustomer.nav * 0.05 / 1000000000).toFixed(2)}T
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">trong 7 ngày</p>
+              </div>
+
+              {/* App Login Frequency */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Đăng nhập App</p>
+                <p className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                  {Math.floor(Math.random() * 20 + 5)} lần
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">tháng này</p>
+              </div>
+
+              {/* Churn Risk */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Khả năng rời bỏ</p>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">
+                    {Math.floor(Math.random() * 60 + 10)}%
+                  </p>
+                  <p className="text-xs font-semibold text-yellow-600 dark:text-yellow-400">TB</p>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">rủi ro</p>
+              </div>
+            </div>
+
             {/* Account Details */}
             <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">💳 Thông tin khách hàng</h3>
