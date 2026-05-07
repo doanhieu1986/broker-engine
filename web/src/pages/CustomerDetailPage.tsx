@@ -273,6 +273,31 @@ export function CustomerDetailPage() {
                   <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Ngành nghề quan tâm</p>
                   <p className="text-slate-900 dark:text-white">TMĐT, Bất động sản, Công nghệ</p>
                 </div>
+                <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
+                  <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3">Top cổ phiếu được theo dõi gần đây</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { symbol: 'VNM', trend: 'up' },
+                      { symbol: 'FPT', trend: 'up' },
+                      { symbol: 'HPG', trend: 'down' },
+                      { symbol: 'ACB', trend: 'up' },
+                      { symbol: 'BID', trend: 'up' },
+                      { symbol: 'CTG', trend: 'down' },
+                    ].map(stock => (
+                      <div
+                        key={stock.symbol}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 ${
+                          stock.trend === 'up'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                        }`}
+                      >
+                        {stock.symbol}
+                        <span className="text-sm">{stock.trend === 'up' ? '↑' : '↓'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
