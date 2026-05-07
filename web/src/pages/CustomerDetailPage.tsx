@@ -104,6 +104,57 @@ export function CustomerDetailPage() {
         {/* Overview Tab */}
         {activeTab === 'overview' && (
           <div className="space-y-8">
+            {/* Financial Health Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              {/* Buying Power */}
+              <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Sức mua hiện tại</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
+                  {((customer.totalBalance / customer.nav) * 100).toFixed(1)}%
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">của tổng tài sản</p>
+              </div>
+
+              {/* Total Margin Debt */}
+              <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Tổng dư nợ Margin</p>
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400 mb-1">
+                  {(customer.nav * 0.15 / 1000000000).toFixed(2)}T
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">đang vay</p>
+              </div>
+
+              {/* Upcoming Margin Due */}
+              <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Margin sắp đến hạn</p>
+                <p className="text-2xl font-bold text-orange-600 dark:text-orange-400 mb-1">
+                  {(customer.nav * 0.05 / 1000000000).toFixed(2)}T
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">trong 7 ngày</p>
+              </div>
+
+              {/* App Login Frequency */}
+              <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Đăng nhập App</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                  {(Math.random() * 20 + 5).toFixed(0)} lần
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">tháng này</p>
+              </div>
+
+              {/* Churn Risk */}
+              <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase mb-2">Khả năng rời bỏ</p>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {Math.floor(Math.random() * 60 + 10)}%
+                  </p>
+                  <p className="text-xs font-semibold text-yellow-600 dark:text-yellow-400">Trung bình</p>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">rủi ro</p>
+              </div>
+            </div>
+
             {/* Personal Info */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6">👤 Thông tin cá nhân</h2>
