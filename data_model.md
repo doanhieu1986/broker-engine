@@ -35,7 +35,7 @@
 
 | Nguồn | Nhóm | Dữ liệu cung cấp |
 |-------|------|------------------|
-| Core Banking / Trading System | D1, D2, D3 | Thông tin tài khoản, lệnh giao dịch, số dư, NAV |
+| Core / Trading System | D1, D2, D3 | Thông tin tài khoản, lệnh giao dịch, số dư, NAV |
 | CRM nội bộ VPS | D1, D6 | Hồ sơ khách hàng, case hỗ trợ, lịch sử tương tác |
 | HR System | D4 | Hồ sơ nhân viên broker, cấp bậc, ngày onboard |
 | KPI Planning System | D5 | Kế hoạch tháng/quý/năm theo team và công ty |
