@@ -9,7 +9,7 @@ export function CustomersPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { role, user } = useUser();
-  const [pageTab, setPageTab] = useState('overview');
+  const [pageTab, setPageTab] = useState('recommendation');
   const [selectedActionTitle, setSelectedActionTitle] = useState<string | null>(null);
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedClassification, setSelectedClassification] = useState('');
@@ -69,6 +69,49 @@ export function CustomersPage() {
   if (selectedBroker) {
     filteredCustomers = filteredCustomers.filter(c => c.brokerName === selectedBroker);
   }
+
+  // Scoring logic for VCK stock recommendation
+  const scoreCustomerForVCK = (c: any): number => {
+    let score = 0;
+
+    // Classification (max 30)
+    if (c.classification === 'VIP') score += 30;
+    else if (c.classification === 'Affluent') score += 22;
+    else if (c.classification === 'Mass Affluent') score += 12;
+    else score += 4;
+
+    // NAV Group (max 25)
+    if (c.navGroup.includes('>2B') || c.navGroup.includes('Nhóm A')) score += 25;
+    else if (c.navGroup.includes('500M') || c.navGroup.includes('Nhóm B')) score += 15;
+    else score += 6;
+
+    // Active status (max 12)
+    if (c.activeStatus) score += 12;
+
+    // Risk appetite (max 12)
+    if (c.riskAppetite === 'Cao') score += 12;
+    else if (c.riskAppetite === 'Cân bằng') score += 8;
+    else score += 3;
+
+    // Preferred products (max 8)
+    if (c.preferredProducts.includes('Chứng khoán')) score += 8;
+
+    // Interested industries (max 7)
+    if (c.interestedIndustries.includes('Ngân hàng')) score += 7;
+
+    // Margin status (max 6)
+    if (c.marginStatus === 'Monitoring') score += 6;
+    else if (c.marginStatus === 'Warning') score += 3;
+
+    // Profit (max 3)
+    if (c.profit > 0) score += 3;
+
+    return score;
+  };
+
+  const recommendationList = filteredCustomers
+    .map(c => ({ ...c, vckScore: scoreCustomerForVCK(c) }))
+    .sort((a, b) => b.vckScore - a.vckScore);
 
   const regions = Array.from(new Set(mockCustomers.map(c => c.region)));
   const classifications = Array.from(new Set(mockCustomers.map(c => c.classification)));
@@ -313,6 +356,16 @@ export function CustomersPage() {
       <div className="bg-white dark:bg-slate-950 rounded-lg shadow">
         <div className="flex gap-6 px-6 py-0 border-b border-slate-200 dark:border-slate-700">
           <button
+            onClick={() => setPageTab('recommendation')}
+            className={`py-3 px-1 border-b-2 font-semibold transition-colors ${
+              pageTab === 'recommendation'
+                ? 'border-accent-500 text-accent-500'
+                : 'border-transparent text-slate-500 hover:text-slate-300'
+            }`}
+          >
+            Recommendation
+          </button>
+          <button
             onClick={() => setPageTab('overview')}
             className={`py-3 px-1 border-b-2 font-semibold transition-colors ${
               pageTab === 'overview'
@@ -344,6 +397,135 @@ export function CustomersPage() {
           </button>
         </div>
       </div>
+
+      {/* Recommendation Tab */}
+      {pageTab === 'recommendation' && (
+        <div className="space-y-6">
+          {/* Header Card */}
+          <div className="bg-gradient-to-r from-accent-50 to-blue-50 dark:from-accent-900/20 dark:to-blue-900/20 rounded-xl border border-accent-200 dark:border-accent-800 p-6">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Gợi ý mua cổ phiếu VCK
+            </h3>
+            <p className="text-sm text-accent-700 dark:text-accent-300 mb-3">
+              Ngành: Dịch vụ Tài chính • Sàn: HOSE
+            </p>
+            <p className="text-gray-700 dark:text-gray-300">
+              Danh sách khách hàng có tiềm năng cao để tiếp cận tư vấn mua VCK, xếp hạng theo điểm phù hợp.
+            </p>
+          </div>
+
+          {/* Score Tier Legend */}
+          <div className="flex flex-wrap gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">≥ 70:</span> Tiềm năng cao
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-amber-500"></div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span className="font-bold text-amber-600 dark:text-amber-400">40–69:</span> Tiềm năng trung bình
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-gray-400"></div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span className="font-bold text-gray-600 dark:text-gray-400">&lt; 40:</span> Tiềm năng thấp
+              </span>
+            </div>
+          </div>
+
+          {/* Recommendation Table */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+            {recommendationList.length > 0 ? (
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Rank</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Khách hàng</th>
+                    <th className="px-6 py-3 text-center text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Điểm</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Phân loại</th>
+                    <th className="px-6 py-3 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">NAV</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Khẩu vị</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Lý do chính</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                  {recommendationList.map((c, index) => {
+                    const scoreColor = c.vckScore >= 70 ? 'emerald' : c.vckScore >= 40 ? 'amber' : 'gray';
+                    const scoreBgColor = scoreColor === 'emerald' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
+                                         : scoreColor === 'amber' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+                                         : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+
+                    // Determine main reasons for score
+                    const reasons = [];
+                    if (c.classification === 'VIP' || c.classification === 'Affluent') reasons.push('Khách hàng cao cấp');
+                    if (c.navGroup.includes('>2B') || c.navGroup.includes('Nhóm A')) reasons.push('Tài chính mạnh');
+                    if (c.riskAppetite === 'Cao') reasons.push('Khẩu vị Cao');
+                    if (c.preferredProducts.includes('Chứng khoán')) reasons.push('Ưa thích CK');
+                    if (c.marginStatus === 'Monitoring') reasons.push('Margin ổn định');
+                    if (c.activeStatus) reasons.push('Giao dịch tích cực');
+
+                    return (
+                      <tr
+                        key={c.id}
+                        onClick={() => setSelectedCustomer(c)}
+                        className="hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-700 dark:text-gray-300">#{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{c.name}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{c.accountNumber}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          <span className={`inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreBgColor}`}>
+                            {c.vckScore}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
+                            c.classification === 'VIP' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                            : c.classification === 'Affluent' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                            : c.classification === 'Mass Affluent' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                          }`}>
+                            {c.classification}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-white">
+                          {(c.nav / 1000000000).toFixed(2)}B
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                          {c.riskAppetite}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1">
+                            {reasons.slice(0, 2).map((reason, i) => (
+                              <span key={i} className="inline-block px-2 py-1 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded text-xs font-medium">
+                                {reason}
+                              </span>
+                            ))}
+                            {reasons.length > 2 && (
+                              <span className="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-xs font-medium">
+                                +{reasons.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : (
+              <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                Không có khách hàng phù hợp với các tiêu chí hiện tại.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Overview Tab */}
       {pageTab === 'overview' && (
