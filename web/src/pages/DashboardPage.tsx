@@ -600,6 +600,7 @@ export function DashboardPage() {
 
       {/* Opportunities Tab Content */}
       {activeTab === 'recommendation' && (
+      <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
       {/* VCK Opportunities Report */}
@@ -872,6 +873,68 @@ export function DashboardPage() {
           </div>
         </div>
       </div>
+      </div>
+
+      {/* Broker Conversion Comparison — Manager only */}
+      {role === 'Manager' && (
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+          So sánh tiến độ chuyển đổi VCK theo Broker
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left: Horizontal bar chart */}
+          <div className="space-y-3">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Sắp xếp theo tỷ lệ chuyển đổi (cao → thấp)</p>
+            {[...brokerVCKList].sort((a, b) => b.conversionRate - a.conversionRate).map(broker => {
+              const rate = broker.conversionRate;
+              const barColor = rate > 50 ? 'bg-emerald-500' : rate > 30 ? 'bg-blue-500' : rate > 15 ? 'bg-amber-500' : 'bg-red-500';
+              return (
+                <div key={broker.name} className="flex items-center gap-3">
+                  <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-28 truncate">{broker.name}</span>
+                  <div className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden">
+                    <div
+                      className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
+                      style={{ width: `${Math.max(rate, 5)}%` }}
+                    >
+                      <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">{broker.bought}/{broker.total}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Right: Performance categories */}
+          <div className="space-y-3">
+            {(
+              [
+                { label: 'Excellence', threshold: '>50%',   check: (r: number) => r > 50,          bg: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300', chip: 'bg-emerald-100 dark:bg-emerald-800/40 text-emerald-700 dark:text-emerald-300' },
+                { label: 'Good',       threshold: '30–50%', check: (r: number) => r > 30 && r <= 50, bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800',         text: 'text-blue-700 dark:text-blue-300',     chip: 'bg-blue-100 dark:bg-blue-800/40 text-blue-700 dark:text-blue-300' },
+                { label: 'Fair',       threshold: '15–30%', check: (r: number) => r > 15 && r <= 30, bg: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       text: 'text-amber-700 dark:text-amber-300',   chip: 'bg-amber-100 dark:bg-amber-800/40 text-amber-700 dark:text-amber-300' },
+                { label: 'Cần cải thiện', threshold: '≤15%', check: (r: number) => r <= 15,          bg: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',             text: 'text-red-700 dark:text-red-300',       chip: 'bg-red-100 dark:bg-red-800/40 text-red-700 dark:text-red-300' },
+              ] as const
+            ).map(cat => {
+              const matched = brokerVCKList.filter(b => cat.check(b.conversionRate));
+              return (
+                <div key={cat.label} className={`${cat.bg} rounded-lg p-3 border`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`text-sm font-semibold ${cat.text}`}>{cat.label} ({cat.threshold})</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${cat.chip}`}>{matched.length}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {matched.map(b => (
+                      <span key={b.name} className={`text-xs px-2 py-0.5 rounded ${cat.chip}`}>{b.name}</span>
+                    ))}
+                    {matched.length === 0 && <span className="text-xs text-gray-400 italic">Không có</span>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      )}
       </div>
       )}
     </div>
