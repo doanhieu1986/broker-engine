@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StatCard } from '../components/shared/StatCard';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Cell, PieChart, Pie } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { TrendingUp, Users, DollarSign, Zap, BarChart2, Briefcase, UserPlus, UserCheck, Building2 } from 'lucide-react';
 import { mockCustomers, mockTransactions, mockStaff } from '../data/mockData';
 import { useUser } from '../context/UserContext';
@@ -145,12 +145,6 @@ export function DashboardPage() {
       if (bought) boughtLow++;
     }
   });
-
-  const vckChartData = [
-    { name: 'Tiềm năng Cao (≥70)', value: totalHigh, bought: boughtHigh, color: '#10b981' },
-    { name: 'Tiềm năng TB (40-69)', value: totalMedium, bought: boughtMedium, color: '#f59e0b' },
-    { name: 'Tiềm năng Thấp (<40)', value: totalLow, bought: boughtLow, color: '#9ca3af' },
-  ];
 
   // Broker view: summary stats
   const brokerVCKStats = (() => {
@@ -601,7 +595,6 @@ export function DashboardPage() {
       {/* Opportunities Tab Content */}
       {activeTab === 'recommendation' && (
       <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
       {/* VCK Opportunities Report */}
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
@@ -616,32 +609,32 @@ export function DashboardPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
                 <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase mb-2">
-                  🟢 Tiềm năng cao
+                  🟢 Cao
                 </p>
                 <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {totalHigh}
+                  {totalHigh} <span className="text-sm text-emerald-600 dark:text-emerald-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalHigh / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
                 </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">khách hàng</p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2">Đã mua: {boughtHigh} ({totalHigh > 0 ? Math.round((boughtHigh / totalHigh) * 100) : 0}%)</p>
               </div>
 
               <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
                 <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase mb-2">
-                  🟡 Tiềm năng TB
+                  🟡 Trung bình
                 </p>
                 <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">
-                  {totalMedium}
+                  {totalMedium} <span className="text-sm text-amber-600 dark:text-amber-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalMedium / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
                 </p>
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">khách hàng</p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">Đã mua: {boughtMedium} ({totalMedium > 0 ? Math.round((boughtMedium / totalMedium) * 100) : 0}%)</p>
               </div>
 
               <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-300 dark:border-gray-700">
                 <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase mb-2">
-                  ⬜ Tiềm năng thấp
+                  ⬜ Thấp
                 </p>
                 <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
-                  {totalLow}
+                  {totalLow} <span className="text-sm text-gray-600 dark:text-gray-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalLow / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">khách hàng</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Đã mua: {boughtLow} ({totalLow > 0 ? Math.round((boughtLow / totalLow) * 100) : 0}%)</p>
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
@@ -649,9 +642,8 @@ export function DashboardPage() {
                   ✅ Đã mua
                 </p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {boughtHigh + boughtMedium + boughtLow}
+                  {boughtHigh + boughtMedium + boughtLow} <span className="text-sm text-blue-600 dark:text-blue-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round(((boughtHigh + boughtMedium + boughtLow) / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
                 </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">khách hàng</p>
               </div>
             </div>
 
@@ -675,6 +667,66 @@ export function DashboardPage() {
               </div>
             )}
 
+            {/* Broker Conversion Comparison — Manager only */}
+            {role === 'Manager' && (
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                So sánh tiến độ chuyển đổi VCK theo Broker
+              </h2>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left: Horizontal bar chart */}
+                <div className="lg:col-span-2 space-y-3">
+                  {[...brokerVCKList].sort((a, b) => b.conversionRate - a.conversionRate).map(broker => {
+                    const rate = broker.conversionRate;
+                    const barColor = rate > 50 ? 'bg-emerald-500' : rate > 30 ? 'bg-blue-500' : rate > 15 ? 'bg-amber-500' : 'bg-red-500';
+                    return (
+                      <div key={broker.name} className="flex items-center gap-3">
+                        <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-28 truncate">{broker.name}</span>
+                        <div className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden">
+                          <div
+                            className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
+                            style={{ width: `${Math.max(rate, 5)}%` }}
+                          >
+                            <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                          </div>
+                        </div>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">{broker.bought}/{broker.total}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Right: Performance categories */}
+                <div className="space-y-3">
+                  {(
+                    [
+                      { label: 'Xuất sắc', threshold: '>50%',   check: (r: number) => r > 50,          bg: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300', chip: 'bg-emerald-100 dark:bg-emerald-800/40 text-emerald-700 dark:text-emerald-300' },
+                      { label: 'Tốt',       threshold: '30–50%', check: (r: number) => r > 30 && r <= 50, bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800',         text: 'text-blue-700 dark:text-blue-300',     chip: 'bg-blue-100 dark:bg-blue-800/40 text-blue-700 dark:text-blue-300' },
+                      { label: 'Khá',       threshold: '15–30%', check: (r: number) => r > 15 && r <= 30, bg: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       text: 'text-amber-700 dark:text-amber-300',   chip: 'bg-amber-100 dark:bg-amber-800/40 text-amber-700 dark:text-amber-300' },
+                      { label: 'Cần cải thiện', threshold: '≤15%', check: (r: number) => r <= 15,          bg: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',             text: 'text-red-700 dark:text-red-300',       chip: 'bg-red-100 dark:bg-red-800/40 text-red-700 dark:text-red-300' },
+                    ] as const
+                  ).map(cat => {
+                    const matched = brokerVCKList.filter(b => cat.check(b.conversionRate));
+                    return (
+                      <div key={cat.label} className={`${cat.bg} rounded-lg p-3 border`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className={`text-sm font-semibold ${cat.text}`}>{cat.label} ({cat.threshold})</span>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${cat.chip}`}>{matched.length}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {matched.map(b => (
+                            <span key={b.name} className={`text-xs px-2 py-0.5 rounded ${cat.chip}`}>{b.name}</span>
+                          ))}
+                          {matched.length === 0 && <span className="text-xs text-gray-400 italic">Không có</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            )}
+
             {/* Broker Breakdown Table */}
             <div className="overflow-x-auto">
               <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Phân tích chi tiết theo Broker</h3>
@@ -688,6 +740,7 @@ export function DashboardPage() {
                     <th className="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">Tổng tiềm năng</th>
                     <th className="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">✅ Đã mua</th>
                     <th className="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">Tỷ lệ</th>
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
@@ -728,6 +781,20 @@ export function DashboardPage() {
                           </span>
                         </div>
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        {(() => {
+                          const rate = broker.conversionRate;
+                          if (rate > 50) {
+                            return <span className="inline-block px-2 py-1 bg-emerald-100 dark:bg-emerald-800/40 text-emerald-700 dark:text-emerald-300 rounded text-xs font-semibold">Xuất sắc</span>;
+                          } else if (rate > 30) {
+                            return <span className="inline-block px-2 py-1 bg-blue-100 dark:bg-blue-800/40 text-blue-700 dark:text-blue-300 rounded text-xs font-semibold">Tốt</span>;
+                          } else if (rate > 15) {
+                            return <span className="inline-block px-2 py-1 bg-amber-100 dark:bg-amber-800/40 text-amber-700 dark:text-amber-300 rounded text-xs font-semibold">Khá</span>;
+                          } else {
+                            return <span className="inline-block px-2 py-1 bg-red-100 dark:bg-red-800/40 text-red-700 dark:text-red-300 rounded text-xs font-semibold">Cần cải thiện</span>;
+                          }
+                        })()}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -745,32 +812,32 @@ export function DashboardPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
                 <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase mb-2">
-                  🟢 Tiềm năng cao
+                  🟢 Cao
                 </p>
                 <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {brokerVCKStats.high}
+                  {brokerVCKStats.high} <span className="text-sm text-emerald-600 dark:text-emerald-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.high / brokerVCKStats.total) * 100) : 0}%)</span>
                 </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">khách hàng</p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2">Đã mua: 0 (0%)</p>
               </div>
 
               <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
                 <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase mb-2">
-                  🟡 Tiềm năng TB
+                  🟡 Trung bình
                 </p>
                 <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">
-                  {brokerVCKStats.medium}
+                  {brokerVCKStats.medium} <span className="text-sm text-amber-600 dark:text-amber-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.medium / brokerVCKStats.total) * 100) : 0}%)</span>
                 </p>
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">khách hàng</p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">Đã mua: 0 (0%)</p>
               </div>
 
               <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-300 dark:border-gray-700">
                 <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase mb-2">
-                  ⬜ Tiềm năng thấp
+                  ⬜ Thấp
                 </p>
                 <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
-                  {brokerVCKStats.low}
+                  {brokerVCKStats.low} <span className="text-sm text-gray-600 dark:text-gray-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.low / brokerVCKStats.total) * 100) : 0}%)</span>
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">khách hàng</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Đã mua: 0 (0%)</p>
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
@@ -778,9 +845,8 @@ export function DashboardPage() {
                   ✅ Đã mua
                 </p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {brokerVCKStats.bought}
+                  {brokerVCKStats.bought} <span className="text-sm text-blue-600 dark:text-blue-400">({brokerVCKStats.conversionRate}%)</span>
                 </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">khách hàng</p>
               </div>
             </div>
 
@@ -806,135 +872,6 @@ export function DashboardPage() {
           </div>
         )}
       </div>
-
-      {/* VCK Distribution Chart */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-          Phân bổ tiềm năng mua VCK
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Pie Chart */}
-          <div className="flex justify-center items-center">
-            <ResponsiveContainer width="100%" height={400}>
-              <PieChart>
-                <Pie
-                  data={vckChartData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ percent }) => percent ? `${(percent * 100).toFixed(0)}%` : ''}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {vckChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#f9fafb',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    color: '#1f2937'
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Legend and Stats */}
-          <div className="flex flex-col justify-center">
-            <div className="space-y-4">
-              {vckChartData.map(item => {
-                const total = vckChartData.reduce((sum, d) => sum + d.value, 0);
-                const percentage = ((item.value / total) * 100).toFixed(1);
-                const conversionRate = item.value > 0 ? Math.round((item.bought / item.value) * 100) : 0;
-                return (
-                  <div key={item.name} className="p-4 bg-gray-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                      <span className="text-sm font-semibold text-gray-900 dark:text-white">{item.name}</span>
-                    </div>
-                    <div className="space-y-1 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Tổng:</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{item.value} KH ({percentage}%)</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Đã mua:</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{item.bought} KH ({conversionRate}%)</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-
-      {/* Broker Conversion Comparison — Manager only */}
-      {role === 'Manager' && (
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-          So sánh tiến độ chuyển đổi VCK theo Broker
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left: Horizontal bar chart */}
-          <div className="space-y-3">
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Sắp xếp theo tỷ lệ chuyển đổi (cao → thấp)</p>
-            {[...brokerVCKList].sort((a, b) => b.conversionRate - a.conversionRate).map(broker => {
-              const rate = broker.conversionRate;
-              const barColor = rate > 50 ? 'bg-emerald-500' : rate > 30 ? 'bg-blue-500' : rate > 15 ? 'bg-amber-500' : 'bg-red-500';
-              return (
-                <div key={broker.name} className="flex items-center gap-3">
-                  <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-28 truncate">{broker.name}</span>
-                  <div className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden">
-                    <div
-                      className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
-                      style={{ width: `${Math.max(rate, 5)}%` }}
-                    >
-                      <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
-                    </div>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">{broker.bought}/{broker.total}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Right: Performance categories */}
-          <div className="space-y-3">
-            {(
-              [
-                { label: 'Excellence', threshold: '>50%',   check: (r: number) => r > 50,          bg: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300', chip: 'bg-emerald-100 dark:bg-emerald-800/40 text-emerald-700 dark:text-emerald-300' },
-                { label: 'Good',       threshold: '30–50%', check: (r: number) => r > 30 && r <= 50, bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800',         text: 'text-blue-700 dark:text-blue-300',     chip: 'bg-blue-100 dark:bg-blue-800/40 text-blue-700 dark:text-blue-300' },
-                { label: 'Fair',       threshold: '15–30%', check: (r: number) => r > 15 && r <= 30, bg: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       text: 'text-amber-700 dark:text-amber-300',   chip: 'bg-amber-100 dark:bg-amber-800/40 text-amber-700 dark:text-amber-300' },
-                { label: 'Cần cải thiện', threshold: '≤15%', check: (r: number) => r <= 15,          bg: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',             text: 'text-red-700 dark:text-red-300',       chip: 'bg-red-100 dark:bg-red-800/40 text-red-700 dark:text-red-300' },
-              ] as const
-            ).map(cat => {
-              const matched = brokerVCKList.filter(b => cat.check(b.conversionRate));
-              return (
-                <div key={cat.label} className={`${cat.bg} rounded-lg p-3 border`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`text-sm font-semibold ${cat.text}`}>{cat.label} ({cat.threshold})</span>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${cat.chip}`}>{matched.length}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {matched.map(b => (
-                      <span key={b.name} className={`text-xs px-2 py-0.5 rounded ${cat.chip}`}>{b.name}</span>
-                    ))}
-                    {matched.length === 0 && <span className="text-xs text-gray-400 italic">Không có</span>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-      )}
       </div>
       )}
     </div>
