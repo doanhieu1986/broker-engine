@@ -15,7 +15,7 @@ const formatCompactNumber = (num: number): string => {
 
 export function DashboardPage() {
   const { role, user } = useUser();
-  const [activeTab, setActiveTab] = useState<'kpi' | 'recommendation'>('kpi');
+  const [activeTab, setActiveTab] = useState<'kpi' | 'recommendation'>('recommendation');
   const [kpiType, setKpiType] = useState<'company' | 'team'>('team');
   const [periodFilter, setPeriodFilter] = useState<'month' | 'quarter' | 'year'>('month');
 
