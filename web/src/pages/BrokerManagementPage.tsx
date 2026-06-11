@@ -5,7 +5,7 @@ import { BrokerTopNavigation } from '../components/broker-growth/BrokerTopNaviga
 type TopTabType = 'trading' | 'customers' | 'agreements' | 'account-management' | 'market-summary' | 'stock-info' | 'customer-management' | 'staff-management' | 'account-registration' | 'broker-growth';
 
 export function BrokerManagementPage() {
-  const [activeTopTab, setActiveTopTab] = useState<TopTabType>('trading');
+  const [activeTopTab, setActiveTopTab] = useState<TopTabType>('broker-growth');
 
   return (
     <div className="space-y-0 -mx-8 -mt-8">
