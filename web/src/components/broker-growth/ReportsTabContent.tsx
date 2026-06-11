@@ -365,15 +365,6 @@ export function ReportsTabContent() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-accent-600 to-accent-800 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 -z-10 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
-        <div className="relative z-10">
-          <h1 className="text-4xl font-bold mb-2">Báo cáo</h1>
-          <p className="text-accent-100 text-lg">Các báo cáo chi tiết và phân tích dữ liệu kinh doanh</p>
-        </div>
-      </div>
-
       {/* Tabs - Segment Control Style */}
       <div className="inline-flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex-wrap">
         <button
