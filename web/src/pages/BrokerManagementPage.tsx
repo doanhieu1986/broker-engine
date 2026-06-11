@@ -11,28 +11,23 @@ export function BrokerManagementPage() {
     <div className="space-y-0 -mx-8 -mt-8">
       {/* Market Indices Bar */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-8 py-3 border-b border-slate-700">
-        <div className="flex items-center justify-between overflow-x-auto">
-          <div className="flex gap-8">
-            <div>
-              <span className="text-xs text-gray-400">VN Index</span>
-              <p className="text-sm font-bold text-white">1,902.93 <span className="text-red-400">△ (25.00)</span></p>
-            </div>
-            <div>
-              <span className="text-xs text-gray-400">VN30-Index</span>
-              <p className="text-sm font-bold text-white">2,080.21 <span className="text-green-400">△ (8.97 0.43%)</span></p>
-            </div>
-            <div>
-              <span className="text-xs text-gray-400">HNX-Index</span>
-              <p className="text-sm font-bold text-white">252.05 <span className="text-green-400">△ (0.97 0.39%)</span></p>
-            </div>
-            <div>
-              <span className="text-xs text-gray-400">HNX30-Index</span>
-              <p className="text-sm font-bold text-white">— </p>
-            </div>
-            <div>
-              <span className="text-xs text-gray-400">UPCOM-Index</span>
-              <p className="text-sm font-bold text-white">121.24 <span className="text-green-400">△ (0.68 0.55%)</span></p>
-            </div>
+        <div className="flex items-center justify-between overflow-x-auto gap-8">
+          <div className="flex gap-8 text-xs">
+            <span className="text-white whitespace-nowrap">
+              <span className="text-gray-400">VN Index:</span> <span className="font-bold">1,902.93</span> <span className="text-red-400">△ (25.60 1.36%)</span>
+            </span>
+            <span className="text-white whitespace-nowrap">
+              <span className="text-gray-400">VN30-Index:</span> <span className="font-bold">2,080.21</span> <span className="text-green-400">△ (8.97 0.43%)</span>
+            </span>
+            <span className="text-white whitespace-nowrap">
+              <span className="text-gray-400">HNX-Index:</span> <span className="font-bold">252.85</span> <span className="text-green-400">△ (0.97 0.39%)</span>
+            </span>
+            <span className="text-white whitespace-nowrap">
+              <span className="text-gray-400">HNX30-Index:</span> <span className="font-bold">—</span>
+            </span>
+            <span className="text-white whitespace-nowrap">
+              <span className="text-gray-400">UPCOM-Index:</span> <span className="font-bold">121.24</span> <span className="text-green-400">△ (0.68 0.55%)</span>
+            </span>
           </div>
         </div>
       </div>
