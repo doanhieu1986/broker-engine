@@ -16,7 +16,7 @@ export function BrokerGrowthTab() {
 
   const internalTabs = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'recommendation', label: 'Recommendation' },
+    { id: 'recommendation', label: 'Khuyến nghị' },
     { id: 'customer-overview', label: 'Tổng quan khách hàng' },
     { id: 'customer-list', label: 'Danh sách khách hàng' },
     { id: 'todo-list', label: 'To-do list' },
