@@ -1,4 +1,5 @@
 import { BrokerGrowthTab } from '../components/broker-growth/BrokerGrowthTab';
+import { BrokerTopNavigation } from '../components/broker-growth/BrokerTopNavigation';
 
 export function BrokerManagementPage() {
   return (
@@ -32,7 +33,11 @@ export function BrokerManagementPage() {
       </div>
 
       {/* Content Area */}
-      <div className="px-8 py-6">
+      <div className="px-8 py-6 space-y-6">
+        {/* Top Navigation Tabs */}
+        <BrokerTopNavigation />
+
+        {/* Internal Broker Growth Tabs */}
         <BrokerGrowthTab />
       </div>
     </div>
