@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { DashboardTabContent } from './DashboardTabContent';
 import { CustomersTabContent } from './CustomersTabContent';
 import { ReportsTabContent } from './ReportsTabContent';
+import { KPIManagementTabContent } from './KPIManagementTabContent';
+import { OpportunitiesTabContent } from './OpportunitiesTabContent';
 import { PerformanceTabContent } from './PerformanceTabContent';
 
-type InternalTabType = 'dashboard' | 'customers' | 'reports' | 'performance';
+type InternalTabType = 'dashboard' | 'customers' | 'reports' | 'kpi' | 'opportunities' | 'performance';
 
 export function BrokerGrowthTab() {
   const [activeInternalTab, setActiveInternalTab] = useState<InternalTabType>('dashboard');
@@ -13,6 +15,8 @@ export function BrokerGrowthTab() {
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'customers', label: 'Quản lý khách hàng' },
     { id: 'reports', label: 'Báo cáo' },
+    { id: 'kpi', label: 'Quản lý KPI' },
+    { id: 'opportunities', label: 'Opportunities' },
     { id: 'performance', label: 'Hiệu suất' },
   ];
 
@@ -48,6 +52,16 @@ export function BrokerGrowthTab() {
       {/* Báo cáo Tab */}
       {activeInternalTab === ('reports' as InternalTabType) && (
         <ReportsTabContent />
+      )}
+
+      {/* Quản lý KPI Tab */}
+      {activeInternalTab === ('kpi' as InternalTabType) && (
+        <KPIManagementTabContent />
+      )}
+
+      {/* Opportunities Tab */}
+      {activeInternalTab === ('opportunities' as InternalTabType) && (
+        <OpportunitiesTabContent />
       )}
 
       {/* Hiệu suất Tab */}
