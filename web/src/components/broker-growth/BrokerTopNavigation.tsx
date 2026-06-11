@@ -77,8 +77,8 @@ export function BrokerTopNavigation({ activeTab, onTabChange }: BrokerTopNavigat
         </div>
       </div>
 
-      {/* Tab Content */}
-      {getTabContent()}
+      {/* Tab Content - Only show for non-Broker Growth tabs */}
+      {activeTab !== 'broker-growth' && getTabContent()}
     </div>
   );
 }
