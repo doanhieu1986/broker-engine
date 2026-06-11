@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { mockCustomers } from '../../data/mockData';
 import { useUser } from '../../context/UserContext';
 
+type InternalTabType = 'dashboard' | 'customers' | 'reports' | 'performance';
+
 export function BrokerGrowthTab() {
   const { role, user } = useUser();
+  const [activeInternalTab, setActiveInternalTab] = useState<InternalTabType>('dashboard');
 
   // VCK Scoring function (0-103 scale)
   const scoreForVCK = (c: any): number => {
@@ -90,8 +94,35 @@ export function BrokerGrowthTab() {
     };
   })();
 
+  const internalTabs = [
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'customers', label: 'Quản lý khách hàng' },
+    { id: 'reports', label: 'Báo cáo' },
+    { id: 'performance', label: 'Hiệu suất' },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-0">
+      {/* Internal Tab Navigation */}
+      <div className="flex gap-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 mb-6">
+        {internalTabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveInternalTab(tab.id as InternalTabType)}
+            className={`px-4 py-3 font-medium text-sm border-b-2 transition-all ${
+              activeInternalTab === tab.id
+                ? 'border-b-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-b-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeInternalTab === 'dashboard' && (
+      <div className="space-y-6">
       {/* VCK Opportunities Report */}
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
@@ -368,6 +399,19 @@ export function BrokerGrowthTab() {
           </div>
         )}
       </div>
+      </div>
+      )}
+
+      {/* Other Tabs */}
+      {(['customers', 'reports', 'performance'] as InternalTabType[]).includes(activeInternalTab) && (
+        <div className="flex items-center justify-center h-96 text-gray-500 dark:text-gray-400">
+          <p>
+            {activeInternalTab === ('customers' as InternalTabType) && 'Quản lý khách hàng - Coming soon'}
+            {activeInternalTab === ('reports' as InternalTabType) && 'Báo cáo - Coming soon'}
+            {activeInternalTab === ('performance' as InternalTabType) && 'Hiệu suất - Coming soon'}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
