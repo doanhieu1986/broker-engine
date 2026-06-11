@@ -81,7 +81,7 @@ export function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) {
               className="h-8 w-auto dark:invert dark:brightness-110"
             />
             <h1 className="text-lg font-bold text-accent-600 dark:text-accent-300 hidden sm:block">
-              Broker
+              ProDesk
             </h1>
           </div>
         </div>
