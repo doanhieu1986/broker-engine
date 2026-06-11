@@ -1,6 +1,4 @@
-import { useState } from 'react';
-
-type TopTabType = 'broker-growth' | 'trading' | 'customers' | 'agreements' | 'account-management' | 'market-summary' | 'stock-info' | 'customer-management' | 'staff-management' | 'account-registration';
+export type TopTabType = 'trading' | 'customers' | 'agreements' | 'account-management' | 'market-summary' | 'stock-info' | 'customer-management' | 'staff-management' | 'account-registration' | 'broker-growth';
 
 interface TopTab {
   id: TopTabType;
@@ -9,8 +7,12 @@ interface TopTab {
   icon?: React.ReactNode;
 }
 
-export function BrokerTopNavigation() {
-  const [activeTopTab, setActiveTopTab] = useState<TopTabType>('trading');
+interface BrokerTopNavigationProps {
+  activeTab: TopTabType;
+  onTabChange: (tab: TopTabType) => void;
+}
+
+export function BrokerTopNavigation({ activeTab, onTabChange }: BrokerTopNavigationProps) {
 
   const topTabs: TopTab[] = [
     { id: 'trading', label: 'Giao dịch', shortcut: 'F12' },
@@ -42,10 +44,10 @@ export function BrokerTopNavigation() {
     return (
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-lg min-h-96">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-          {tabLabels[activeTopTab]}
+          {tabLabels[activeTab]}
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Nội dung tab "{tabLabels[activeTopTab]}" sẽ được thêm ở đây
+          Nội dung tab "{tabLabels[activeTab]}" sẽ được thêm ở đây
         </p>
       </div>
     );
@@ -60,9 +62,9 @@ export function BrokerTopNavigation() {
             {topTabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTopTab(tab.id)}
+                onClick={() => onTabChange(tab.id)}
                 className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-all duration-200 border-b-2 ${
-                  activeTopTab === tab.id
+                  activeTab === tab.id
                     ? 'border-b-blue-500 text-blue-600 dark:text-blue-400'
                     : 'border-b-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                 }`}

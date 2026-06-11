@@ -1,7 +1,12 @@
+import { useState } from 'react';
 import { BrokerGrowthTab } from '../components/broker-growth/BrokerGrowthTab';
 import { BrokerTopNavigation } from '../components/broker-growth/BrokerTopNavigation';
 
+type TopTabType = 'trading' | 'customers' | 'agreements' | 'account-management' | 'market-summary' | 'stock-info' | 'customer-management' | 'staff-management' | 'account-registration' | 'broker-growth';
+
 export function BrokerManagementPage() {
+  const [activeTopTab, setActiveTopTab] = useState<TopTabType>('trading');
+
   return (
     <div className="space-y-0 -mx-8 -mt-8">
       {/* Market Indices Bar */}
@@ -35,10 +40,12 @@ export function BrokerManagementPage() {
       {/* Content Area */}
       <div className="px-8 py-6 space-y-6">
         {/* Top Navigation Tabs */}
-        <BrokerTopNavigation />
+        <BrokerTopNavigation activeTab={activeTopTab} onTabChange={setActiveTopTab} />
 
-        {/* Internal Broker Growth Tabs */}
-        <BrokerGrowthTab />
+        {/* Internal Broker Growth Tabs - Only show when Broker Growth tab is active */}
+        {activeTopTab === 'broker-growth' && (
+          <BrokerGrowthTab />
+        )}
       </div>
     </div>
   );
