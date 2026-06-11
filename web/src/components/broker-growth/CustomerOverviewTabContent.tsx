@@ -1,5 +1,5 @@
 import { CustomersTabContent as OriginalCustomers } from './CustomersTabContent';
 
 export function CustomerOverviewTabContent() {
-  return <OriginalCustomers initialTab="overview" />;
+  return <OriginalCustomers initialTab="overview" hideTabNavigation={true} />;
 }

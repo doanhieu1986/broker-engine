@@ -7,9 +7,10 @@ import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Ba
 
 interface CustomersTabContentProps {
   initialTab?: 'recommendation' | 'overview' | 'list' | 'todo';
+  hideTabNavigation?: boolean;
 }
 
-export function CustomersTabContent({ initialTab = 'recommendation' }: CustomersTabContentProps = {}) {
+export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavigation = false }: CustomersTabContentProps = {}) {
   const navigate = useNavigate();
   const location = useLocation();
   const { role, user } = useUser();
@@ -347,7 +348,8 @@ export function CustomersTabContent({ initialTab = 'recommendation' }: Customers
 
   return (
     <div className="space-y-6">
-      {/* Tabs */}
+      {/* Tabs - Only show if not hideTabNavigation */}
+      {!hideTabNavigation && (
       <div className="bg-white dark:bg-slate-950 rounded-lg shadow">
         <div className="flex gap-6 px-6 py-0 border-b border-slate-200 dark:border-slate-700">
           <button
@@ -392,6 +394,7 @@ export function CustomersTabContent({ initialTab = 'recommendation' }: Customers
           </button>
         </div>
       </div>
+      )}
 
       {/* Recommendation Tab */}
       {pageTab === 'recommendation' && (
