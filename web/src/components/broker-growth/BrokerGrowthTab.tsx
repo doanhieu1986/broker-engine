@@ -22,7 +22,7 @@ export function BrokerGrowthTab() {
     { id: 'todo-list', label: 'To-do list' },
     { id: 'reports', label: 'Báo cáo' },
     { id: 'kpi', label: 'Quản lý KPI' },
-    { id: 'opportunities', label: 'Opportunities' },
+    { id: 'opportunities', label: 'Đại chúng hóa VCK' },
     { id: 'performance', label: 'Hiệu suất' },
   ];
 
