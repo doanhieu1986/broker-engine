@@ -5,11 +5,15 @@ import { mockCustomers } from '../../data/mockData';
 import { useUser } from '../../context/UserContext';
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Treemap } from 'recharts';
 
-export function CustomersTabContent() {
+interface CustomersTabContentProps {
+  initialTab?: 'recommendation' | 'overview' | 'list' | 'todo';
+}
+
+export function CustomersTabContent({ initialTab = 'recommendation' }: CustomersTabContentProps = {}) {
   const navigate = useNavigate();
   const location = useLocation();
   const { role, user } = useUser();
-  const [pageTab, setPageTab] = useState('recommendation');
+  const [pageTab, setPageTab] = useState(initialTab);
   const [selectedActionTitle, setSelectedActionTitle] = useState<string | null>(null);
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedClassification, setSelectedClassification] = useState('');

@@ -1,19 +1,25 @@
 import { useState } from 'react';
 import { DashboardTabContent } from './DashboardTabContent';
-import { CustomersTabContent } from './CustomersTabContent';
+import { RecommendationTabContent } from './RecommendationTabContent';
+import { CustomerOverviewTabContent } from './CustomerOverviewTabContent';
+import { CustomerListTabContent } from './CustomerListTabContent';
+import { TodoListTabContent } from './TodoListTabContent';
 import { ReportsTabContent } from './ReportsTabContent';
 import { KPIManagementTabContent } from './KPIManagementTabContent';
 import { OpportunitiesTabContent } from './OpportunitiesTabContent';
 import { PerformanceTabContent } from './PerformanceTabContent';
 
-type InternalTabType = 'dashboard' | 'customers' | 'reports' | 'kpi' | 'opportunities' | 'performance';
+type InternalTabType = 'dashboard' | 'recommendation' | 'customer-overview' | 'customer-list' | 'todo-list' | 'reports' | 'kpi' | 'opportunities' | 'performance';
 
 export function BrokerGrowthTab() {
   const [activeInternalTab, setActiveInternalTab] = useState<InternalTabType>('dashboard');
 
   const internalTabs = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'customers', label: 'Quản lý khách hàng' },
+    { id: 'recommendation', label: 'Recommendation' },
+    { id: 'customer-overview', label: 'Tổng quan khách hàng' },
+    { id: 'customer-list', label: 'Danh sách khách hàng' },
+    { id: 'todo-list', label: 'To-do list' },
     { id: 'reports', label: 'Báo cáo' },
     { id: 'kpi', label: 'Quản lý KPI' },
     { id: 'opportunities', label: 'Opportunities' },
@@ -44,9 +50,24 @@ export function BrokerGrowthTab() {
         <DashboardTabContent />
       )}
 
-      {/* Quản lý khách hàng Tab */}
-      {activeInternalTab === ('customers' as InternalTabType) && (
-        <CustomersTabContent />
+      {/* Recommendation Tab */}
+      {activeInternalTab === ('recommendation' as InternalTabType) && (
+        <RecommendationTabContent />
+      )}
+
+      {/* Customer Overview Tab */}
+      {activeInternalTab === ('customer-overview' as InternalTabType) && (
+        <CustomerOverviewTabContent />
+      )}
+
+      {/* Customer List Tab */}
+      {activeInternalTab === ('customer-list' as InternalTabType) && (
+        <CustomerListTabContent />
+      )}
+
+      {/* Todo List Tab */}
+      {activeInternalTab === ('todo-list' as InternalTabType) && (
+        <TodoListTabContent />
       )}
 
       {/* Báo cáo Tab */}
