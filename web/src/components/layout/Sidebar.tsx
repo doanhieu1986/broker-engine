@@ -1,4 +1,4 @@
-import { Users, FileText, TrendingUp, Settings, Home, BarChart3 } from 'lucide-react';
+import { Settings, BarChart3 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUser, type Role } from '../../context/UserContext';
 
@@ -21,29 +21,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const navItems: NavItem[] = [
     {
-      label: 'Dashboard',
-      icon: <Home size={20} />,
-      href: '/',
-    },
-    {
       label: 'Broker Growth',
       icon: <BarChart3 size={20} />,
       href: '/broker-management',
-    },
-    {
-      label: 'Quản lý khách hàng',
-      icon: <Users size={20} />,
-      href: '/customers',
-    },
-    {
-      label: 'Báo cáo',
-      icon: <FileText size={20} />,
-      href: '/reports',
-    },
-    {
-      label: 'Hiệu suất',
-      icon: <TrendingUp size={20} />,
-      href: '/performance',
     },
   ];
 

@@ -1,6 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
-import { DashboardPage } from './pages/DashboardPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { PerformancePage } from './pages/PerformancePage';
@@ -14,7 +13,7 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
+            <Route path="/" element={<Navigate to="/broker-management" replace />} />
             <Route path="/customers" element={<CustomersPage />} />
             <Route path="/brokers/:brokerCode" element={<BrokerDetailPage />} />
             <Route path="/reports" element={<ReportsPage />} />
