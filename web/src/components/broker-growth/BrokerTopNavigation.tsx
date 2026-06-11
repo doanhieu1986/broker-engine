@@ -17,7 +17,7 @@ export function BrokerTopNavigation({ activeTab, onTabChange }: BrokerTopNavigat
   const topTabs: TopTab[] = [
     { id: 'trading', label: 'Giao dịch', shortcut: 'F12' },
     { id: 'customers', label: 'Khách hàng', shortcut: 'F9' },
-    { id: 'agreements', label: 'Thổ thuận', shortcut: 'F8' },
+    { id: 'agreements', label: 'Thỏa thuận', shortcut: 'F8' },
     { id: 'account-management', label: 'Quản trị tài khoản', shortcut: 'F5' },
     { id: 'market-summary', label: 'Market Summary', shortcut: 'F4' },
     { id: 'stock-info', label: 'Stock Info', shortcut: 'F2' },
@@ -31,7 +31,7 @@ export function BrokerTopNavigation({ activeTab, onTabChange }: BrokerTopNavigat
     const tabLabels: Record<TopTabType, string> = {
       'trading': 'Giao dịch',
       'customers': 'Khách hàng',
-      'agreements': 'Thổ thuận',
+      'agreements': 'Thỏa thuận',
       'account-management': 'Quản trị tài khoản',
       'market-summary': 'Market Summary',
       'stock-info': 'Stock Info',
