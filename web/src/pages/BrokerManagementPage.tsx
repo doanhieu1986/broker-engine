@@ -33,14 +33,19 @@ export function BrokerManagementPage() {
       </div>
 
       {/* Content Area */}
-      <div className="px-8 py-6 space-y-6">
-        {/* Top Navigation Tabs */}
-        <BrokerTopNavigation activeTab={activeTopTab} onTabChange={setActiveTopTab} />
+      <div className="space-y-0">
+        {/* Top Navigation Tabs - Full width with consistent padding */}
+        <div className="px-8 py-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+          <BrokerTopNavigation activeTab={activeTopTab} onTabChange={setActiveTopTab} />
+        </div>
 
-        {/* Internal Broker Growth Tabs - Only show when Broker Growth tab is active */}
-        {activeTopTab === 'broker-growth' && (
-          <BrokerGrowthTab />
-        )}
+        {/* Tab Content Area */}
+        <div className="px-8 py-6 space-y-6">
+          {/* Internal Broker Growth Tabs - Only show when Broker Growth tab is active */}
+          {activeTopTab === 'broker-growth' && (
+            <BrokerGrowthTab />
+          )}
+        </div>
       </div>
     </div>
   );
