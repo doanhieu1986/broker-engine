@@ -56,24 +56,22 @@ export function BrokerTopNavigation({ activeTab, onTabChange }: BrokerTopNavigat
   return (
     <div className="space-y-6">
       {/* Top Navigation Tabs */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg">
-        <div className="overflow-x-auto">
-          <div className="flex gap-0 px-6 py-4 min-w-max">
-            {topTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-all duration-200 border-b-2 ${
-                  activeTab === tab.id
-                    ? 'border-b-blue-500 text-blue-600 dark:text-blue-400'
-                    : 'border-b-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
-                }`}
-              >
-                {tab.label}
-                {tab.shortcut && <span className="text-xs font-normal opacity-70"> ({tab.shortcut})</span>}
-              </button>
-            ))}
-          </div>
+      <div className="overflow-x-auto border-b border-slate-200 dark:border-slate-700">
+        <div className="flex gap-0 py-3 min-w-max">
+          {topTabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className={`px-4 py-0 font-medium text-sm whitespace-nowrap transition-all duration-200 border-b-2 ${
+                activeTab === tab.id
+                  ? 'border-b-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-b-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+              }`}
+            >
+              {tab.label}
+              {tab.shortcut && <span className="text-xs font-normal opacity-70"> ({tab.shortcut})</span>}
+            </button>
+          ))}
         </div>
       </div>
 

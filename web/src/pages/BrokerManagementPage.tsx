@@ -10,7 +10,7 @@ export function BrokerManagementPage() {
   return (
     <div className="space-y-0 -mx-8 -mt-8">
       {/* Market Indices Bar */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-8 py-3 border-b border-slate-700">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 py-3 border-b border-slate-700">
         <div className="flex items-center justify-between overflow-x-auto gap-8">
           <div className="flex gap-8 text-xs">
             <span className="text-white whitespace-nowrap">
@@ -35,12 +35,12 @@ export function BrokerManagementPage() {
       {/* Content Area */}
       <div className="space-y-0">
         {/* Top Navigation Tabs - Full width with consistent padding */}
-        <div className="px-8 py-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+        <div className="px-4 py-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
           <BrokerTopNavigation activeTab={activeTopTab} onTabChange={setActiveTopTab} />
         </div>
 
         {/* Tab Content Area */}
-        <div className="px-8 py-6 space-y-6">
+        <div className="px-4 py-6 space-y-6">
           {/* Internal Broker Growth Tabs - Only show when Broker Growth tab is active */}
           {activeTopTab === 'broker-growth' && (
             <BrokerGrowthTab />
