@@ -2,26 +2,24 @@ import { useState } from 'react';
 import { DashboardTabContent } from './DashboardTabContent';
 import { CustomerOverviewTabContent } from './CustomerOverviewTabContent';
 import { CustomerListTabContent } from './CustomerListTabContent';
-import { TodoListTabContent } from './TodoListTabContent';
 import { ReportsTabContent } from './ReportsTabContent';
 import { KPIManagementTabContent } from './KPIManagementTabContent';
 import { OpportunitiesTabContent } from './OpportunitiesTabContent';
 import { PerformanceTabContent } from './PerformanceTabContent';
 
-type InternalTabType = 'dashboard' | 'customer-overview' | 'customer-list' | 'todo-list' | 'reports' | 'kpi' | 'opportunities' | 'performance';
+type InternalTabType = 'dashboard' | 'opportunities' | 'customer-overview' | 'customer-list' | 'kpi' | 'performance' | 'reports';
 
 export function BrokerGrowthTab() {
   const [activeInternalTab, setActiveInternalTab] = useState<InternalTabType>('dashboard');
 
   const internalTabs = [
     { id: 'dashboard', label: 'Dashboard' },
+    { id: 'opportunities', label: 'Đại chúng hóa VCK' },
     { id: 'customer-overview', label: 'Tổng quan khách hàng' },
     { id: 'customer-list', label: 'Danh sách khách hàng' },
-    { id: 'todo-list', label: 'To-do list' },
-    { id: 'reports', label: 'Báo cáo' },
     { id: 'kpi', label: 'Quản lý KPI' },
-    { id: 'opportunities', label: 'Đại chúng hóa VCK' },
     { id: 'performance', label: 'Hiệu suất' },
+    { id: 'reports', label: 'Báo cáo' },
   ];
 
   return (
@@ -56,11 +54,6 @@ export function BrokerGrowthTab() {
       {/* Customer List Tab */}
       {activeInternalTab === ('customer-list' as InternalTabType) && (
         <CustomerListTabContent />
-      )}
-
-      {/* Todo List Tab */}
-      {activeInternalTab === ('todo-list' as InternalTabType) && (
-        <TodoListTabContent />
       )}
 
       {/* Báo cáo Tab */}
