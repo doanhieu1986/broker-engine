@@ -1,8 +1,13 @@
+import { useState } from 'react';
 import { mockCustomers } from '../../data/mockData';
 import { useUser } from '../../context/UserContext';
+import { RecommendationTabContent } from './RecommendationTabContent';
+
+type OpportunitiesInternalTab = 'recommendation' | 'summary';
 
 export function OpportunitiesTabContent() {
   const { role, user } = useUser();
+  const [activeInternalTab, setActiveInternalTab] = useState<OpportunitiesInternalTab>('summary');
 
   const scoreForVCK = (c: any): number => {
     let score = 0;
@@ -92,10 +97,42 @@ export function OpportunitiesTabContent() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-          Báo cáo tiềm năng mua VCK
-        </h2>
+      {/* Internal Tabs Navigation */}
+      <div className="flex gap-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+        <button
+          onClick={() => setActiveInternalTab('recommendation')}
+          className={`px-4 py-3 font-medium text-sm border-b-2 transition-all ${
+            activeInternalTab === 'recommendation'
+              ? 'border-b-blue-500 text-blue-600 dark:text-blue-400'
+              : 'border-b-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+          }`}
+        >
+          Khuyến nghị
+        </button>
+        <button
+          onClick={() => setActiveInternalTab('summary')}
+          className={`px-4 py-3 font-medium text-sm border-b-2 transition-all ${
+            activeInternalTab === 'summary'
+              ? 'border-b-blue-500 text-blue-600 dark:text-blue-400'
+              : 'border-b-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+          }`}
+        >
+          Tổng hợp
+        </button>
+      </div>
+
+      {/* Recommendation Tab */}
+      {activeInternalTab === 'recommendation' && (
+        <RecommendationTabContent />
+      )}
+
+      {/* Summary Tab */}
+      {activeInternalTab === 'summary' && (
+      <div className="space-y-6">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+            Báo cáo tiềm năng mua VCK
+          </h2>
 
         {role === 'Manager' ? (
           <div className="space-y-6">
@@ -358,6 +395,8 @@ export function OpportunitiesTabContent() {
           </div>
         )}
       </div>
+      </div>
+      )}
     </div>
   );
 }

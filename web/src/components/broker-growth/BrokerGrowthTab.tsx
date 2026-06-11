@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { DashboardTabContent } from './DashboardTabContent';
-import { RecommendationTabContent } from './RecommendationTabContent';
 import { CustomerOverviewTabContent } from './CustomerOverviewTabContent';
 import { CustomerListTabContent } from './CustomerListTabContent';
 import { TodoListTabContent } from './TodoListTabContent';
@@ -9,14 +8,13 @@ import { KPIManagementTabContent } from './KPIManagementTabContent';
 import { OpportunitiesTabContent } from './OpportunitiesTabContent';
 import { PerformanceTabContent } from './PerformanceTabContent';
 
-type InternalTabType = 'dashboard' | 'recommendation' | 'customer-overview' | 'customer-list' | 'todo-list' | 'reports' | 'kpi' | 'opportunities' | 'performance';
+type InternalTabType = 'dashboard' | 'customer-overview' | 'customer-list' | 'todo-list' | 'reports' | 'kpi' | 'opportunities' | 'performance';
 
 export function BrokerGrowthTab() {
   const [activeInternalTab, setActiveInternalTab] = useState<InternalTabType>('dashboard');
 
   const internalTabs = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'recommendation', label: 'Khuyến nghị' },
     { id: 'customer-overview', label: 'Tổng quan khách hàng' },
     { id: 'customer-list', label: 'Danh sách khách hàng' },
     { id: 'todo-list', label: 'To-do list' },
@@ -48,11 +46,6 @@ export function BrokerGrowthTab() {
       {/* Tab Content */}
       {activeInternalTab === 'dashboard' && (
         <DashboardTabContent />
-      )}
-
-      {/* Recommendation Tab */}
-      {activeInternalTab === ('recommendation' as InternalTabType) && (
-        <RecommendationTabContent />
       )}
 
       {/* Customer Overview Tab */}
