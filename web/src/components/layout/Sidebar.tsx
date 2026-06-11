@@ -19,6 +19,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
   const { role } = useUser();
 
+  // Hide sidebar on Broker Growth page
+  if (location.pathname === '/broker-management') {
+    return null;
+  }
+
   const navItems: NavItem[] = [
     {
       label: 'Broker Growth',
