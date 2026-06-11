@@ -5,6 +5,7 @@ import { CustomersPage } from './pages/CustomersPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { PerformancePage } from './pages/PerformancePage';
 import { BrokerDetailPage } from './pages/BrokerDetailPage';
+import { BrokerManagementPage } from './pages/BrokerManagementPage';
 import { UserProvider } from './context/UserContext';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route path="/brokers/:brokerCode" element={<BrokerDetailPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/performance" element={<PerformancePage />} />
+            <Route path="/broker-management" element={<BrokerManagementPage />} />
           </Routes>
         </Layout>
       </Router>

@@ -1,4 +1,4 @@
-import { Users, FileText, TrendingUp, Settings, Home } from 'lucide-react';
+import { Users, FileText, TrendingUp, Settings, Home, BarChart3 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUser, type Role } from '../../context/UserContext';
 
@@ -24,6 +24,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       label: 'Dashboard',
       icon: <Home size={20} />,
       href: '/',
+    },
+    {
+      label: 'Broker Growth',
+      icon: <BarChart3 size={20} />,
+      href: '/broker-management',
     },
     {
       label: 'Quản lý khách hàng',
