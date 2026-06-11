@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type TopTabType = 'trading' | 'customers' | 'agreements' | 'account-management' | 'market-summary' | 'stock-info' | 'customer-management' | 'staff-management' | 'account-registration';
+type TopTabType = 'broker-growth' | 'trading' | 'customers' | 'agreements' | 'account-management' | 'market-summary' | 'stock-info' | 'customer-management' | 'staff-management' | 'account-registration';
 
 interface TopTab {
   id: TopTabType;
@@ -10,7 +10,7 @@ interface TopTab {
 }
 
 export function BrokerTopNavigation() {
-  const [activeTopTab, setActiveTopTab] = useState<TopTabType>('customers');
+  const [activeTopTab, setActiveTopTab] = useState<TopTabType>('trading');
 
   const topTabs: TopTab[] = [
     { id: 'trading', label: 'Giao dịch', shortcut: 'F12' },
@@ -22,6 +22,7 @@ export function BrokerTopNavigation() {
     { id: 'customer-management', label: 'Quản trị khách hàng', shortcut: 'F6' },
     { id: 'staff-management', label: 'Quản trị nhân viên', shortcut: 'F7' },
     { id: 'account-registration', label: 'Đăng ký CS Tài khoản', shortcut: 'F10' },
+    { id: 'broker-growth', label: 'Broker Growth', shortcut: '' },
   ];
 
   const getTabContent = () => {
@@ -35,6 +36,7 @@ export function BrokerTopNavigation() {
       'customer-management': 'Quản trị khách hàng',
       'staff-management': 'Quản trị nhân viên',
       'account-registration': 'Đăng ký CS Tài khoản',
+      'broker-growth': 'Broker Growth',
     };
 
     return (
@@ -65,7 +67,8 @@ export function BrokerTopNavigation() {
                     : 'border-b-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                 }`}
               >
-                {tab.label} <span className="text-xs font-normal opacity-70">({tab.shortcut})</span>
+                {tab.label}
+                {tab.shortcut && <span className="text-xs font-normal opacity-70"> ({tab.shortcut})</span>}
               </button>
             ))}
           </div>
