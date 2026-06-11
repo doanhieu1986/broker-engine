@@ -14,30 +14,23 @@ export function BrokerManagementPage() {
 
   const tabs: Tab[] = [
     { id: 'trading', label: 'Giao dịch', shortcut: 'F12' },
-    { id: 'customers', label: 'Khách hàng', shortcut: 'F9' },
-    { id: 'contracts', label: 'Thỏa thuận', shortcut: 'F8' },
-    { id: 'accounts', label: 'Quản lý tài khoản', shortcut: 'F5' },
-    { id: 'market-summary', label: 'Market Summary', shortcut: 'F4' },
-    { id: 'stock-info', label: 'Stock Info', shortcut: 'F2' },
-    { id: 'customer-mgmt', label: 'Quản lý khách hàng', shortcut: 'F6' },
-    { id: 'staff-mgmt', label: 'Quản lý nhân viên', shortcut: 'F7' },
-    { id: 'account-register', label: 'Đăng ký CS tài khoản', shortcut: 'F10' },
-    { id: 'broker-growth', label: 'Broker Growth', shortcut: 'F11' },
+    { id: 'broker-growth', label: 'Broker Growth', shortcut: 'F1' },
   ];
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'broker-growth':
         return <BrokerGrowthTab />;
-      default:
+      case 'trading':
         return (
           <div className="flex items-center justify-center h-96">
             <div className="text-center">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">Tab content coming soon</p>
-              <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">{tabs.find(t => t.id === activeTab)?.label}</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">Giao dịch - Coming soon</p>
             </div>
           </div>
         );
+      default:
+        return null;
     }
   };
 
