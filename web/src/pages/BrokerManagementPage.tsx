@@ -23,7 +23,7 @@ export function BrokerManagementPage() {
               <span className="text-gray-400">HNX-Index:</span> <span className="font-bold">252.85</span> <span className="text-green-400">△ (0.97 0.39%)</span>
             </span>
             <span className="text-white whitespace-nowrap">
-              <span className="text-gray-400">HNX30-Index:</span> <span className="font-bold">—</span>
+              <span className="text-gray-400">HNX30-Index:</span> <span className="font-bold">1,245.67</span> <span className="text-green-400">△ (12.34 1.00%)</span>
             </span>
             <span className="text-white whitespace-nowrap">
               <span className="text-gray-400">UPCOM-Index:</span> <span className="font-bold">121.24</span> <span className="text-green-400">△ (0.68 0.55%)</span>
