@@ -65,10 +65,7 @@ export function BrokerTopNavigation() {
                     : 'border-b-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                 }`}
               >
-                <div className="flex flex-col items-center gap-1">
-                  <span>{tab.label}</span>
-                  <span className="text-xs font-normal opacity-70">{tab.shortcut}</span>
-                </div>
+                {tab.label} <span className="text-xs font-normal opacity-70">({tab.shortcut})</span>
               </button>
             ))}
           </div>
