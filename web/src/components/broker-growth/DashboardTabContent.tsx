@@ -63,38 +63,6 @@ const getChartData = (period: PeriodFilter) => {
   }
 };
 
-// Custom shape renderer for Net line with color-coding based on value
-const NetLineShape = (props: any) => {
-  const { points } = props;
-  if (!points || points.length < 2) return null;
-
-  return (
-    <g>
-      {points.map((point: any, index: number) => {
-        if (index === 0) return null;
-        const prevPoint = points[index - 1];
-        const isPositive = point.payload?.net >= 0;
-        const color = isPositive ? '#10b981' : '#ef4444';
-
-        return (
-          <line
-            key={`net-segment-${index}`}
-            x1={prevPoint.x}
-            y1={prevPoint.y}
-            x2={point.x}
-            y2={point.y}
-            stroke={color}
-            strokeWidth={3}
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        );
-      })}
-    </g>
-  );
-};
-
 export function DashboardTabContent() {
   const { role } = useUser();
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('month');
@@ -303,7 +271,8 @@ export function DashboardTabContent() {
               <Legend />
               <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" />
               <Bar dataKey="rút" name="Rút tiền (tỷ đ)" fill="#ef4444" />
-              <Line type="linear" dataKey="net" name="Net (tỷ đ)" stroke="#10b981" strokeWidth={3} dot={false} shape={<NetLineShape />} isAnimationActive={false} />
+              <Line type="monotone" dataKey="netPos" name="Net (tỷ đ)" stroke="#10b981" strokeWidth={3} dot={false} connectNulls={true} />
+              <Line type="monotone" dataKey="netNeg" stroke="#ef4444" strokeWidth={3} dot={false} connectNulls={true} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
