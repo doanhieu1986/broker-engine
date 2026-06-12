@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Users, UserPlus, DollarSign, Activity, Zap, CreditCard, AlertCircle } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 
 type PeriodFilter = 'day' | 'week' | 'month' | 'quarter' | 'year';
@@ -49,21 +48,21 @@ export function DashboardTabContent() {
     {
       label: 'Khách hàng quản lý',
       value: latestData.customers,
-      icon: Users,
+      abbr: 'KH QL',
       color: 'from-blue-500 to-blue-600',
       percent: calculatePercent(latestData.customers, previousData.customers),
     },
     {
       label: 'Khách hàng active',
       value: latestData.active,
-      icon: Activity,
+      abbr: 'Active',
       color: 'from-green-500 to-green-600',
       percent: calculatePercent(latestData.active, previousData.active),
     },
     {
       label: 'Khách hàng mở mới',
       value: latestData.newCustomers,
-      icon: UserPlus,
+      abbr: 'Mới',
       color: 'from-purple-500 to-purple-600',
       percent: calculatePercent(latestData.newCustomers, previousData.newCustomers),
     },
@@ -71,7 +70,7 @@ export function DashboardTabContent() {
       label: 'Sức mua',
       value: latestData.nav,
       unit: 'tỷ đồng',
-      icon: Zap,
+      abbr: 'Sức mua',
       color: 'from-yellow-500 to-yellow-600',
       percent: calculatePercent(latestData.nav, previousData.nav),
     },
@@ -79,7 +78,7 @@ export function DashboardTabContent() {
       label: 'Tổng NAV',
       value: latestData.nav,
       unit: 'tỷ đồng',
-      icon: DollarSign,
+      abbr: 'NAV',
       color: 'from-purple-500 to-purple-600',
       percent: calculatePercent(latestData.nav, previousData.nav),
     },
@@ -87,7 +86,7 @@ export function DashboardTabContent() {
       label: 'Giá trị giao dịch',
       value: latestData.tradingValue,
       unit: 'tỷ đồng',
-      icon: TrendingUp,
+      abbr: 'GD',
       color: 'from-orange-500 to-orange-600',
       percent: calculatePercent(latestData.tradingValue, previousData.tradingValue),
     },
@@ -95,7 +94,7 @@ export function DashboardTabContent() {
       label: 'Net (Nộp - Rút)',
       value: latestData.nộp - latestData.rút,
       unit: 'tỷ đồng',
-      icon: CreditCard,
+      abbr: 'Net',
       color: 'from-green-500 to-green-600',
       percent: calculatePercent(latestData.nộp - latestData.rút, previousData.nộp - previousData.rút),
     },
@@ -103,7 +102,7 @@ export function DashboardTabContent() {
       label: 'Dư nợ',
       value: latestData.debt,
       unit: 'tỷ đồng',
-      icon: AlertCircle,
+      abbr: 'Nợ',
       color: 'from-red-500 to-red-600',
       percent: calculatePercent(latestData.debt, previousData.debt),
     },
@@ -151,7 +150,6 @@ export function DashboardTabContent() {
       {/* KPI Cards */}
       <div className="grid grid-cols-8 gap-3">
         {metrics.map((metric) => {
-          const Icon = metric.icon;
           const isPositive = parseFloat(metric.percent) >= 0;
           const percentColor = isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
           const percentBg = isPositive ? 'bg-green-100 dark:bg-green-900/20' : 'bg-red-100 dark:bg-red-900/20';
@@ -159,8 +157,8 @@ export function DashboardTabContent() {
           return (
             <div key={metric.label} className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-2">
-                <div className={`p-2 rounded-md bg-gradient-to-br ${metric.color} text-white`}>
-                  <Icon size={16} />
+                <div className={`px-2 py-1 rounded-md bg-gradient-to-br ${metric.color} text-white text-xs font-semibold`}>
+                  {metric.abbr}
                 </div>
                 <div className={`px-1 py-0.5 rounded-full text-xs font-semibold ${percentBg} ${percentColor}`}>
                   {isPositive ? '↑' : '↓'} {Math.abs(parseFloat(metric.percent))}%
