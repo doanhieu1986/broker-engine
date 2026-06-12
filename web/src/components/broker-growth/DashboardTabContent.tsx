@@ -2,11 +2,23 @@ import { useState } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useUser } from '../../context/UserContext';
 
-type PeriodFilter = 'day' | 'week' | 'month' | 'quarter' | 'year';
+type PeriodFilter = 'week' | 'month' | 'quarter' | 'year';
 type ViewMode = 'company' | 'team';
 
-// Mock data for 12 periods (months/quarters/etc)
-const chartData = [
+// Mock data for different periods
+const weekData = Array.from({ length: 52 }, (_, i) => ({
+  period: `W${i + 1}`,
+  customers: 900 + i * 10,
+  active: 800 + i * 8,
+  newCustomers: 20 + Math.floor(i / 4),
+  nav: 350 + i * 10,
+  tradingValue: 900 + i * 15,
+  nộp: 40 + i,
+  rút: 10 + Math.floor(i / 5),
+  debt: 300 - i * 2,
+}));
+
+const monthData = [
   { period: 'T1', customers: 1100, active: 980, newCustomers: 45, nav: 450, tradingValue: 1200, nộp: 85, rút: 20, debt: 250 },
   { period: 'T2', customers: 1120, active: 1000, newCustomers: 50, nav: 480, tradingValue: 1350, nộp: 95, rút: 25, debt: 240 },
   { period: 'T3', customers: 1150, active: 1030, newCustomers: 55, nav: 520, tradingValue: 1450, nộp: 110, rút: 28, debt: 235 },
@@ -21,14 +33,40 @@ const chartData = [
   { period: 'T12', customers: 1450, active: 1300, newCustomers: 88, nav: 900, tradingValue: 2150, nộp: 220, rút: 50, debt: 175 },
 ];
 
+const quarterData = [
+  { period: 'Q1', customers: 1120, active: 1003, newCustomers: 50, nav: 485, tradingValue: 1333, nộp: 96, rút: 25, debt: 242 },
+  { period: 'Q2', customers: 1213, active: 1090, newCustomers: 61, nav: 590, tradingValue: 1517, nộp: 121, rút: 32, debt: 232 },
+  { period: 'Q3', customers: 1313, active: 1180, newCustomers: 66, nav: 673, tradingValue: 1717, nộp: 128, rút: 40, debt: 224 },
+  { period: 'Q4', customers: 1417, active: 1270, newCustomers: 82, nav: 850, tradingValue: 2050, nộp: 200, rút: 48, debt: 185 },
+];
+
+const yearData = [
+  { period: '2024', customers: 1250, active: 1125, newCustomers: 65, nav: 635, tradingValue: 1650, nộp: 140, rút: 35, debt: 220 },
+  { period: '2025', customers: 1417, active: 1270, newCustomers: 82, nav: 850, tradingValue: 2050, nộp: 200, rút: 48, debt: 175 },
+];
+
+const getChartData = (period: PeriodFilter) => {
+  switch (period) {
+    case 'week':
+      return weekData;
+    case 'month':
+      return monthData;
+    case 'quarter':
+      return quarterData;
+    case 'year':
+      return yearData;
+  }
+};
+
 export function DashboardTabContent() {
   const { role } = useUser();
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('month');
   const [viewMode, setViewMode] = useState<ViewMode>('company');
 
-  // Get latest data (end of period)
-  const latestData = chartData[chartData.length - 1];
-  const previousData = chartData[chartData.length - 2];
+  // Get data for current period filter
+  const currentData = getChartData(periodFilter);
+  const latestData = currentData[currentData.length - 1];
+  const previousData = currentData[currentData.length - 2];
 
   // Calculate change percentage
   const calculatePercent = (current: number, previous: number): string => {
@@ -37,12 +75,11 @@ export function DashboardTabContent() {
   };
 
   const periodLabel = {
-    day: 'Ngày',
     week: 'Tuần',
     month: 'Tháng',
     quarter: 'Quý',
     year: 'Năm',
-  };
+  } as const;
 
   const metrics = [
     {
@@ -113,7 +150,7 @@ export function DashboardTabContent() {
       {/* Filters */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex gap-2">
-          {(['day', 'week', 'month', 'quarter', 'year'] as PeriodFilter[]).map((period) => (
+          {(['week', 'month', 'quarter', 'year'] as PeriodFilter[]).map((period) => (
             <button
               key={period}
               onClick={() => setPeriodFilter(period)}
@@ -183,7 +220,7 @@ export function DashboardTabContent() {
             👥 Khách hàng (Tổng, Active, Mới)
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
+            <LineChart data={currentData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
@@ -202,7 +239,7 @@ export function DashboardTabContent() {
             💰 Tổng NAV & Giá trị giao dịch
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
+            <LineChart data={currentData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" yAxisId="left" />
@@ -221,7 +258,7 @@ export function DashboardTabContent() {
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
+            <BarChart data={currentData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
@@ -239,7 +276,7 @@ export function DashboardTabContent() {
             📉 Tổng Dư nợ
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
+            <LineChart data={currentData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
