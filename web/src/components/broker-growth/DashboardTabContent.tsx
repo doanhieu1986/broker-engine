@@ -63,6 +63,17 @@ const getChartData = (period: PeriodFilter) => {
   }
 };
 
+// Custom shape for Net bar with dynamic colors
+const NetBar = (props: any) => {
+  const { x, y, width, height, payload } = props;
+  const isPositive = payload.net >= 0;
+  const barColor = isPositive ? '#10b981' : '#ef4444';
+
+  return (
+    <rect x={x} y={y} width={width} height={height} fill={barColor} rx={4} ry={4} />
+  );
+};
+
 export function DashboardTabContent() {
   const { role } = useUser();
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('month');
@@ -272,9 +283,8 @@ export function DashboardTabContent() {
               <Legend />
               <Bar yAxisId="left" dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" />
               <Bar yAxisId="left" dataKey="rút" name="Rút tiền (tỷ đ)" fill="#ef4444" />
-              <Bar yAxisId="right" dataKey="netPos" name="Net Dương (tỷ đ)" fill="#059669" stackId="net" />
-              <Bar yAxisId="right" dataKey="netNeg" name="Net Âm (tỷ đ)" fill="#dc2626" stackId="net" />
-              <ReferenceLine yAxisId="right" y={0} stroke="#9ca3af" strokeDasharray="3 3" />
+              <Bar yAxisId="right" dataKey="net" name="Net (tỷ đ)" shape={<NetBar />} />
+              <ReferenceLine yAxisId="right" y={0} stroke="#9ca3af" strokeDasharray="3 3" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
