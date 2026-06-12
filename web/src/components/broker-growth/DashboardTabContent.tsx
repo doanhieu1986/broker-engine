@@ -271,7 +271,8 @@ export function DashboardTabContent() {
               <Legend />
               <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" />
               <Bar dataKey="rút" name="Rút tiền (tỷ đ)" fill="#ef4444" />
-              <Line type="monotone" dataKey="net" name="Net (tỷ đ)" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6' }} />
+              <Line type="linear" dataKey="netPos" name="Net Dương (tỷ đ)" stroke="#10b981" strokeWidth={3} dot={false} connectNulls={true} />
+              <Line type="linear" dataKey="netNeg" name="Net Âm (tỷ đ)" stroke="#ef4444" strokeWidth={3} dot={false} connectNulls={true} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
