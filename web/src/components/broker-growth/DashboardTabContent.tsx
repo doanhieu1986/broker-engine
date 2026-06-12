@@ -156,21 +156,19 @@ export function DashboardTabContent() {
 
           return (
             <div key={metric.label} className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex justify-end mb-1">
-                <div className={`px-1 py-0.5 rounded-full text-xs font-semibold ${percentBg} ${percentColor}`}>
-                  {isPositive ? '↑' : '↓'} {Math.abs(parseFloat(metric.percent))}%
-                </div>
-              </div>
-              <div className="mb-1.5">
-                <div className={`px-2 py-1 rounded-md bg-gradient-to-br ${metric.color} text-white text-xs font-semibold whitespace-nowrap`}>
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <div className={`px-2 py-1 rounded-md bg-gradient-to-br ${metric.color} text-white text-xs font-semibold whitespace-nowrap flex-shrink-0`}>
                   {metric.abbr}
                 </div>
-              </div>
-              <div className="flex items-baseline gap-1">
-                <p className="text-lg font-bold text-gray-900 dark:text-white">
-                  {metric.value.toLocaleString()}
-                </p>
-                {metric.unit && <p className="text-xs text-gray-500 dark:text-gray-500">{metric.unit}</p>}
+                <div className="flex items-baseline gap-1">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">
+                    {metric.value.toLocaleString()}
+                  </p>
+                  {metric.unit && <p className="text-xs text-gray-500 dark:text-gray-500">{metric.unit}</p>}
+                </div>
+                <div className={`px-1 py-0.5 rounded-full text-xs font-semibold ${percentBg} ${percentColor} flex-shrink-0`}>
+                  {isPositive ? '↑' : '↓'} {Math.abs(parseFloat(metric.percent))}%
+                </div>
               </div>
             </div>
           );
