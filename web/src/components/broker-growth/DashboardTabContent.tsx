@@ -55,7 +55,7 @@ export function DashboardTabContent() {
     {
       label: 'Khách hàng active',
       value: latestData.active,
-      abbr: 'Active',
+      abbr: 'Khách hàng mở mới',
       color: 'from-green-500 to-green-600',
       percent: calculatePercent(latestData.active, previousData.active),
     },
