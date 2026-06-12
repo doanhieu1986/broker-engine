@@ -63,17 +63,6 @@ const getChartData = (period: PeriodFilter) => {
   }
 };
 
-// Custom shape for Net bar with dynamic colors
-const NetBar = (props: any) => {
-  const { x, y, width, height, payload } = props;
-  const isPositive = payload.net >= 0;
-  const barColor = isPositive ? '#10b981' : '#ef4444';
-
-  return (
-    <rect x={x} y={y} width={width} height={height} fill={barColor} rx={4} ry={4} />
-  );
-};
-
 export function DashboardTabContent() {
   const { role } = useUser();
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('month');
@@ -277,14 +266,13 @@ export function DashboardTabContent() {
             <ComposedChart data={monthData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" yAxisId="left" />
-              <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
+              <YAxis stroke="#9ca3af" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend />
-              <Bar yAxisId="left" dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" />
-              <Bar yAxisId="left" dataKey="rút" name="Rút tiền (tỷ đ)" fill="#ef4444" />
-              <Bar yAxisId="right" dataKey="net" name="Net (tỷ đ)" shape={<NetBar />} />
-              <ReferenceLine yAxisId="right" y={0} stroke="#9ca3af" strokeDasharray="3 3" strokeWidth={2} />
+              <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" />
+              <Bar dataKey="rút" name="Rút tiền (tỷ đ)" fill="#ef4444" />
+              <Line type="monotone" dataKey="net" name="Net (tỷ đ)" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6' }} />
+              <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
