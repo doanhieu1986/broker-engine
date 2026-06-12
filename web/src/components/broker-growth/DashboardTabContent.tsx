@@ -70,7 +70,7 @@ export function DashboardTabContent() {
     {
       label: 'Sức mua',
       value: latestData.nav,
-      unit: 'tỷ đ',
+      unit: 'tỷ đồng',
       icon: Zap,
       color: 'from-yellow-500 to-yellow-600',
       percent: calculatePercent(latestData.nav, previousData.nav),
@@ -78,7 +78,7 @@ export function DashboardTabContent() {
     {
       label: 'Tổng NAV',
       value: latestData.nav,
-      unit: 'tỷ đ',
+      unit: 'tỷ đồng',
       icon: DollarSign,
       color: 'from-purple-500 to-purple-600',
       percent: calculatePercent(latestData.nav, previousData.nav),
@@ -86,7 +86,7 @@ export function DashboardTabContent() {
     {
       label: 'Giá trị giao dịch',
       value: latestData.tradingValue,
-      unit: 'tỷ đ',
+      unit: 'tỷ đồng',
       icon: TrendingUp,
       color: 'from-orange-500 to-orange-600',
       percent: calculatePercent(latestData.tradingValue, previousData.tradingValue),
@@ -94,7 +94,7 @@ export function DashboardTabContent() {
     {
       label: 'Net (Nộp - Rút)',
       value: latestData.nộp - latestData.rút,
-      unit: 'tỷ đ',
+      unit: 'tỷ đồng',
       icon: CreditCard,
       color: 'from-green-500 to-green-600',
       percent: calculatePercent(latestData.nộp - latestData.rút, previousData.nộp - previousData.rút),
@@ -102,7 +102,7 @@ export function DashboardTabContent() {
     {
       label: 'Dư nợ',
       value: latestData.debt,
-      unit: 'tỷ đ',
+      unit: 'tỷ đồng',
       icon: AlertCircle,
       color: 'from-red-500 to-red-600',
       percent: calculatePercent(latestData.debt, previousData.debt),
@@ -167,10 +167,12 @@ export function DashboardTabContent() {
                 </div>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400 mb-0.5 line-clamp-2">{metric.label}</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-white">
-                {metric.value.toLocaleString()}
-              </p>
-              {metric.unit && <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">{metric.unit}</p>}
+              <div className="flex items-baseline gap-1">
+                <p className="text-lg font-bold text-gray-900 dark:text-white">
+                  {metric.value.toLocaleString()}
+                </p>
+                {metric.unit && <p className="text-xs text-gray-500 dark:text-gray-500">{metric.unit}</p>}
+              </div>
             </div>
           );
         })}
