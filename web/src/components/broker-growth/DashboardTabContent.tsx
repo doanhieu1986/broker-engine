@@ -5,44 +5,49 @@ import { useUser } from '../../context/UserContext';
 type PeriodFilter = 'week' | 'month' | 'quarter' | 'year';
 type ViewMode = 'company' | 'team';
 
-// Mock data for different periods
-const weekData = Array.from({ length: 52 }, (_, i) => ({
-  period: `W${i + 1}`,
-  customers: 900 + i * 10,
-  active: 800 + i * 8,
-  newCustomers: 20 + Math.floor(i / 4),
-  nav: 350 + i * 10,
-  tradingValue: 900 + i * 15,
-  nộp: 40 + i,
-  rút: 10 + Math.floor(i / 5),
-  debt: 300 - i * 2,
-}));
+// Mock data for different periods (with realistic fluctuations)
+const weekData = Array.from({ length: 52 }, (_, i) => {
+  const trend = Math.floor(i / 4) * 30;
+  const wave = Math.sin((i * Math.PI) / 8) * 25;
+  const noise = (Math.random() - 0.5) * 20;
+  return {
+    period: `W${i + 1}`,
+    customers: 1100 + trend + wave + noise,
+    active: 980 + Math.floor(trend * 0.85) + wave + noise,
+    newCustomers: 45 + Math.floor(i / 6) + (Math.sin((i * Math.PI) / 10) * 15) + ((Math.random() - 0.5) * 10),
+    nav: 450 + trend * 0.6 + wave + noise,
+    tradingValue: 1200 + trend * 0.8 + wave * 1.2 + noise,
+    nộp: 85 + Math.floor(i / 2) + (Math.sin((i * Math.PI) / 12) * 20) + ((Math.random() - 0.5) * 15),
+    rút: 20 + Math.floor(i / 10) + (Math.sin((i * Math.PI) / 16) * 8) + ((Math.random() - 0.5) * 5),
+    debt: 250 - Math.floor(i * 0.8) + (Math.sin((i * Math.PI) / 6) * 30) + ((Math.random() - 0.5) * 20),
+  };
+});
 
 const monthData = [
   { period: 'T1', customers: 1100, active: 980, newCustomers: 45, nav: 450, tradingValue: 1200, nộp: 85, rút: 20, debt: 250 },
-  { period: 'T2', customers: 1120, active: 1000, newCustomers: 50, nav: 480, tradingValue: 1350, nộp: 95, rút: 25, debt: 240 },
-  { period: 'T3', customers: 1150, active: 1030, newCustomers: 55, nav: 520, tradingValue: 1450, nộp: 110, rút: 28, debt: 235 },
-  { period: 'T4', customers: 1180, active: 1060, newCustomers: 48, nav: 550, tradingValue: 1380, nộp: 88, rút: 30, debt: 245 },
-  { period: 'T5', customers: 1210, active: 1090, newCustomers: 60, nav: 590, tradingValue: 1520, nộp: 125, rút: 32, debt: 230 },
-  { period: 'T6', customers: 1250, active: 1120, newCustomers: 65, nav: 630, tradingValue: 1650, nộp: 140, rút: 35, debt: 220 },
-  { period: 'T7', customers: 1280, active: 1150, newCustomers: 58, nav: 670, tradingValue: 1580, nộp: 115, rút: 38, debt: 228 },
-  { period: 'T8', customers: 1310, active: 1180, newCustomers: 72, nav: 710, tradingValue: 1720, nộp: 155, rút: 40, debt: 215 },
-  { period: 'T9', customers: 1350, active: 1210, newCustomers: 68, nav: 760, tradingValue: 1850, nộp: 165, rút: 42, debt: 205 },
-  { period: 'T10', customers: 1380, active: 1240, newCustomers: 75, nav: 800, tradingValue: 1920, nộp: 180, rút: 45, debt: 195 },
-  { period: 'T11', customers: 1420, active: 1270, newCustomers: 82, nav: 850, tradingValue: 2050, nộp: 200, rút: 48, debt: 185 },
-  { period: 'T12', customers: 1450, active: 1300, newCustomers: 88, nav: 900, tradingValue: 2150, nộp: 220, rút: 50, debt: 175 },
+  { period: 'T2', customers: 1135, active: 1015, newCustomers: 52, nav: 485, tradingValue: 1380, nộp: 105, rút: 22, debt: 245 },
+  { period: 'T3', customers: 1110, active: 1005, newCustomers: 48, nav: 470, tradingValue: 1320, nộp: 92, rút: 26, debt: 258 },
+  { period: 'T4', customers: 1165, active: 1050, newCustomers: 58, nav: 520, tradingValue: 1480, nộp: 115, rút: 28, debt: 235 },
+  { period: 'T5', customers: 1140, active: 1025, newCustomers: 62, nav: 500, tradingValue: 1420, nộp: 100, rút: 32, debt: 248 },
+  { period: 'T6', customers: 1210, active: 1095, newCustomers: 68, nav: 580, tradingValue: 1650, nộp: 145, rút: 35, debt: 218 },
+  { period: 'T7', customers: 1285, active: 1160, newCustomers: 65, nav: 640, tradingValue: 1720, nộp: 160, rút: 38, debt: 205 },
+  { period: 'T8', customers: 1255, active: 1130, newCustomers: 75, nav: 610, tradingValue: 1580, nộp: 135, rút: 42, debt: 225 },
+  { period: 'T9', customers: 1320, active: 1195, newCustomers: 70, nav: 710, tradingValue: 1850, nộp: 175, rút: 44, debt: 195 },
+  { period: 'T10', customers: 1380, active: 1250, newCustomers: 80, nav: 800, tradingValue: 1920, nộp: 185, rút: 45, debt: 175 },
+  { period: 'T11', customers: 1350, active: 1220, newCustomers: 85, nav: 770, tradingValue: 1850, nộp: 170, rút: 50, debt: 200 },
+  { period: 'T12', customers: 1420, active: 1290, newCustomers: 92, nav: 850, tradingValue: 2000, nộp: 210, rút: 48, debt: 168 },
 ];
 
 const quarterData = [
-  { period: 'Q1', customers: 1120, active: 1003, newCustomers: 50, nav: 485, tradingValue: 1333, nộp: 96, rút: 25, debt: 242 },
-  { period: 'Q2', customers: 1213, active: 1090, newCustomers: 61, nav: 590, tradingValue: 1517, nộp: 121, rút: 32, debt: 232 },
-  { period: 'Q3', customers: 1313, active: 1180, newCustomers: 66, nav: 673, tradingValue: 1717, nộp: 128, rút: 40, debt: 224 },
-  { period: 'Q4', customers: 1417, active: 1270, newCustomers: 82, nav: 850, tradingValue: 2050, nộp: 200, rút: 48, debt: 185 },
+  { period: 'Q1', customers: 1115, active: 1000, newCustomers: 48, nav: 468, tradingValue: 1300, nộp: 94, rút: 23, debt: 251 },
+  { period: 'Q2', customers: 1172, active: 1057, newCustomers: 63, nav: 533, tradingValue: 1517, nộp: 120, rút: 32, debt: 234 },
+  { period: 'Q3', customers: 1287, active: 1162, newCustomers: 70, nav: 653, tradingValue: 1717, nộp: 157, rút: 41, debt: 208 },
+  { period: 'Q4', customers: 1383, active: 1253, newCustomers: 86, nav: 807, tradingValue: 1923, nộp: 188, rút: 48, debt: 181 },
 ];
 
 const yearData = [
-  { period: '2024', customers: 1250, active: 1125, newCustomers: 65, nav: 635, tradingValue: 1650, nộp: 140, rút: 35, debt: 220 },
-  { period: '2025', customers: 1417, active: 1270, newCustomers: 82, nav: 850, tradingValue: 2050, nộp: 200, rút: 48, debt: 175 },
+  { period: '2024', customers: 1189, active: 1069, newCustomers: 61, nav: 540, tradingValue: 1483, nộp: 124, rút: 32, debt: 223 },
+  { period: '2025', customers: 1354, active: 1208, newCustomers: 77, nav: 730, tradingValue: 1820, nộp: 173, rút: 45, debt: 197 },
 ];
 
 const getChartData = (period: PeriodFilter) => {
