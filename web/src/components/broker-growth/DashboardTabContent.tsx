@@ -272,7 +272,7 @@ export function DashboardTabContent() {
               <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" />
               <Bar dataKey="rút" name="Rút tiền (tỷ đ)" fill="#ef4444" />
               <Line type="monotone" dataKey="netPos" name="Net (tỷ đ)" stroke="#10b981" strokeWidth={3} dot={false} connectNulls={true} />
-              <Line type="monotone" dataKey="netNeg" stroke="#ef4444" strokeWidth={3} dot={false} connectNulls={true} isAnimationActive={false} />
+              <Line type="monotone" dataKey="netNeg" stroke="#ef4444" strokeWidth={3} dot={false} connectNulls={true} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
