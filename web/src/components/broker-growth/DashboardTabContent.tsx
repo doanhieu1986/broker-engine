@@ -156,7 +156,7 @@ export function DashboardTabContent() {
 
           return (
             <div key={metric.label} className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-2">
+              <div className="flex items-start justify-between mb-1.5">
                 <div className={`px-2 py-1 rounded-md bg-gradient-to-br ${metric.color} text-white text-xs font-semibold`}>
                   {metric.abbr}
                 </div>
@@ -164,7 +164,6 @@ export function DashboardTabContent() {
                   {isPositive ? '↑' : '↓'} {Math.abs(parseFloat(metric.percent))}%
                 </div>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mb-0.5 line-clamp-2">{metric.label}</p>
               <div className="flex items-baseline gap-1">
                 <p className="text-lg font-bold text-gray-900 dark:text-white">
                   {metric.value.toLocaleString()}
