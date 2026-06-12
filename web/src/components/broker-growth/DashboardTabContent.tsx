@@ -149,7 +149,7 @@ export function DashboardTabContent() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-8 gap-3">
         {metrics.map((metric) => {
           const Icon = metric.icon;
           const isPositive = parseFloat(metric.percent) >= 0;
@@ -157,20 +157,20 @@ export function DashboardTabContent() {
           const percentBg = isPositive ? 'bg-green-100 dark:bg-green-900/20' : 'bg-red-100 dark:bg-red-900/20';
 
           return (
-            <div key={metric.label} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-lg bg-gradient-to-br ${metric.color} text-white`}>
-                  <Icon size={24} />
+            <div key={metric.label} className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between mb-2">
+                <div className={`p-2 rounded-md bg-gradient-to-br ${metric.color} text-white`}>
+                  <Icon size={16} />
                 </div>
-                <div className={`px-2 py-1 rounded-full text-sm font-semibold ${percentBg} ${percentColor}`}>
+                <div className={`px-1 py-0.5 rounded-full text-xs font-semibold ${percentBg} ${percentColor}`}>
                   {isPositive ? '↑' : '↓'} {Math.abs(parseFloat(metric.percent))}%
                 </div>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{metric.label}</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-0.5 line-clamp-2">{metric.label}</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
                 {metric.value.toLocaleString()}
               </p>
-              {metric.unit && <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{metric.unit}</p>}
+              {metric.unit && <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">{metric.unit}</p>}
             </div>
           );
         })}
