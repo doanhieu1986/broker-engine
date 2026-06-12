@@ -157,7 +157,7 @@ export function DashboardTabContent() {
           return (
             <div key={metric.label} className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-1.5">
-                <div className={`px-2 py-1 rounded-md bg-gradient-to-br ${metric.color} text-white text-xs font-semibold`}>
+                <div className={`px-2 py-1 rounded-md bg-gradient-to-br ${metric.color} text-white text-xs font-semibold whitespace-nowrap overflow-hidden text-ellipsis`}>
                   {metric.abbr}
                 </div>
                 <div className={`px-1 py-0.5 rounded-full text-xs font-semibold ${percentBg} ${percentColor}`}>
