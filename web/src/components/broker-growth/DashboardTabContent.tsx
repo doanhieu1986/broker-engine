@@ -252,11 +252,11 @@ export function DashboardTabContent() {
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={monthData}>
-              <XAxis dataKey="period" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" yAxisId="left" />
-              <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
+              <XAxis dataKey="period" stroke="#9ca3af" tick={{ fontSize: 12 }} />
+              <YAxis stroke="#9ca3af" yAxisId="left" tick={{ fontSize: 12 }} />
+              <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" tick={{ fontSize: 12 }} />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
-              <Legend />
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
               <Bar yAxisId="left" stackId="customers" dataKey="active" name="Khách hàng Active" fill="#10b981" />
               <Bar yAxisId="left" stackId="customers" dataKey="inactive" name="Khách hàng Inactive" fill="#ef4444" />
               <Line yAxisId="right" type="monotone" dataKey="customers" name="Tổng quản lý" stroke="#3b82f6" strokeWidth={2} />
@@ -272,11 +272,11 @@ export function DashboardTabContent() {
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={monthData}>
-              <XAxis dataKey="period" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" yAxisId="left" />
-              <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
+              <XAxis dataKey="period" stroke="#9ca3af" tick={{ fontSize: 12 }} />
+              <YAxis stroke="#9ca3af" yAxisId="left" tick={{ fontSize: 12 }} />
+              <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" tick={{ fontSize: 12 }} />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
-              <Legend />
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
               <Bar yAxisId="left" dataKey="nav" name="NAV (tỷ đ)" fill="#10b981" />
               <Bar yAxisId="left" dataKey="debt" name="Tổng dư nợ (tỷ đ)" fill="#ef4444" />
               <Line yAxisId="right" type="monotone" dataKey="debtToNavRatio" name="Tỷ lệ Dư nợ/NAV (%)" stroke="#fbbf24" strokeWidth={2} />
@@ -311,7 +311,7 @@ export function DashboardTabContent() {
                   return [num, name as string];
                 }}
               />
-              <Legend wrapperStyle={{ color: '#e5e7eb' }} verticalAlign="bottom" align="center" height={48} />
+              <Legend wrapperStyle={{ color: '#e5e7eb', fontSize: '12px' }} verticalAlign="bottom" align="center" height={48} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={2} />
               {/* Diverging/overlapping bars (chồng lên nhau): both bars share the
                   same stackId and stackOffset="sign" makes positive values stack
@@ -370,7 +370,7 @@ export function DashboardTabContent() {
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
-              <Legend />
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
               <Bar dataKey="tradingValueBase" name="Giá trị GD Cơ sở (tỷ đ)" fill="#10b981" />
               <Bar dataKey="tradingValueDerivative" name="Giá trị GD Phái sinh (tỷ đ)" fill="#ef4444" />
               <Line type="monotone" dataKey="tradingValue" name="Tổng GD (tỷ đ)" stroke="#fbbf24" strokeWidth={2} />
