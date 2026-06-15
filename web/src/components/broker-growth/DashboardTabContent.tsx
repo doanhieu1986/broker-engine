@@ -300,7 +300,7 @@ export function DashboardTabContent() {
                 </linearGradient>
               </defs>
               <XAxis dataKey="period" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" domain={[-150, 400]} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
                 formatter={(value, name) => {
