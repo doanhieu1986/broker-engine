@@ -307,7 +307,7 @@ export function DashboardTabContent() {
                   return [num, name as string];
                 }}
               />
-              <Legend />
+              <Legend wrapperStyle={{ color: '#e5e7eb' }} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={2} />
               {/* Diverging bars: Nộp grows up, Rút grows down from the zero line */}
               <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[3, 3, 0, 0]} barSize={14} />
