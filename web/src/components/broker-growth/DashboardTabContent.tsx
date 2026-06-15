@@ -288,7 +288,7 @@ export function DashboardTabContent() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
-          <ResponsiveContainer width="100%" height={420}>
+          <ResponsiveContainer width="100%" height={480}>
             <ComposedChart data={netChartData} stackOffset="sign" margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 {/* Net line colour: green above the zero line, red below it.
@@ -299,7 +299,7 @@ export function DashboardTabContent() {
                   <stop offset={netZeroOffset} stopColor="#ef4444" />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="period" stroke="#9ca3af" />
+              <XAxis dataKey="period" stroke="#9ca3af" angle={-45} textAnchor="end" height={80} />
               <YAxis stroke="#9ca3af" />
               <Tooltip
                 contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
