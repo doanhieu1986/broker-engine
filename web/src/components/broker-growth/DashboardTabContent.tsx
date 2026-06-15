@@ -288,7 +288,7 @@ export function DashboardTabContent() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
-          <ResponsiveContainer width="100%" height={320}>
+          <ResponsiveContainer width="100%" height={360}>
             <ComposedChart data={netChartData} stackOffset="sign">
               <defs>
                 {/* Net line colour: green above the zero line, red below it.
@@ -345,7 +345,7 @@ export function DashboardTabContent() {
               >
                 <LabelList
                   dataKey="rútNeg"
-                  position="bottom"
+                  position="top"
                   fill="#e5e7eb"
                   fontSize={12}
                   formatter={(value) => Math.abs(Math.round(Number(value))).toString()}
