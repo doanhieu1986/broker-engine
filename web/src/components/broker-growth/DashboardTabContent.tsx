@@ -25,18 +25,18 @@ const weekData = Array.from({ length: 52 }, (_, i) => {
 });
 
 const monthData = [
-  { period: 'T1', customers: 1100, active: 980, newCustomers: 45, nav: 450, tradingValue: 1200, tradingValueBase: 720, tradingValueDerivative: 480, nộp: 85, rút: 20, net: 65, debt: 250, commission: 8.4 },
-  { period: 'T2', customers: 1165, active: 1045, newCustomers: 62, nav: 520, tradingValue: 1420, tradingValueBase: 852, tradingValueDerivative: 568, nộp: 125, rút: 18, net: 107, debt: 228, commission: 10.2 },
-  { period: 'T3', customers: 1075, active: 960, newCustomers: 38, nav: 420, tradingValue: 1280, tradingValueBase: 768, tradingValueDerivative: 512, nộp: 55, rút: 85, net: -30, debt: 275, commission: 8.9 },
-  { period: 'T4', customers: 1220, active: 1100, newCustomers: 75, nav: 580, tradingValue: 1580, tradingValueBase: 948, tradingValueDerivative: 632, nộp: 155, rút: 22, net: 133, debt: 210, commission: 11.6 },
-  { period: 'T5', customers: 1090, active: 975, newCustomers: 48, nav: 440, tradingValue: 1300, tradingValueBase: 780, tradingValueDerivative: 520, nộp: 70, rút: 95, net: -25, debt: 265, commission: 9.1 },
-  { period: 'T6', customers: 1280, active: 1150, newCustomers: 82, nav: 640, tradingValue: 1750, tradingValueBase: 1050, tradingValueDerivative: 700, nộp: 180, rút: 25, net: 155, debt: 185, commission: 13.2 },
-  { period: 'T7', customers: 1340, active: 1210, newCustomers: 88, nav: 720, tradingValue: 1850, tradingValueBase: 1110, tradingValueDerivative: 740, nộp: 200, rút: 30, net: 170, debt: 165, commission: 14.1 },
-  { period: 'T8', customers: 1190, active: 1070, newCustomers: 62, nav: 560, tradingValue: 1480, tradingValueBase: 888, tradingValueDerivative: 592, nộp: 95, rút: 120, net: -25, debt: 245, commission: 10.5 },
-  { period: 'T9', customers: 1360, active: 1230, newCustomers: 92, nav: 760, tradingValue: 1900, tradingValueBase: 1140, tradingValueDerivative: 760, nộp: 210, rút: 28, net: 182, debt: 155, commission: 14.6 },
-  { period: 'T10', customers: 1420, active: 1290, newCustomers: 105, nav: 850, tradingValue: 2000, tradingValueBase: 1200, tradingValueDerivative: 800, nộp: 235, rút: 35, net: 200, debt: 140, commission: 15.4 },
-  { period: 'T11', customers: 1310, active: 1180, newCustomers: 78, nav: 720, tradingValue: 1820, tradingValueBase: 1092, tradingValueDerivative: 728, nộp: 160, rút: 85, net: 75, debt: 210, commission: 13.7 },
-  { period: 'T12', customers: 1480, active: 1340, newCustomers: 112, nav: 920, tradingValue: 2100, tradingValueBase: 1260, tradingValueDerivative: 840, nộp: 255, rút: 32, net: 223, debt: 120, commission: 16.5 },
+  { period: 'T1', customers: 1100, active: 980, newCustomers: 45, nav: 450, tradingValue: 1200, tradingValueBase: 720, tradingValueDerivative: 480, nộp: 85, rút: 20, net: 65, debt: 250, debtToNavRatio: 55.6, commission: 8.4 },
+  { period: 'T2', customers: 1165, active: 1045, newCustomers: 62, nav: 520, tradingValue: 1420, tradingValueBase: 852, tradingValueDerivative: 568, nộp: 125, rút: 18, net: 107, debt: 228, debtToNavRatio: 43.8, commission: 10.2 },
+  { period: 'T3', customers: 1075, active: 960, newCustomers: 38, nav: 420, tradingValue: 1280, tradingValueBase: 768, tradingValueDerivative: 512, nộp: 55, rút: 85, net: -30, debt: 275, debtToNavRatio: 65.5, commission: 8.9 },
+  { period: 'T4', customers: 1220, active: 1100, newCustomers: 75, nav: 580, tradingValue: 1580, tradingValueBase: 948, tradingValueDerivative: 632, nộp: 155, rút: 22, net: 133, debt: 210, debtToNavRatio: 36.2, commission: 11.6 },
+  { period: 'T5', customers: 1090, active: 975, newCustomers: 48, nav: 440, tradingValue: 1300, tradingValueBase: 780, tradingValueDerivative: 520, nộp: 70, rút: 95, net: -25, debt: 265, debtToNavRatio: 60.2, commission: 9.1 },
+  { period: 'T6', customers: 1280, active: 1150, newCustomers: 82, nav: 640, tradingValue: 1750, tradingValueBase: 1050, tradingValueDerivative: 700, nộp: 180, rút: 25, net: 155, debt: 185, debtToNavRatio: 28.9, commission: 13.2 },
+  { period: 'T7', customers: 1340, active: 1210, newCustomers: 88, nav: 720, tradingValue: 1850, tradingValueBase: 1110, tradingValueDerivative: 740, nộp: 200, rút: 30, net: 170, debt: 165, debtToNavRatio: 22.9, commission: 14.1 },
+  { period: 'T8', customers: 1190, active: 1070, newCustomers: 62, nav: 560, tradingValue: 1480, tradingValueBase: 888, tradingValueDerivative: 592, nộp: 95, rút: 120, net: -25, debt: 245, debtToNavRatio: 43.8, commission: 10.5 },
+  { period: 'T9', customers: 1360, active: 1230, newCustomers: 92, nav: 760, tradingValue: 1900, tradingValueBase: 1140, tradingValueDerivative: 760, nộp: 210, rút: 28, net: 182, debt: 155, debtToNavRatio: 20.4, commission: 14.6 },
+  { period: 'T10', customers: 1420, active: 1290, newCustomers: 105, nav: 850, tradingValue: 2000, tradingValueBase: 1200, tradingValueDerivative: 800, nộp: 235, rút: 35, net: 200, debt: 140, debtToNavRatio: 16.5, commission: 15.4 },
+  { period: 'T11', customers: 1310, active: 1180, newCustomers: 78, nav: 720, tradingValue: 1820, tradingValueBase: 1092, tradingValueDerivative: 728, nộp: 160, rút: 85, net: 75, debt: 210, debtToNavRatio: 29.2, commission: 13.7 },
+  { period: 'T12', customers: 1480, active: 1340, newCustomers: 112, nav: 920, tradingValue: 2100, tradingValueBase: 1260, tradingValueDerivative: 840, nộp: 255, rút: 32, net: 223, debt: 120, debtToNavRatio: 13.0, commission: 16.5 },
 ];
 
 const quarterData = [
@@ -269,15 +269,16 @@ export function DashboardTabContent() {
             💰 NAV & Tổng Dư nợ
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={monthData}>
+            <ComposedChart data={monthData}>
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" yAxisId="left" />
               <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend />
-              <Line yAxisId="left" type="monotone" dataKey="nav" name="NAV (tỷ đ)" stroke="#a855f7" strokeWidth={2} />
-              <Line yAxisId="right" type="monotone" dataKey="debt" name="Tổng dư nợ (tỷ đ)" stroke="#ef4444" strokeWidth={2} />
-            </LineChart>
+              <Bar yAxisId="left" dataKey="nav" name="NAV (tỷ đ)" fill="#a855f7" />
+              <Bar yAxisId="left" dataKey="debt" name="Tổng dư nợ (tỷ đ)" fill="#ef4444" />
+              <Line yAxisId="right" type="monotone" dataKey="debtToNavRatio" name="Tỷ lệ Dư nợ/NAV (%)" stroke="#10b981" strokeWidth={2} />
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
 
