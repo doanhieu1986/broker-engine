@@ -329,6 +329,7 @@ export function DashboardTabContent() {
                 <LabelList
                   dataKey="nộp"
                   position="top"
+                  offset={15}
                   fill="#e5e7eb"
                   fontSize={12}
                   formatter={(value) => Math.round(Number(value)).toString()}
@@ -346,6 +347,7 @@ export function DashboardTabContent() {
                 <LabelList
                   dataKey="rútNeg"
                   position="top"
+                  offset={-15}
                   fill="#e5e7eb"
                   fontSize={12}
                   formatter={(value) => Math.abs(Math.round(Number(value))).toString()}
