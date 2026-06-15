@@ -299,7 +299,7 @@ export function DashboardTabContent() {
                   <stop offset={netZeroOffset} stopColor="#ef4444" />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="period" stroke="#9ca3af" angle={-45} textAnchor="end" height={80} />
+              <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
               <Tooltip
                 contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
