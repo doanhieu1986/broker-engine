@@ -7,7 +7,7 @@ type OpportunitiesInternalTab = 'recommendation' | 'summary';
 
 export function OpportunitiesTabContent() {
   const { role, user } = useUser();
-  const [activeInternalTab, setActiveInternalTab] = useState<OpportunitiesInternalTab>('summary');
+  const [activeInternalTab, setActiveInternalTab] = useState<OpportunitiesInternalTab>('recommendation');
 
   const scoreForVCK = (c: any): number => {
     let score = 0;
