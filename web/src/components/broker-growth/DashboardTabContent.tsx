@@ -284,11 +284,11 @@ export function DashboardTabContent() {
         </div>
 
         {/* Chart 3: Net (Nộp - Rút) */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg pb-8">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={320}>
             <ComposedChart data={netChartData} stackOffset="sign">
               <defs>
                 {/* Net line colour: green above the zero line, red below it.
