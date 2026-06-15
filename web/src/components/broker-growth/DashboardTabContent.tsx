@@ -263,10 +263,10 @@ export function DashboardTabContent() {
           </ResponsiveContainer>
         </div>
 
-        {/* Chart 2: Giá trị giao dịch & Phí giao dịch */}
+        {/* Chart 2: NAV & Tổng Dư nợ */}
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            💰 Giá trị giao dịch & Phí giao dịch
+            💰 NAV & Tổng Dư nợ
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={monthData}>
@@ -275,8 +275,8 @@ export function DashboardTabContent() {
               <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend />
-              <Line yAxisId="left" type="monotone" dataKey="tradingValue" name="Giá trị GD (tỷ đ)" stroke="#f97316" strokeWidth={2} />
-              <Line yAxisId="right" type="monotone" dataKey="commission" name="Phí GD (tỷ đ)" stroke="#10b981" strokeWidth={2} />
+              <Line yAxisId="left" type="monotone" dataKey="nav" name="NAV (tỷ đ)" stroke="#a855f7" strokeWidth={2} />
+              <Line yAxisId="right" type="monotone" dataKey="debt" name="Tổng dư nợ (tỷ đ)" stroke="#ef4444" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
