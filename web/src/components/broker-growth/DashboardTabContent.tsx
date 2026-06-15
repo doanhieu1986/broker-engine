@@ -289,7 +289,7 @@ export function DashboardTabContent() {
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
           <ResponsiveContainer width="100%" height={420}>
-            <ComposedChart data={netChartData} stackOffset="sign" margin={{ bottom: 80 }}>
+            <ComposedChart data={netChartData} stackOffset="sign" margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 {/* Net line colour: green above the zero line, red below it.
                     The hard colour switch is placed at netZeroOffset so it
@@ -310,7 +310,7 @@ export function DashboardTabContent() {
                   return [num, name as string];
                 }}
               />
-              <Legend wrapperStyle={{ color: '#e5e7eb', paddingTop: '20px' }} verticalAlign="bottom" height={36} />
+              <Legend wrapperStyle={{ color: '#e5e7eb' }} verticalAlign="top" align="center" height={48} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={2} />
               {/* Diverging/overlapping bars (chồng lên nhau): both bars share the
                   same stackId and stackOffset="sign" makes positive values stack
