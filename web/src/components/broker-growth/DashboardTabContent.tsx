@@ -282,7 +282,7 @@ export function DashboardTabContent() {
         </div>
 
         {/* Chart 3: Net (Nộp - Rút) */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 py-6 px-4 shadow-lg pb-8">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
