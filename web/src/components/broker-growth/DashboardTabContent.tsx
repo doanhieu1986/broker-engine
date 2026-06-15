@@ -289,7 +289,7 @@ export function DashboardTabContent() {
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={netChartData}>
+            <ComposedChart data={netChartData} stackOffset="sign">
               <defs>
                 {/* Net line colour: green above the zero line, red below it.
                     The hard colour switch is placed at netZeroOffset so it
@@ -313,12 +313,13 @@ export function DashboardTabContent() {
               />
               <Legend wrapperStyle={{ color: '#e5e7eb' }} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={2} />
-              {/* Option 2 diverging bars: each month has two side-by-side bars.
-                  Nộp (green) sits on the left and extends UP from 0; Rút (red)
-                  sits on the right and extends DOWN from 0. Without stacking,
-                  Recharts places the two Bars next to each other automatically. */}
-              <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[4, 4, 0, 0]} barSize={18} fillOpacity={0.9} />
-              <Bar dataKey="rútNeg" name="Rút tiền (tỷ đ)" fill="#ef4444" radius={[0, 0, 4, 4]} barSize={18} fillOpacity={0.9} />
+              {/* Diverging/overlapping bars (chồng lên nhau): both bars share the
+                  same stackId and stackOffset="sign" makes positive values stack
+                  UP and negative values stack DOWN from the y=0 line. Since one is
+                  positive (nộp) and the other negative (rútNeg), they originate
+                  from the same x position and diverge in opposite directions. */}
+              <Bar stackId="net" dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[4, 4, 0, 0]} barSize={28} fillOpacity={0.9} />
+              <Bar stackId="net" dataKey="rútNeg" name="Rút tiền (tỷ đ)" fill="#ef4444" radius={[0, 0, 4, 4]} barSize={28} fillOpacity={0.9} />
               {/* Net trend: a single smooth line over the bars, no fill.
                   Colour is green above 0 / red below 0 via the gradient stroke,
                   so the bars stay fully visible underneath. */}
