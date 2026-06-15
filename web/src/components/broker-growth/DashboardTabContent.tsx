@@ -257,9 +257,15 @@ export function DashboardTabContent() {
               <YAxis stroke="#9ca3af" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend />
-              <Line type="monotone" dataKey="customers" name="Tổng quản lý" stroke="#3b82f6" strokeWidth={2} />
-              <Line type="monotone" dataKey="active" name="Active" stroke="#10b981" strokeWidth={2} />
-              <Line type="monotone" dataKey="newCustomers" name="Mở mới" stroke="#f59e0b" strokeWidth={2} />
+              <Line type="monotone" dataKey="customers" name="Tổng quản lý" stroke="#3b82f6" strokeWidth={2}>
+                <LabelList dataKey="customers" position="top" fill="#e5e7eb" fontSize={12} formatter={(value: number) => Math.round(value)} />
+              </Line>
+              <Line type="monotone" dataKey="active" name="Active" stroke="#10b981" strokeWidth={2}>
+                <LabelList dataKey="active" position="top" fill="#e5e7eb" fontSize={12} formatter={(value: number) => Math.round(value)} />
+              </Line>
+              <Line type="monotone" dataKey="newCustomers" name="Mở mới" stroke="#f59e0b" strokeWidth={2}>
+                <LabelList dataKey="newCustomers" position="top" fill="#e5e7eb" fontSize={12} formatter={(value: number) => Math.round(value)} />
+              </Line>
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -277,8 +283,12 @@ export function DashboardTabContent() {
               <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend />
-              <Line yAxisId="left" type="monotone" dataKey="nav" name="NAV (tỷ đ)" stroke="#a855f7" strokeWidth={2} />
-              <Line yAxisId="right" type="monotone" dataKey="tradingValue" name="Giá trị GD (tỷ đ)" stroke="#f97316" strokeWidth={2} />
+              <Line yAxisId="left" type="monotone" dataKey="nav" name="NAV (tỷ đ)" stroke="#a855f7" strokeWidth={2}>
+                <LabelList dataKey="nav" position="top" fill="#e5e7eb" fontSize={12} formatter={(value: number) => Math.round(value)} />
+              </Line>
+              <Line yAxisId="right" type="monotone" dataKey="tradingValue" name="Giá trị GD (tỷ đ)" stroke="#f97316" strokeWidth={2}>
+                <LabelList dataKey="tradingValue" position="top" fill="#e5e7eb" fontSize={12} formatter={(value: number) => Math.round(value)} />
+              </Line>
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -372,7 +382,9 @@ export function DashboardTabContent() {
               <YAxis stroke="#9ca3af" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend />
-              <Line type="monotone" dataKey="debt" name="Dư nợ (tỷ đ)" stroke="#ef4444" strokeWidth={2} dot={{ fill: '#ef4444' }} />
+              <Line type="monotone" dataKey="debt" name="Dư nợ (tỷ đ)" stroke="#ef4444" strokeWidth={2} dot={{ fill: '#ef4444' }}>
+                <LabelList dataKey="debt" position="top" fill="#e5e7eb" fontSize={12} formatter={(value: number) => Math.round(value)} />
+              </Line>
             </LineChart>
           </ResponsiveContainer>
         </div>
