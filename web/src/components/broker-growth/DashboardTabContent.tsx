@@ -248,7 +248,7 @@ export function DashboardTabContent() {
         {/* Chart 1: Khách hàng */}
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            👥 Khách hàng (Active & Inactive)
+            👥 Khách hàng (Active & Inactive & Mở mới)
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={monthData}>
@@ -260,6 +260,7 @@ export function DashboardTabContent() {
               <Bar yAxisId="left" stackId="customers" dataKey="active" name="Khách hàng Active" fill="#10b981" />
               <Bar yAxisId="left" stackId="customers" dataKey="inactive" name="Khách hàng Inactive" fill="#ef4444" />
               <Line yAxisId="right" type="monotone" dataKey="customers" name="Tổng quản lý" stroke="#3b82f6" strokeWidth={2} />
+              <Line yAxisId="right" type="monotone" dataKey="newCustomers" name="Khách hàng mở mới" stroke="#fbbf24" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
