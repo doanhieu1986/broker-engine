@@ -313,9 +313,11 @@ export function DashboardTabContent() {
               />
               <Legend wrapperStyle={{ color: '#e5e7eb' }} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={2} />
-              {/* Diverging bars: Nộp grows up, Rút grows down from the zero line */}
-              <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[3, 3, 0, 0]} barSize={14} />
-              <Bar dataKey="rútNeg" name="Rút tiền (tỷ đ)" fill="#ef4444" radius={[0, 0, 3, 3]} barSize={14} />
+              {/* True diverging bars: Nộp grows up (green), Rút grows down (red)
+                  from the zero line. Wider bars with rounded outer corners give a
+                  clean, symmetric left/right separation around the centre line. */}
+              <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[4, 4, 0, 0]} barSize={20} fillOpacity={0.9} />
+              <Bar dataKey="rútNeg" name="Rút tiền (tỷ đ)" fill="#ef4444" radius={[0, 0, 4, 4]} barSize={20} fillOpacity={0.9} />
               {/* Net trend: a single smooth line over the bars, no fill.
                   Colour is green above 0 / red below 0 via the gradient stroke,
                   so the bars stay fully visible underneath. */}
