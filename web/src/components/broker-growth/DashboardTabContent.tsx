@@ -310,7 +310,7 @@ export function DashboardTabContent() {
                   return [num, name as string];
                 }}
               />
-              <Legend wrapperStyle={{ color: '#e5e7eb', paddingTop: '20px' }} verticalAlign="bottom" align="center" height={48} />
+              <Legend wrapperStyle={{ color: '#e5e7eb' }} verticalAlign="bottom" align="center" height={48} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={2} />
               {/* Diverging/overlapping bars (chồng lên nhau): both bars share the
                   same stackId and stackOffset="sign" makes positive values stack
