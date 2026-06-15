@@ -329,7 +329,7 @@ export function DashboardTabContent() {
                 <LabelList
                   dataKey="nộp"
                   position="top"
-                  fill="#e5e7eb"
+                  fill="#10b981"
                   fontSize={12}
                   formatter={(value) => Math.round(Number(value)).toString()}
                 />
@@ -346,9 +346,9 @@ export function DashboardTabContent() {
                 <LabelList
                   dataKey="rútNeg"
                   position="top"
-                  fill="#e5e7eb"
+                  fill="#ef4444"
                   fontSize={12}
-                  formatter={(value) => Math.abs(Math.round(Number(value))).toString()}
+                  formatter={(value) => Math.round(Number(value)).toString()}
                 />
               </Bar>
               {/* Net trend: a single smooth line over the bars, no fill.
