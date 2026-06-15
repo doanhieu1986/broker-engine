@@ -73,16 +73,27 @@ export function DashboardTabContent() {
   const latestData = currentData[currentData.length - 1];
   const previousData = currentData[currentData.length - 2];
 
-  // Net line gradient: place the green→red color switch exactly at the y=0
-  // crossing so a single <Line> renders green above zero and red below it.
-  const netValues = monthData.map((d) => d.net);
-  const rawNetMax = Math.max(...netValues, 0);
-  const rawNetMin = Math.min(...netValues, 0);
-  // Add a small headroom so the line never touches the chart edges.
-  const netMax = Math.ceil(rawNetMax * 1.1);
-  const netMin = Math.floor(rawNetMin * 1.1);
-  // Gradient offset is the fraction (top→bottom) where value === 0 lands.
-  const netZeroOffset = netMax === netMin ? 0.5 : netMax / (netMax - netMin);
+  // Hybrid Net chart data: diverging bars (Nộp up, Rút down) + Net trend line.
+  // - rútNeg: withdrawals rendered as negative so the red bar grows downward.
+  // - net: the full Net value drawn as a single line, color-coded by sign via
+  //   an SVG gradient (green above the zero line, red below it).
+  const netChartData = monthData.map((d) => ({
+    period: d.period,
+    nộp: d.nộp,
+    rút: d.rút,
+    rútNeg: -d.rút,
+    net: d.net,
+  }));
+
+  // Where does y=0 sit within the chart's value range? The Net line gradient
+  // switches colour at this fractional offset so the boundary lands exactly on
+  // the zero line regardless of the data. The chart's range is driven by the
+  // bars (nộp up, rútNeg down), so include those in the bounds.
+  const netValues = netChartData.flatMap((d) => [d.nộp, d.rútNeg, d.net]);
+  const netMax = Math.max(0, ...netValues);
+  const netMin = Math.min(0, ...netValues);
+  const netZeroOffset =
+    netMax === netMin ? 0.5 : netMax / (netMax - netMin);
 
   // Calculate change percentage
   const calculatePercent = (current: number, previous: number): string => {
@@ -274,24 +285,37 @@ export function DashboardTabContent() {
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={monthData}>
+            <ComposedChart data={netChartData} stackOffset="sign">
               <defs>
-                <linearGradient id="netLineGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stopColor="#10b981" />
+                {/* Net line colour: green above the zero line, red below it.
+                    The hard colour switch is placed at netZeroOffset so it
+                    aligns exactly with y=0. */}
+                <linearGradient id="netLineStroke" x1="0" y1="0" x2="0" y2="1">
                   <stop offset={netZeroOffset} stopColor="#10b981" />
                   <stop offset={netZeroOffset} stopColor="#ef4444" />
-                  <stop offset="1" stopColor="#ef4444" />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" domain={[netMin, netMax]} />
-              <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
+                formatter={(value, name) => {
+                  const num = typeof value === 'number' ? value : Number(value);
+                  // Show the withdrawal bar as its real positive magnitude.
+                  if (name === 'Rút tiền (tỷ đ)') return [Math.abs(num), name];
+                  return [num, name as string];
+                }}
+              />
               <Legend />
-              <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" />
-              <Bar dataKey="rút" name="Rút tiền (tỷ đ)" fill="#ef4444" />
-              <Line type="monotone" dataKey="net" name="Net (tỷ đ)" stroke="url(#netLineGradient)" strokeWidth={3} dot={false} />
-              <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" strokeWidth={2} />
+              <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={2} />
+              {/* Diverging bars: Nộp grows up, Rút grows down from the zero line */}
+              <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[3, 3, 0, 0]} barSize={14} />
+              <Bar dataKey="rútNeg" name="Rút tiền (tỷ đ)" fill="#ef4444" radius={[0, 0, 3, 3]} barSize={14} />
+              {/* Net trend: a single smooth line over the bars, no fill.
+                  Colour is green above 0 / red below 0 via the gradient stroke,
+                  so the bars stay fully visible underneath. */}
+              <Line type="monotone" dataKey="net" name="Net (tỷ đ)" stroke="url(#netLineStroke)" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} legendType="plainline" />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
