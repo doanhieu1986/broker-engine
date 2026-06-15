@@ -288,7 +288,7 @@ export function DashboardTabContent() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
-          <ResponsiveContainer width="100%" height={360}>
+          <ResponsiveContainer width="100%" height={420}>
             <ComposedChart data={netChartData} stackOffset="sign">
               <defs>
                 {/* Net line colour: green above the zero line, red below it.
