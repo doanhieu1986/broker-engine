@@ -275,7 +275,7 @@ export function DashboardTabContent() {
               <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend />
-              <Bar yAxisId="left" dataKey="nav" name="NAV (tỷ đ)" fill="#a855f7" />
+              <Bar yAxisId="left" dataKey="nav" name="NAV (tỷ đ)" fill="#10b981" />
               <Bar yAxisId="left" dataKey="debt" name="Tổng dư nợ (tỷ đ)" fill="#ef4444" />
               <Line yAxisId="right" type="monotone" dataKey="debtToNavRatio" name="Tỷ lệ Dư nợ/NAV (%)" stroke="#10b981" strokeWidth={2} />
             </ComposedChart>
@@ -369,8 +369,8 @@ export function DashboardTabContent() {
               <YAxis stroke="#9ca3af" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend />
-              <Bar dataKey="tradingValueBase" name="Giá trị GD Cơ sở (tỷ đ)" fill="#3b82f6" />
-              <Bar dataKey="tradingValueDerivative" name="Giá trị GD Phái sinh (tỷ đ)" fill="#f59e0b" />
+              <Bar dataKey="tradingValueBase" name="Giá trị GD Cơ sở (tỷ đ)" fill="#10b981" />
+              <Bar dataKey="tradingValueDerivative" name="Giá trị GD Phái sinh (tỷ đ)" fill="#ef4444" />
               <Line type="monotone" dataKey="tradingValue" name="Tổng GD (tỷ đ)" stroke="#ef4444" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
