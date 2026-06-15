@@ -289,7 +289,7 @@ export function DashboardTabContent() {
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
           <ResponsiveContainer width="100%" height={480}>
-            <ComposedChart data={netChartData} stackOffset="sign" margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <ComposedChart data={netChartData} stackOffset="sign" margin={{ top: 10, right: 10, left: 0, bottom: 60 }}>
               <defs>
                 {/* Net line colour: green above the zero line, red below it.
                     The hard colour switch is placed at netZeroOffset so it
@@ -323,7 +323,7 @@ export function DashboardTabContent() {
                 name="Nộp tiền (tỷ đ)"
                 fill="#10b981"
                 radius={[4, 4, 0, 0]}
-                barSize={50}
+                barSize={28}
                 fillOpacity={0.9}
               >
                 <LabelList
@@ -340,7 +340,7 @@ export function DashboardTabContent() {
                 name="Rút tiền (tỷ đ)"
                 fill="#ef4444"
                 radius={[0, 0, 4, 4]}
-                barSize={50}
+                barSize={28}
                 fillOpacity={0.9}
               >
                 <LabelList
