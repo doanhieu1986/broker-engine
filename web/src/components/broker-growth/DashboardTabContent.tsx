@@ -211,32 +211,27 @@ export function DashboardTabContent() {
         )}
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-8 gap-3">
-        {metrics.map((metric) => {
-          const isPositive = parseFloat(metric.percent) >= 0;
-          const percentColor = isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
-          const percentBg = isPositive ? 'bg-green-100 dark:bg-green-900/20' : 'bg-red-100 dark:bg-red-900/20';
+      {/* KPI Bar - compact horizontal layout matching Market Indices style */}
+      <div className="bg-gradient-to-r from-blue-900/20 via-slate-800/20 to-blue-900/20 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-3">
+        <div className="flex items-center flex-wrap gap-x-6 gap-y-2 text-xs">
+          {metrics.map((metric) => {
+            const isPositive = parseFloat(metric.percent) >= 0;
+            const changeColor = isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
 
-          return (
-            <div key={metric.label} className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between gap-2 mb-1">
-                <div className={`px-2 py-1 rounded-md bg-gradient-to-br ${metric.color} text-white text-xs font-semibold whitespace-nowrap flex-shrink-0`}>
-                  {metric.abbr}
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {metric.value.toLocaleString()}
-                  </p>
-                  {metric.unit && <p className="text-xs text-gray-500 dark:text-gray-500">{metric.unit}</p>}
-                </div>
-                <div className={`px-1 py-0.5 rounded-full text-xs font-semibold ${percentBg} ${percentColor} flex-shrink-0`}>
+            return (
+              <span key={metric.label} className="text-gray-900 dark:text-white whitespace-nowrap">
+                <span className="text-gray-500 dark:text-gray-400">{metric.label}:</span>{' '}
+                <span className="font-bold">
+                  {metric.value.toLocaleString()}
+                  {metric.unit ? ` ${metric.unit}` : ''}
+                </span>{' '}
+                <span className={changeColor}>
                   {isPositive ? '↑' : '↓'} {Math.abs(parseFloat(metric.percent))}%
-                </div>
-              </div>
-            </div>
-          );
-        })}
+                </span>
+              </span>
+            );
+          })}
+        </div>
       </div>
 
       {/* Charts */}
