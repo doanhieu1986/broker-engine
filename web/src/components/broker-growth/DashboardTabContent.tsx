@@ -318,8 +318,36 @@ export function DashboardTabContent() {
                   UP and negative values stack DOWN from the y=0 line. Since one is
                   positive (nộp) and the other negative (rútNeg), they originate
                   from the same x position and diverge in opposite directions. */}
-              <Bar stackId="net" dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[4, 4, 0, 0]} barSize={28} fillOpacity={0.9} />
-              <Bar stackId="net" dataKey="rútNeg" name="Rút tiền (tỷ đ)" fill="#ef4444" radius={[0, 0, 4, 4]} barSize={28} fillOpacity={0.9} />
+              <Bar
+                stackId="net"
+                dataKey="nộp"
+                name="Nộp tiền (tỷ đ)"
+                fill="#10b981"
+                radius={[4, 4, 0, 0]}
+                barSize={28}
+                fillOpacity={0.9}
+                label={{
+                  position: 'top',
+                  fill: '#e5e7eb',
+                  fontSize: 12,
+                  formatter: (value: number) => Math.round(value).toString(),
+                }}
+              />
+              <Bar
+                stackId="net"
+                dataKey="rútNeg"
+                name="Rút tiền (tỷ đ)"
+                fill="#ef4444"
+                radius={[0, 0, 4, 4]}
+                barSize={28}
+                fillOpacity={0.9}
+                label={{
+                  position: 'bottom',
+                  fill: '#e5e7eb',
+                  fontSize: 12,
+                  formatter: (value: number) => Math.round(Math.abs(value)).toString(),
+                }}
+              />
               {/* Net trend: a single smooth line over the bars, no fill.
                   Colour is green above 0 / red below 0 via the gradient stroke,
                   so the bars stay fully visible underneath. */}
