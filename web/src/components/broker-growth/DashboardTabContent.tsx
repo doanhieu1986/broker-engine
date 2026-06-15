@@ -323,7 +323,7 @@ export function DashboardTabContent() {
                 name="Nộp tiền (tỷ đ)"
                 fill="#10b981"
                 radius={[4, 4, 0, 0]}
-                barSize={28}
+                barSize={50}
                 fillOpacity={0.9}
               >
                 <LabelList
@@ -340,7 +340,7 @@ export function DashboardTabContent() {
                 name="Rút tiền (tỷ đ)"
                 fill="#ef4444"
                 radius={[0, 0, 4, 4]}
-                barSize={28}
+                barSize={50}
                 fillOpacity={0.9}
               >
                 <LabelList
