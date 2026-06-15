@@ -136,44 +136,36 @@ export function OpportunitiesTabContent() {
 
         {role === 'Manager' ? (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
-                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase mb-2">
-                  🟢 Cao
-                </p>
-                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {totalHigh} <span className="text-sm text-emerald-600 dark:text-emerald-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalHigh / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
-                </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2">Đã mua: {boughtHigh} ({totalHigh > 0 ? Math.round((boughtHigh / totalHigh) * 100) : 0}%)</p>
-              </div>
-
-              <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
-                <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase mb-2">
-                  🟡 Trung bình
-                </p>
-                <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">
-                  {totalMedium} <span className="text-sm text-amber-600 dark:text-amber-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalMedium / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
-                </p>
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">Đã mua: {boughtMedium} ({totalMedium > 0 ? Math.round((boughtMedium / totalMedium) * 100) : 0}%)</p>
-              </div>
-
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-300 dark:border-gray-700">
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase mb-2">
-                  ⬜ Thấp
-                </p>
-                <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
-                  {totalLow} <span className="text-sm text-gray-600 dark:text-gray-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalLow / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Đã mua: {boughtLow} ({totalLow > 0 ? Math.round((boughtLow / totalLow) * 100) : 0}%)</p>
-              </div>
-
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-                <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase mb-2">
-                  ✅ Đã mua
-                </p>
-                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {boughtHigh + boughtMedium + boughtLow} <span className="text-sm text-blue-600 dark:text-blue-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round(((boughtHigh + boughtMedium + boughtLow) / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
-                </p>
+            <div className="bg-gradient-to-r from-emerald-900/20 via-emerald-800/20 to-emerald-900/20 rounded-lg px-4 py-3 border border-emerald-200 dark:border-emerald-800">
+              <div className="flex items-center justify-between overflow-x-auto gap-6">
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
+                  <span className="whitespace-nowrap">
+                    <span className="text-gray-500 dark:text-gray-400">🟢 Cao:</span>{' '}
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{totalHigh}</span>{' '}
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalHigh / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
+                    <span className="text-gray-400 dark:text-gray-500 mx-2">·</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Đã mua: {boughtHigh} ({totalHigh > 0 ? Math.round((boughtHigh / totalHigh) * 100) : 0}%)</span>
+                  </span>
+                  <span className="whitespace-nowrap">
+                    <span className="text-gray-500 dark:text-gray-400">🟡 Trung bình:</span>{' '}
+                    <span className="font-bold text-amber-600 dark:text-amber-400">{totalMedium}</span>{' '}
+                    <span className="text-xs text-amber-600 dark:text-amber-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalMedium / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
+                    <span className="text-gray-400 dark:text-gray-500 mx-2">·</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Đã mua: {boughtMedium} ({totalMedium > 0 ? Math.round((boughtMedium / totalMedium) * 100) : 0}%)</span>
+                  </span>
+                  <span className="whitespace-nowrap">
+                    <span className="text-gray-500 dark:text-gray-400">⬜ Thấp:</span>{' '}
+                    <span className="font-bold text-gray-600 dark:text-gray-300">{totalLow}</span>{' '}
+                    <span className="text-xs text-gray-500 dark:text-gray-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round((totalLow / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
+                    <span className="text-gray-400 dark:text-gray-500 mx-2">·</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Đã mua: {boughtLow} ({totalLow > 0 ? Math.round((boughtLow / totalLow) * 100) : 0}%)</span>
+                  </span>
+                  <span className="whitespace-nowrap">
+                    <span className="text-gray-500 dark:text-gray-400">✅ Đã mua:</span>{' '}
+                    <span className="font-bold text-blue-600 dark:text-blue-400">{boughtHigh + boughtMedium + boughtLow}</span>{' '}
+                    <span className="text-xs text-blue-600 dark:text-blue-400">({(totalHigh + totalMedium + totalLow) > 0 ? Math.round(((boughtHigh + boughtMedium + boughtLow) / (totalHigh + totalMedium + totalLow)) * 100) : 0}%)</span>
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -333,44 +325,36 @@ export function OpportunitiesTabContent() {
           </div>
         ) : (
           <div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
-                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase mb-2">
-                  🟢 Cao
-                </p>
-                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {brokerVCKStats.high} <span className="text-sm text-emerald-600 dark:text-emerald-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.high / brokerVCKStats.total) * 100) : 0}%)</span>
-                </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2">Đã mua: 0 (0%)</p>
-              </div>
-
-              <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
-                <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase mb-2">
-                  🟡 Trung bình
-                </p>
-                <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">
-                  {brokerVCKStats.medium} <span className="text-sm text-amber-600 dark:text-amber-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.medium / brokerVCKStats.total) * 100) : 0}%)</span>
-                </p>
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">Đã mua: 0 (0%)</p>
-              </div>
-
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-300 dark:border-gray-700">
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase mb-2">
-                  ⬜ Thấp
-                </p>
-                <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
-                  {brokerVCKStats.low} <span className="text-sm text-gray-600 dark:text-gray-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.low / brokerVCKStats.total) * 100) : 0}%)</span>
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Đã mua: 0 (0%)</p>
-              </div>
-
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-                <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase mb-2">
-                  ✅ Đã mua
-                </p>
-                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {brokerVCKStats.bought} <span className="text-sm text-blue-600 dark:text-blue-400">({brokerVCKStats.conversionRate}%)</span>
-                </p>
+            <div className="bg-gradient-to-r from-emerald-900/20 via-emerald-800/20 to-emerald-900/20 rounded-lg px-4 py-3 border border-emerald-200 dark:border-emerald-800 mb-6">
+              <div className="flex items-center justify-between overflow-x-auto gap-6">
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
+                  <span className="whitespace-nowrap">
+                    <span className="text-gray-500 dark:text-gray-400">🟢 Cao:</span>{' '}
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{brokerVCKStats.high}</span>{' '}
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.high / brokerVCKStats.total) * 100) : 0}%)</span>
+                    <span className="text-gray-400 dark:text-gray-500 mx-2">·</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Đã mua: 0 (0%)</span>
+                  </span>
+                  <span className="whitespace-nowrap">
+                    <span className="text-gray-500 dark:text-gray-400">🟡 Trung bình:</span>{' '}
+                    <span className="font-bold text-amber-600 dark:text-amber-400">{brokerVCKStats.medium}</span>{' '}
+                    <span className="text-xs text-amber-600 dark:text-amber-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.medium / brokerVCKStats.total) * 100) : 0}%)</span>
+                    <span className="text-gray-400 dark:text-gray-500 mx-2">·</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Đã mua: 0 (0%)</span>
+                  </span>
+                  <span className="whitespace-nowrap">
+                    <span className="text-gray-500 dark:text-gray-400">⬜ Thấp:</span>{' '}
+                    <span className="font-bold text-gray-600 dark:text-gray-300">{brokerVCKStats.low}</span>{' '}
+                    <span className="text-xs text-gray-500 dark:text-gray-400">({brokerVCKStats.total > 0 ? Math.round((brokerVCKStats.low / brokerVCKStats.total) * 100) : 0}%)</span>
+                    <span className="text-gray-400 dark:text-gray-500 mx-2">·</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Đã mua: 0 (0%)</span>
+                  </span>
+                  <span className="whitespace-nowrap">
+                    <span className="text-gray-500 dark:text-gray-400">✅ Đã mua:</span>{' '}
+                    <span className="font-bold text-blue-600 dark:text-blue-400">{brokerVCKStats.bought}</span>{' '}
+                    <span className="text-xs text-blue-600 dark:text-blue-400">({brokerVCKStats.conversionRate}%)</span>
+                  </span>
+                </div>
               </div>
             </div>
 
