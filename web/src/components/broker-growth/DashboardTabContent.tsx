@@ -299,7 +299,6 @@ export function DashboardTabContent() {
                   <stop offset={netZeroOffset} stopColor="#ef4444" />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
               <Tooltip
