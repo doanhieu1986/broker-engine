@@ -378,25 +378,6 @@ export function DashboardTabContent() {
           </ResponsiveContainer>
         </div>
       </div>
-
-      {/* Chart 5: Waterfall Flow - Khách hàng */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          📈 Khách hàng - Waterfall Flow
-        </h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <ComposedChart data={monthData}>
-            <XAxis dataKey="period" stroke="#9ca3af" />
-            <YAxis stroke="#9ca3af" yAxisId="left" />
-            <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
-            <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
-            <Legend />
-            <Bar yAxisId="left" dataKey="newCustomers" name="Khách hàng mới" fill="#10b981" />
-            <Bar yAxisId="left" dataKey="churn" name="Churn" fill="#ef4444" />
-            <Line yAxisId="right" type="monotone" dataKey="customers" name="Tổng khách hàng" stroke="#3b82f6" strokeWidth={2} />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </div>
     </div>
   );
 }
