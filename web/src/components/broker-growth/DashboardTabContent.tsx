@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LineChart, Line, Bar, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
+import { LineChart, Line, Bar, ComposedChart, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
 import { useUser } from '../../context/UserContext';
 
 type PeriodFilter = 'week' | 'month' | 'quarter' | 'year';
@@ -252,7 +252,6 @@ export function DashboardTabContent() {
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={monthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
@@ -271,7 +270,6 @@ export function DashboardTabContent() {
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={monthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" yAxisId="left" />
               <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" />
@@ -366,7 +364,6 @@ export function DashboardTabContent() {
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={monthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
