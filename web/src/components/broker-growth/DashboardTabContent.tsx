@@ -289,7 +289,7 @@ export function DashboardTabContent() {
             💵 Net (Nộp tiền - Rút tiền)
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={netChartData} stackOffset="sign">
+            <ComposedChart data={netChartData}>
               <defs>
                 {/* Net line colour: green above the zero line, red below it.
                     The hard colour switch is placed at netZeroOffset so it
@@ -313,11 +313,12 @@ export function DashboardTabContent() {
               />
               <Legend wrapperStyle={{ color: '#e5e7eb' }} />
               <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={2} />
-              {/* True diverging bars: Nộp grows up (green), Rút grows down (red)
-                  from the zero line. Wider bars with rounded outer corners give a
-                  clean, symmetric left/right separation around the centre line. */}
-              <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[4, 4, 0, 0]} barSize={20} fillOpacity={0.9} />
-              <Bar dataKey="rútNeg" name="Rút tiền (tỷ đ)" fill="#ef4444" radius={[0, 0, 4, 4]} barSize={20} fillOpacity={0.9} />
+              {/* Option 2 diverging bars: each month has two side-by-side bars.
+                  Nộp (green) sits on the left and extends UP from 0; Rút (red)
+                  sits on the right and extends DOWN from 0. Without stacking,
+                  Recharts places the two Bars next to each other automatically. */}
+              <Bar dataKey="nộp" name="Nộp tiền (tỷ đ)" fill="#10b981" radius={[4, 4, 0, 0]} barSize={18} fillOpacity={0.9} />
+              <Bar dataKey="rútNeg" name="Rút tiền (tỷ đ)" fill="#ef4444" radius={[0, 0, 4, 4]} barSize={18} fillOpacity={0.9} />
               {/* Net trend: a single smooth line over the bars, no fill.
                   Colour is green above 0 / red below 0 via the gradient stroke,
                   so the bars stay fully visible underneath. */}
