@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LineChart, Line, Bar, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, Bar, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
 import { useUser } from '../../context/UserContext';
 
 type PeriodFilter = 'week' | 'month' | 'quarter' | 'year';
@@ -326,13 +326,15 @@ export function DashboardTabContent() {
                 radius={[4, 4, 0, 0]}
                 barSize={28}
                 fillOpacity={0.9}
-                label={{
-                  position: 'top',
-                  fill: '#e5e7eb',
-                  fontSize: 12,
-                  formatter: (value: number) => Math.round(value).toString(),
-                }}
-              />
+              >
+                <LabelList
+                  dataKey="nộp"
+                  position="top"
+                  fill="#e5e7eb"
+                  fontSize={12}
+                  formatter={(value) => Math.round(Number(value)).toString()}
+                />
+              </Bar>
               <Bar
                 stackId="net"
                 dataKey="rútNeg"
@@ -341,13 +343,15 @@ export function DashboardTabContent() {
                 radius={[0, 0, 4, 4]}
                 barSize={28}
                 fillOpacity={0.9}
-                label={{
-                  position: 'bottom',
-                  fill: '#e5e7eb',
-                  fontSize: 12,
-                  formatter: (value: number) => Math.round(Math.abs(value)).toString(),
-                }}
-              />
+              >
+                <LabelList
+                  dataKey="rútNeg"
+                  position="bottom"
+                  fill="#e5e7eb"
+                  fontSize={12}
+                  formatter={(value) => Math.abs(Math.round(Number(value))).toString()}
+                />
+              </Bar>
               {/* Net trend: a single smooth line over the bars, no fill.
                   Colour is green above 0 / red below 0 via the gradient stroke,
                   so the bars stay fully visible underneath. */}
