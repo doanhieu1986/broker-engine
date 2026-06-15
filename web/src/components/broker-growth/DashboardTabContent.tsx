@@ -277,7 +277,7 @@ export function DashboardTabContent() {
               <Legend />
               <Bar yAxisId="left" dataKey="nav" name="NAV (tỷ đ)" fill="#10b981" />
               <Bar yAxisId="left" dataKey="debt" name="Tổng dư nợ (tỷ đ)" fill="#ef4444" />
-              <Line yAxisId="right" type="monotone" dataKey="debtToNavRatio" name="Tỷ lệ Dư nợ/NAV (%)" stroke="#10b981" strokeWidth={2} />
+              <Line yAxisId="right" type="monotone" dataKey="debtToNavRatio" name="Tỷ lệ Dư nợ/NAV (%)" stroke="#fbbf24" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -371,7 +371,7 @@ export function DashboardTabContent() {
               <Legend />
               <Bar dataKey="tradingValueBase" name="Giá trị GD Cơ sở (tỷ đ)" fill="#10b981" />
               <Bar dataKey="tradingValueDerivative" name="Giá trị GD Phái sinh (tỷ đ)" fill="#ef4444" />
-              <Line type="monotone" dataKey="tradingValue" name="Tổng GD (tỷ đ)" stroke="#ef4444" strokeWidth={2} />
+              <Line type="monotone" dataKey="tradingValue" name="Tổng GD (tỷ đ)" stroke="#fbbf24" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
