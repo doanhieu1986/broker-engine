@@ -146,7 +146,8 @@ const getChartData = (period: PeriodFilter, view: ViewMode = 'company') => {
   const data = (() => {
     switch (period) {
       case 'week':
-        return view === 'company' ? weekData : weekTeamData;
+        const weekSource = view === 'company' ? weekData : weekTeamData;
+        return weekSource.slice(-12);
       case 'month':
         return view === 'company' ? monthData : teamMonthData;
       case 'quarter':
