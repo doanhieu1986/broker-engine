@@ -39,24 +39,24 @@ const individualMonthData = [
   { period: 'T12', customers: 1480, active: 1340, inactive: 140, newCustomers: 112, churn: -97, nav: 920, tradingValue: 2100, tradingValueBase: 1260, tradingValueDerivative: 840, nộp: 255, rút: 32, net: 223, debt: 120, debtToNavRatio: 13.0, commission: 16.5 },
 ];
 
-// Team data (40% higher than individual)
+// Team data (100% higher than individual - 2x)
 const teamMonthData = individualMonthData.map(d => ({
   ...d,
-  customers: Math.round(d.customers * 1.4),
-  active: Math.round(d.active * 1.4),
-  inactive: Math.round(d.inactive * 1.4),
-  newCustomers: Math.round(d.newCustomers * 1.4),
-  churn: Math.round(d.churn * 1.4),
-  nav: Math.round(d.nav * 1.4),
-  tradingValue: Math.round(d.tradingValue * 1.4),
-  tradingValueBase: Math.round(d.tradingValueBase * 1.4),
-  tradingValueDerivative: Math.round(d.tradingValueDerivative * 1.4),
-  nộp: Math.round(d.nộp * 1.4),
-  rút: Math.round(d.rút * 1.4),
-  net: Math.round(d.net * 1.4),
-  debt: Math.round(d.debt * 1.4),
+  customers: Math.round(d.customers * 2),
+  active: Math.round(d.active * 2),
+  inactive: Math.round(d.inactive * 2),
+  newCustomers: Math.round(d.newCustomers * 2),
+  churn: Math.round(d.churn * 2),
+  nav: Math.round(d.nav * 2),
+  tradingValue: Math.round(d.tradingValue * 2),
+  tradingValueBase: Math.round(d.tradingValueBase * 2),
+  tradingValueDerivative: Math.round(d.tradingValueDerivative * 2),
+  nộp: Math.round(d.nộp * 2),
+  rút: Math.round(d.rút * 2),
+  net: Math.round(d.net * 2),
+  debt: Math.round(d.debt * 2),
   debtToNavRatio: parseFloat((d.debtToNavRatio).toFixed(1)),
-  commission: parseFloat((d.commission * 1.4).toFixed(1)),
+  commission: parseFloat((d.commission * 2).toFixed(1)),
 }));
 
 const monthData = individualMonthData;
