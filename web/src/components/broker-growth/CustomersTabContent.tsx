@@ -4,7 +4,7 @@ import { DataTable } from '../shared/DataTable';
 import { mockCustomers } from '../../data/mockData';
 import { getClassificationLabel } from '../../data/generators';
 import { useUser } from '../../context/UserContext';
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Treemap } from 'recharts';
+import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Treemap } from 'recharts';
 
 interface CustomersTabContentProps {
   initialTab?: 'recommendation' | 'overview' | 'list' | 'todo';
@@ -166,13 +166,13 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
   });
 
   const stackedChartData = [
-    { name: 'S1', ...classificationsByStatus['S1'] },
-    { name: 'S2', ...classificationsByStatus['S2'] },
-    { name: 'S3', ...classificationsByStatus['S3'] },
-    { name: 'S4', ...classificationsByStatus['S4'] },
-    { name: 'S5', ...classificationsByStatus['S5'] },
-    { name: 'S6', ...classificationsByStatus['S6'] },
-    { name: 'S7', ...classificationsByStatus['S7'] },
+    { name: getClassificationLabel('S1'), ...classificationsByStatus['S1'] },
+    { name: getClassificationLabel('S2'), ...classificationsByStatus['S2'] },
+    { name: getClassificationLabel('S3'), ...classificationsByStatus['S3'] },
+    { name: getClassificationLabel('S4'), ...classificationsByStatus['S4'] },
+    { name: getClassificationLabel('S5'), ...classificationsByStatus['S5'] },
+    { name: getClassificationLabel('S6'), ...classificationsByStatus['S6'] },
+    { name: getClassificationLabel('S7'), ...classificationsByStatus['S7'] },
   ];
 
   // Calculate status distribution across all classifications
@@ -237,7 +237,11 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
   const brokerStackedData = uniqueBrokers.map(broker => ({
     name: broker,
     ...brokersByStatus[broker],
-  }));
+  })).sort((a: any, b: any) => {
+    const totalA = a.Prospect + a.Active + a.Inactive + a.Dormant + a.Churn;
+    const totalB = b.Prospect + b.Active + b.Inactive + b.Dormant + b.Churn;
+    return totalB - totalA;
+  });
 
   // Calculate profit/loss data for customers
   const profitableCustomers = filteredCustomers.filter(c => c.profit > 0);
@@ -283,11 +287,28 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
   const STOCK_COLORS = ['#7c3aed', '#059669', '#0891b2', '#d97706', '#dc2626', '#2563eb', '#9333ea', '#ea580c'];
 
   const STATUS_COLORS: Record<string, string> = {
-    'Prospect': '#60a5fa',
-    'Active': '#4ade80',
+    'Prospect': '#bfdbfe',
+    'Active': '#86efac',
     'Inactive': '#d1d5db',
-    'Dormant': '#fcd34d',
-    'Churn': '#fca5a5',
+    'Dormant': '#fef3c7',
+    'Churn': '#fee2e2',
+  };
+
+  const TOOLTIP_STYLE = {
+    backgroundColor: '#1e293b',
+    border: '1px solid #475569',
+    borderRadius: '8px',
+    padding: '10px 12px',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+  };
+
+  const TOOLTIP_LABEL_STYLE = {
+    color: '#f1f5f9 !important',
+    fontWeight: 'bold',
+  };
+
+  const TOOLTIP_ITEM_STYLE = {
+    fontWeight: '600',
   };
 
   const columns = [
@@ -544,16 +565,12 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
               </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={stackedChartData}>
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
                   <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
                   <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
                   <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
+                    contentStyle={TOOLTIP_STYLE}
+                    labelStyle={TOOLTIP_LABEL_STYLE}
+                    itemStyle={TOOLTIP_ITEM_STYLE}
                     formatter={(value: any) => `${value} khách hàng`}
                   />
                   <Legend />
@@ -573,16 +590,12 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
               </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={statusDistData}>
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
                   <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} />
                   <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
                   <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
+                    contentStyle={TOOLTIP_STYLE}
+                    labelStyle={TOOLTIP_LABEL_STYLE}
+                    itemStyle={TOOLTIP_ITEM_STYLE}
                     formatter={(value: any) => `${value} khách hàng`}
                   />
                   <Bar dataKey="value" name="Số khách hàng">
@@ -619,12 +632,7 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#f9fafb',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '8px',
-                        color: '#1f2937'
-                      }}
+                      contentStyle={TOOLTIP_STYLE}
                       formatter={(value: any) => `${value} khách hàng`}
                     />
                   </PieChart>
@@ -648,7 +656,7 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
             </div>
           </div>
 
-          {/* Row 2: Broker Distribution by Status Chart - Only for Manager */}
+          {/* Row 3: Broker Distribution by Status Chart - Only for Manager */}
           {role === 'Manager' && (
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -656,16 +664,13 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
               </h3>
               <ResponsiveContainer width="100%" height={uniqueBrokers.length * 50 + 50}>
                 <BarChart data={brokerStackedData} layout="vertical">
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
                   <XAxis type="number" stroke="#9ca3af" tick={{ fontSize: 12 }} />
                   <YAxis dataKey="name" type="category" stroke="#9ca3af" width={140} tick={{ fontSize: 11 }} />
                   <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
+                    contentStyle={TOOLTIP_STYLE}
+                    labelStyle={{ color: '#f1f5f9', fontWeight: 'bold', fontSize: '14px' }}
+                    itemStyle={TOOLTIP_ITEM_STYLE}
+                    labelFormatter={(value: any) => `📊 ${value}`}
                     formatter={(value: any) => `${value} khách hàng`}
                   />
                   <Legend />
@@ -679,7 +684,7 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
             </div>
           )}
 
-          {/* Row 3: Industry Sector and Stock Type Distribution */}
+          {/* Row 4: Industry Sector and Stock Type Distribution */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Industry Sector Distribution */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">

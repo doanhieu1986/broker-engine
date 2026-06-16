@@ -528,8 +528,8 @@ export function generateTransaction(customerId: string): Transaction {
     type: faker.datatype.boolean() ? 'Mua' : 'Bán',
     quantity: faker.number.int({ min: 100, max: 10000 }),
     price: faker.number.int({ min: 10000, max: 500000 }),
-    amount: faker.number.int({ min: 10000000, max: 2000000000 }),
-    commission: faker.number.int({ min: 50000, max: 50000000 }),
+    amount: faker.number.int({ min: 100000000, max: 20000000000 }),
+    commission: faker.number.int({ min: 500000, max: 500000000 }),
   };
 }
 

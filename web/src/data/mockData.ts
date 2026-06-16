@@ -55,16 +55,16 @@ export const mockTransactions: Transaction[] = mockCustomers.flatMap((customer) 
 
   if (customer.nav > 30000000000) {
     // Top tier customers (30B+): proportional to NAV
-    transactionCount = Math.floor(navInBillions * 400);
+    transactionCount = Math.floor(navInBillions * 1);
   } else if (customer.nav > 10000000000) {
     // High tier (10-30B): proportional to NAV
-    transactionCount = Math.floor(navInBillions * 300);
+    transactionCount = Math.floor(navInBillions * 0.7);
   } else if (customer.nav > 1000000000) {
     // Mid tier (1-10B): proportional to NAV
-    transactionCount = Math.floor(navInBillions * 200);
+    transactionCount = Math.floor(navInBillions * 0.4);
   } else {
     // Regular (< 1B): proportional to NAV
-    transactionCount = Math.floor(navInBillions * 300);
+    transactionCount = Math.floor(navInBillions * 0.5);
   }
 
   // Ensure at least some transactions
@@ -74,9 +74,9 @@ export const mockTransactions: Transaction[] = mockCustomers.flatMap((customer) 
     { length: transactionCount },
     () => {
       const transaction = generateTransaction(customer.id);
-      // Adjust commission multiplier for high NAV customers
-      transaction.commission = Math.floor(transaction.commission * (1 + navInBillions * 0.2));
-      transaction.amount = Math.floor(transaction.amount * (1 + navInBillions * 0.2));
+      // Adjust commission multiplier for high NAV customers (minimal multiplier)
+      transaction.commission = Math.floor(transaction.commission * (1 + navInBillions * 0.01));
+      transaction.amount = Math.floor(transaction.amount * (1 + navInBillions * 0.01));
       return transaction;
     }
   );
