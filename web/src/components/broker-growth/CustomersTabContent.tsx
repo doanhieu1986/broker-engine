@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DataTable } from '../shared/DataTable';
 import { mockCustomers } from '../../data/mockData';
+import { getClassificationLabel } from '../../data/generators';
 import { useUser } from '../../context/UserContext';
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Treemap } from 'recharts';
 
@@ -500,7 +501,7 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
                             : c.classification === 'S6' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
                             : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
                           }`}>
-                            {c.classification}
+                            {getClassificationLabel(c.classification as any)}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-white">

@@ -1,5 +1,20 @@
 import { faker } from '@faker-js/faker';
 
+// Classification mapping with descriptions
+export const classificationLabels: Record<'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7', string> = {
+  'S1': 'S1 - Whale',
+  'S2': 'S2 - Giao dịch mạnh',
+  'S3': 'S3 - Phổ thông',
+  'S4': 'S4 - Mới giao dịch',
+  'S5': 'S5 - Khách hàng Kho',
+  'S6': 'S6 - Tiềm năng',
+  'S7': 'S7 - Ngưng hoạt động',
+};
+
+export const getClassificationLabel = (classification: 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7'): string => {
+  return classificationLabels[classification] || classification;
+};
+
 // Vietnamese names data
 const firstNames = [
   'Nguyễn', 'Trần', 'Phạm', 'Hoàng', 'Phan', 'Vũ', 'Đặng', 'Bùi', 'Đỗ', 'Hồ',

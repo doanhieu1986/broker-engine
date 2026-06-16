@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { mockCustomers, mockStaff } from '../data/mockData';
+import { getClassificationLabel } from '../data/generators';
 
 export function BrokerDetailPage() {
   const { brokerCode } = useParams<{ brokerCode: string }>();
@@ -156,7 +157,7 @@ export function BrokerDetailPage() {
                           customer.classification === 'S6' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
                           'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
                         }`}>
-                          {customer.classification}
+                          {getClassificationLabel(customer.classification as any)}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm">
