@@ -24,7 +24,7 @@ const weekData = Array.from({ length: 52 }, (_, i) => {
   };
 });
 
-const monthData = [
+const individualMonthData = [
   { period: 'T1', customers: 1100, active: 980, inactive: 120, newCustomers: 45, churn: 0, nav: 450, tradingValue: 1200, tradingValueBase: 720, tradingValueDerivative: 480, nộp: 85, rút: 20, net: 65, debt: 250, debtToNavRatio: 55.6, commission: 8.4 },
   { period: 'T2', customers: 1165, active: 1045, inactive: 120, newCustomers: 62, churn: -3, nav: 520, tradingValue: 1420, tradingValueBase: 852, tradingValueDerivative: 568, nộp: 125, rút: 18, net: 107, debt: 228, debtToNavRatio: 43.8, commission: 10.2 },
   { period: 'T3', customers: 1075, active: 960, inactive: 115, newCustomers: 38, churn: 128, nav: 420, tradingValue: 1280, tradingValueBase: 768, tradingValueDerivative: 512, nộp: 55, rút: 85, net: -30, debt: 275, debtToNavRatio: 65.5, commission: 8.9 },
@@ -39,6 +39,28 @@ const monthData = [
   { period: 'T12', customers: 1480, active: 1340, inactive: 140, newCustomers: 112, churn: -97, nav: 920, tradingValue: 2100, tradingValueBase: 1260, tradingValueDerivative: 840, nộp: 255, rút: 32, net: 223, debt: 120, debtToNavRatio: 13.0, commission: 16.5 },
 ];
 
+// Team data (40% higher than individual)
+const teamMonthData = individualMonthData.map(d => ({
+  ...d,
+  customers: Math.round(d.customers * 1.4),
+  active: Math.round(d.active * 1.4),
+  inactive: Math.round(d.inactive * 1.4),
+  newCustomers: Math.round(d.newCustomers * 1.4),
+  churn: Math.round(d.churn * 1.4),
+  nav: Math.round(d.nav * 1.4),
+  tradingValue: Math.round(d.tradingValue * 1.4),
+  tradingValueBase: Math.round(d.tradingValueBase * 1.4),
+  tradingValueDerivative: Math.round(d.tradingValueDerivative * 1.4),
+  nộp: Math.round(d.nộp * 1.4),
+  rút: Math.round(d.rút * 1.4),
+  net: Math.round(d.net * 1.4),
+  debt: Math.round(d.debt * 1.4),
+  debtToNavRatio: parseFloat((d.debtToNavRatio).toFixed(1)),
+  commission: parseFloat((d.commission * 1.4).toFixed(1)),
+}));
+
+const monthData = individualMonthData;
+
 const quarterData = [
   { period: 'Q1', customers: 1113, active: 995, newCustomers: 48, nav: 463, tradingValue: 1300, nộp: 92, rút: 23, debt: 251, commission: 27.5 },
   { period: 'Q2', customers: 1197, active: 1075, newCustomers: 68, nav: 560, tradingValue: 1573, nộp: 140, rút: 30, debt: 220, commission: 33.9 },
@@ -51,17 +73,20 @@ const yearData = [
   { period: '2025', customers: 1375, active: 1229, newCustomers: 92, nav: 795, tradingValue: 1890, nộp: 209, rút: 35, debt: 165, commission: 146.2 },
 ];
 
-const getChartData = (period: PeriodFilter) => {
-  switch (period) {
-    case 'week':
-      return weekData;
-    case 'month':
-      return monthData;
-    case 'quarter':
-      return quarterData;
-    case 'year':
-      return yearData;
-  }
+const getChartData = (period: PeriodFilter, view: ViewMode = 'company') => {
+  const data = (() => {
+    switch (period) {
+      case 'week':
+        return weekData;
+      case 'month':
+        return view === 'company' ? monthData : teamMonthData;
+      case 'quarter':
+        return quarterData;
+      case 'year':
+        return yearData;
+    }
+  })();
+  return data;
 };
 
 export function DashboardTabContent() {
@@ -69,8 +94,8 @@ export function DashboardTabContent() {
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('month');
   const [viewMode, setViewMode] = useState<ViewMode>('company');
 
-  // Get data for current period filter
-  const currentData = getChartData(periodFilter);
+  // Get data for current period filter and view mode
+  const currentData = getChartData(periodFilter, viewMode);
   const latestData = currentData[currentData.length - 1];
   const previousData = currentData[currentData.length - 2];
 
