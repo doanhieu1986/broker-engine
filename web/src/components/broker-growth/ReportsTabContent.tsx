@@ -259,21 +259,8 @@ export function ReportsTabContent() {
       label: 'SĐT Liên Hệ',
     },
     {
-      key: 'customerCareScenario',
-      label: 'Kịch bản CSKH',
-    },
-    {
-      key: 'status',
-      label: 'Trạng Thái',
-      render: (value: string) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value === 'Đã chuẩn bị mã' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-          value === 'Đang duyệt ngân sách' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-        }`}>
-          {value}
-        </span>
-      ),
+      key: 'email',
+      label: 'Email',
     },
   ];
 
