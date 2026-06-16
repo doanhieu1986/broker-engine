@@ -91,15 +91,26 @@ const weekTeamData = weekData.map(d => ({
 }));
 
 const quarterData = [
-  { period: 'Q1', customers: 1113, active: 995, inactive: 118, newCustomers: 48, churn: -48, nav: 463, tradingValue: 1300, tradingValueBase: 780, tradingValueDerivative: 520, nộp: 92, rút: 23, net: 69, debt: 251, debtToNavRatio: 54.2, commission: 27.5 },
-  { period: 'Q2', customers: 1197, active: 1075, inactive: 122, newCustomers: 68, churn: 68, nav: 560, tradingValue: 1573, tradingValueBase: 944, tradingValueDerivative: 629, nộp: 140, rút: 30, net: 110, debt: 220, debtToNavRatio: 39.3, commission: 33.9 },
-  { period: 'Q3', customers: 1297, active: 1173, inactive: 124, newCustomers: 81, churn: -81, nav: 680, tradingValue: 1750, tradingValueBase: 1050, tradingValueDerivative: 700, nộp: 173, rút: 35, net: 138, debt: 188, debtToNavRatio: 27.6, commission: 39.2 },
-  { period: 'Q4', customers: 1403, active: 1270, inactive: 133, newCustomers: 98, churn: 98, nav: 850, tradingValue: 2033, tradingValueBase: 1220, tradingValueDerivative: 813, nộp: 222, rút: 35, net: 187, debt: 143, debtToNavRatio: 16.8, commission: 45.6 },
+  { period: 'Q1\'23', customers: 850, active: 765, inactive: 85, newCustomers: 28, churn: -28, nav: 320, tradingValue: 850, tradingValueBase: 510, tradingValueDerivative: 340, nộp: 58, rút: 15, net: 43, debt: 280, debtToNavRatio: 87.5, commission: 15.2 },
+  { period: 'Q2\'23', customers: 920, active: 828, inactive: 92, newCustomers: 42, churn: 42, nav: 380, tradingValue: 1020, tradingValueBase: 612, tradingValueDerivative: 408, nộp: 78, rút: 18, net: 60, debt: 265, debtToNavRatio: 69.7, commission: 18.5 },
+  { period: 'Q3\'23', customers: 995, active: 896, inactive: 99, newCustomers: 38, churn: -38, nav: 420, tradingValue: 1150, tradingValueBase: 690, tradingValueDerivative: 460, nộp: 95, rút: 22, net: 73, debt: 250, debtToNavRatio: 59.5, commission: 20.8 },
+  { period: 'Q4\'23', customers: 1085, active: 977, inactive: 108, newCustomers: 55, churn: 55, nav: 480, tradingValue: 1280, tradingValueBase: 768, tradingValueDerivative: 512, nộp: 115, rút: 25, net: 90, debt: 230, debtToNavRatio: 47.9, commission: 23.6 },
+  { period: 'Q1\'24', customers: 1113, active: 1001, inactive: 112, newCustomers: 48, churn: -48, nav: 463, tradingValue: 1300, tradingValueBase: 780, tradingValueDerivative: 520, nộp: 92, rút: 23, net: 69, debt: 251, debtToNavRatio: 54.2, commission: 27.5 },
+  { period: 'Q2\'24', customers: 1197, active: 1075, inactive: 122, newCustomers: 68, churn: 68, nav: 560, tradingValue: 1573, tradingValueBase: 944, tradingValueDerivative: 629, nộp: 140, rút: 30, net: 110, debt: 220, debtToNavRatio: 39.3, commission: 33.9 },
+  { period: 'Q3\'24', customers: 1297, active: 1173, inactive: 124, newCustomers: 81, churn: -81, nav: 680, tradingValue: 1750, tradingValueBase: 1050, tradingValueDerivative: 700, nộp: 173, rút: 35, net: 138, debt: 188, debtToNavRatio: 27.6, commission: 39.2 },
+  { period: 'Q4\'24', customers: 1403, active: 1270, inactive: 133, newCustomers: 98, churn: 98, nav: 850, tradingValue: 2033, tradingValueBase: 1220, tradingValueDerivative: 813, nộp: 222, rút: 35, net: 187, debt: 143, debtToNavRatio: 16.8, commission: 45.6 },
+  { period: 'Q1\'25', customers: 1468, active: 1321, inactive: 147, newCustomers: 76, churn: -76, nav: 920, tradingValue: 2150, tradingValueBase: 1290, tradingValueDerivative: 860, nộp: 245, rút: 32, net: 213, debt: 125, debtToNavRatio: 13.6, commission: 51.8 },
+  { period: 'Q2\'25', customers: 1540, active: 1386, inactive: 154, newCustomers: 88, churn: 88, nav: 985, tradingValue: 2310, tradingValueBase: 1386, tradingValueDerivative: 924, nộp: 278, rút: 38, net: 240, debt: 110, debtToNavRatio: 11.2, commission: 56.4 },
+  { period: 'Q3\'25', customers: 1618, active: 1456, inactive: 162, newCustomers: 102, churn: -102, nav: 1055, tradingValue: 2480, tradingValueBase: 1488, tradingValueDerivative: 992, nộp: 315, rút: 42, net: 273, debt: 95, debtToNavRatio: 9.0, commission: 61.5 },
+  { period: 'Q4\'25', customers: 1703, active: 1532, inactive: 171, newCustomers: 120, churn: 120, nav: 1132, tradingValue: 2660, tradingValueBase: 1596, tradingValueDerivative: 1064, nộp: 355, rút: 48, net: 307, debt: 80, debtToNavRatio: 7.1, commission: 67.2 },
 ];
 
 const yearData = [
-  { period: '2024', customers: 1202, active: 1078, inactive: 124, newCustomers: 66, churn: -66, nav: 590, tradingValue: 1604, tradingValueBase: 962, tradingValueDerivative: 642, nộp: 149, rút: 32, net: 117, debt: 205, debtToNavRatio: 34.7, commission: 128.4 },
-  { period: '2025', customers: 1375, active: 1229, inactive: 146, newCustomers: 92, churn: 92, nav: 795, tradingValue: 1890, tradingValueBase: 1134, tradingValueDerivative: 756, nộp: 209, rút: 35, net: 174, debt: 165, debtToNavRatio: 20.8, commission: 146.2 },
+  { period: '2021', customers: 650, active: 585, inactive: 65, newCustomers: 35, churn: 35, nav: 240, tradingValue: 620, tradingValueBase: 372, tradingValueDerivative: 248, nộp: 45, rút: 10, net: 35, debt: 320, debtToNavRatio: 133.3, commission: 42.5 },
+  { period: '2022', customers: 750, active: 675, inactive: 75, newCustomers: 42, churn: -42, nav: 310, tradingValue: 820, tradingValueBase: 492, tradingValueDerivative: 328, nộp: 68, rút: 14, net: 54, debt: 300, debtToNavRatio: 96.8, commission: 58.2 },
+  { period: '2023', customers: 950, active: 855, inactive: 95, newCustomers: 41, churn: 41, nav: 400, tradingValue: 1100, tradingValueBase: 660, tradingValueDerivative: 440, nộp: 86, rút: 20, net: 66, debt: 256, debtToNavRatio: 64.0, commission: 82.7 },
+  { period: '2024', customers: 1202, active: 1078, inactive: 124, newCustomers: 74, churn: -74, nav: 590, tradingValue: 1604, tradingValueBase: 962, tradingValueDerivative: 642, nộp: 159, rút: 28, net: 131, debt: 205, debtToNavRatio: 34.7, commission: 146.2 },
+  { period: '2025', customers: 1482, active: 1349, inactive: 133, newCustomers: 97, churn: 97, nav: 773, tradingValue: 2100, tradingValueBase: 1260, tradingValueDerivative: 840, nộp: 298, rút: 40, net: 258, debt: 102, debtToNavRatio: 13.2, commission: 237.1 },
 ];
 
 // Team data for quarter
@@ -151,9 +162,11 @@ const getChartData = (period: PeriodFilter, view: ViewMode = 'company') => {
       case 'month':
         return view === 'company' ? monthData : teamMonthData;
       case 'quarter':
-        return view === 'company' ? quarterData : quarterTeamData;
+        const quarterSource = view === 'company' ? quarterData : quarterTeamData;
+        return quarterSource.slice(-12);
       case 'year':
-        return view === 'company' ? yearData : yearTeamData;
+        const yearSource = view === 'company' ? yearData : yearTeamData;
+        return yearSource.slice(-5);
     }
   })();
   return data;
