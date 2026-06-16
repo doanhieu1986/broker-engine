@@ -74,9 +74,9 @@ export const mockTransactions: Transaction[] = mockCustomers.flatMap((customer) 
     { length: transactionCount },
     () => {
       const transaction = generateTransaction(customer.id);
-      // Adjust commission multiplier for high NAV customers (minimal multiplier)
-      transaction.commission = Math.floor(transaction.commission * (1 + navInBillions * 0.01));
-      transaction.amount = Math.floor(transaction.amount * (1 + navInBillions * 0.01));
+      // Adjust commission multiplier for high NAV customers
+      transaction.commission = Math.floor(transaction.commission * (1 + navInBillions * 0.2));
+      transaction.amount = Math.floor(transaction.amount * (1 + navInBillions * 0.2));
       return transaction;
     }
   );
