@@ -1,48 +1,19 @@
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { mockPerformanceReports, mockCustomers, mockTransactions, mockBrokerChartData } from '../../data/mockData';
-import { DataTable } from '../shared/DataTable';
+import { mockCustomers, mockTransactions, mockBrokerChartData } from '../../data/mockData';
 import { useUser } from '../../context/UserContext';
 
 export function PerformanceTabContent() {
   const { role, user } = useUser();
-  const [performanceTab, setPerformanceTab] = useState<'overview' | 'brokers' | 'customers'>('overview');
+  const [performanceTab, setPerformanceTab] = useState<'brokers' | 'customers'>(role === 'Manager' ? 'brokers' : 'customers');
 
-  const columns = [
-    {
-      key: 'brokerName',
-      label: 'Broker',
-      sortable: true,
-    },
-    {
-      key: 'newAccountsOpened',
-      label: 'Tài khoản mới',
-      sortable: true,
-    },
-    {
-      key: 'totalCommission',
-      label: 'Hoa hồng (tỷ đ)',
-      sortable: true,
-      render: (value: number) => (value / 1000000000).toFixed(2),
-    },
-    {
-      key: 'totalOrders',
-      label: 'Số lệnh',
-      sortable: true,
-    },
-    {
-      key: 'activeAccountsRatio',
-      label: 'Tài khoản active (%)',
-      sortable: true,
-      render: (value: number) => value.toFixed(2),
-    },
-    {
-      key: 'tradingFrequency',
-      label: 'Tần suất giao dịch',
-      sortable: true,
-      render: (value: number) => value.toFixed(2),
-    },
-  ];
+  // Helper function to get color based on completion percentage
+  const getProgressBarColor = (completion: number): string => {
+    if (completion >= 100) return 'bg-emerald-500';
+    if (completion >= 80) return 'bg-blue-500';
+    if (completion >= 50) return 'bg-amber-500';
+    return 'bg-red-500';
+  };
 
   // Colors for charts
   const CHART_BASE = '#9ca3af';
@@ -115,16 +86,6 @@ export function PerformanceTabContent() {
     <div className="space-y-6">
       {/* Tab Navigation */}
       <div className="flex gap-2 border-b border-slate-200 dark:border-slate-800">
-        <button
-          onClick={() => setPerformanceTab('overview')}
-          className={`px-4 py-3 font-medium text-sm transition-all border-b-2 ${
-            performanceTab === 'overview'
-              ? 'border-accent-600 text-accent-600 dark:text-accent-400'
-              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
-          }`}
-        >
-          Tổng quan
-        </button>
         {role === 'Manager' && (
           <button
             onClick={() => setPerformanceTab('brokers')}
@@ -149,154 +110,132 @@ export function PerformanceTabContent() {
         </button>
       </div>
 
-      {/* Overview Tab */}
-      {performanceTab === 'overview' && (
-        <div className="space-y-6">
-          {/* Performance Table */}
-      <DataTable
-        title="Chi tiết hiệu suất từng broker"
-        columns={columns}
-        data={mockPerformanceReports}
-        searchFields={['brokerName']}
-        onExport={() => alert('Export feature coming soon')}
-      />
-        </div>
-      )}
-
       {/* Broker Performance Tab */}
       {performanceTab === 'brokers' && role === 'Manager' && (
         <div className="space-y-6">
           {/* Row 1: Revenue and Orders */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Broker Revenue Chart */}
+            {/* Broker Revenue Progress Bars */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 Doanh thu phí hoa hồng môi giới theo Broker
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={topBrokersByRevenue} layout="vertical">
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
-                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: any, name: any) => {
-                      if (name === 'Còn lại (KH)') return '';
-                      return typeof value === 'number' ? `${(value / 1000000000).toFixed(2)} tỷ đ` : '';
-                    }}
-                    labelFormatter={(label: any) => {
-                      const broker = topBrokersByRevenue.find((b: any) => b.name === label);
-                      return broker ? `${broker.name} - ${broker.completion}%` : label;
-                    }}
-                  />
-                  <Bar dataKey="hoaHong" name="Doanh thu thực tế" stackId="revenue" fill="#3b82f6" />
-                  <Bar dataKey="gap" name="Còn lại (KH)" stackId="revenue" fill="#d1d5db" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="space-y-3">
+                {[...topBrokersByRevenue].sort((a, b) => b.completion - a.completion).map(broker => {
+                  const rate = broker.completion;
+                  const barColor = getProgressBarColor(rate);
+                  const missing = (broker.hoaHongKH - broker.hoaHong).toFixed(2);
+                  return (
+                    <div key={broker.name} className="flex items-center gap-3">
+                      <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-32 truncate">{broker.name}</span>
+                      <div
+                        className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden cursor-help"
+                        title={`Thực hiện: ${(broker.hoaHong).toFixed(2)}B | Kế hoạch: ${(broker.hoaHongKH).toFixed(2)}B | Còn thiếu: ${missing}B`}
+                      >
+                        <div
+                          className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
+                          style={{ width: `${Math.max(rate, 5)}%` }}
+                        >
+                          <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Broker Trading Orders Chart */}
+            {/* Broker Trading Orders Progress Bars */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 Số lệnh giao dịch theo Broker
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={topBrokersByOrders} layout="vertical">
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
-                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: any, name: any) => {
-                      if (name === 'Còn lại (KH)') return '';
-                      return `${value} lệnh`;
-                    }}
-                    labelFormatter={(label: any) => {
-                      const broker = topBrokersByOrders.find((b: any) => b.name === label);
-                      return broker ? `${broker.name} - ${broker.completion}%` : label;
-                    }}
-                  />
-                  <Bar dataKey="soLenh" name="Lệnh thực tế" stackId="orders" fill="#10b981" />
-                  <Bar dataKey="gap" name="Còn lại (KH)" stackId="orders" fill="#d1d5db" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="space-y-3">
+                {[...topBrokersByOrders].sort((a, b) => b.completion - a.completion).map(broker => {
+                  const rate = broker.completion;
+                  const barColor = getProgressBarColor(rate);
+                  const missing = broker.soLenhKH - broker.soLenh;
+                  return (
+                    <div key={broker.name} className="flex items-center gap-3">
+                      <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-32 truncate">{broker.name}</span>
+                      <div
+                        className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden cursor-help"
+                        title={`Thực hiện: ${broker.soLenh} | Kế hoạch: ${broker.soLenhKH} | Còn thiếu: ${missing}`}
+                      >
+                        <div
+                          className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
+                          style={{ width: `${Math.max(rate, 5)}%` }}
+                        >
+                          <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           {/* Row 2: Customers and Margin Debt */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Broker Customers Chart */}
+            {/* Broker Customers Progress Bars */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 Số khách hàng theo Broker
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={topBrokersByCustomers} layout="vertical">
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
-                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: any, name: any) => {
-                      if (name === 'Còn lại (KH)') return '';
-                      return `${value} khách`;
-                    }}
-                    labelFormatter={(label: any) => {
-                      const broker = topBrokersByCustomers.find((b: any) => b.name === label);
-                      return broker ? `${broker.name} - ${broker.completion}%` : label;
-                    }}
-                  />
-                  <Bar dataKey="khachHang" name="Khách hàng thực tế" stackId="customers" fill="#f59e0b" />
-                  <Bar dataKey="gap" name="Còn lại (KH)" stackId="customers" fill="#d1d5db" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="space-y-3">
+                {[...topBrokersByCustomers].sort((a, b) => b.completion - a.completion).map(broker => {
+                  const rate = broker.completion;
+                  const barColor = getProgressBarColor(rate);
+                  const missing = broker.khachHangKH - broker.khachHang;
+                  return (
+                    <div key={broker.name} className="flex items-center gap-3">
+                      <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-32 truncate">{broker.name}</span>
+                      <div
+                        className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden cursor-help"
+                        title={`Thực hiện: ${broker.khachHang} | Kế hoạch: ${broker.khachHangKH} | Còn thiếu: ${missing}`}
+                      >
+                        <div
+                          className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
+                          style={{ width: `${Math.max(rate, 5)}%` }}
+                        >
+                          <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Margin Debt Chart */}
+            {/* Margin Debt Progress Bars */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 Dư nợ margin theo Broker
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={topBrokersByMarginDebt} layout="vertical">
-                  <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-                  <XAxis type="number" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
-                  <YAxis dataKey="name" type="category" stroke={AXIS_LABEL} width={140} tick={{ fontSize: 11 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: any, name: any) => {
-                      if (name === 'Còn lại (KH)') return '';
-                      return typeof value === 'number' ? `${(value / 1000000000).toFixed(2)} tỷ đ` : '';
-                    }}
-                    labelFormatter={(label: any) => {
-                      const broker = topBrokersByMarginDebt.find((b: any) => b.name === label);
-                      return broker ? `${broker.name} - ${broker.completion}%` : label;
-                    }}
-                  />
-                  <Bar dataKey="duNoMargin" name="Dư nợ thực tế" stackId="margin" fill="#ef4444" />
-                  <Bar dataKey="gap" name="Còn lại (KH)" stackId="margin" fill="#d1d5db" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="space-y-3">
+                {[...topBrokersByMarginDebt].sort((a, b) => b.completion - a.completion).map(broker => {
+                  const rate = broker.completion;
+                  const barColor = getProgressBarColor(rate);
+                  const missing = (broker.duNoMarginKH - broker.duNoMargin).toFixed(2);
+                  return (
+                    <div key={broker.name} className="flex items-center gap-3">
+                      <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-32 truncate">{broker.name}</span>
+                      <div
+                        className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden cursor-help"
+                        title={`Thực hiện: ${(broker.duNoMargin).toFixed(2)}B | Kế hoạch: ${(broker.duNoMarginKH).toFixed(2)}B | Còn thiếu: ${missing}B`}
+                      >
+                        <div
+                          className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
+                          style={{ width: `${Math.max(rate, 5)}%` }}
+                        >
+                          <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
