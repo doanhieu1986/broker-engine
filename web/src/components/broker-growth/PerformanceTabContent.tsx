@@ -22,40 +22,44 @@ export function PerformanceTabContent() {
 
   // Broker performance data with targets
   const topBrokersByRevenue = [...mockBrokerChartData]
-    .sort((a, b) => b.hoaHong - a.hoaHong)
     .map(b => ({
       ...b,
-      actual: Math.min(b.hoaHong, b.hoaHongKH),
-      gap: Math.max(0, b.hoaHongKH - b.hoaHong),
+      actual: b.hoaHong,
+      target: b.hoaHongKH,
+      remaining: Math.max(0, b.hoaHongKH - b.hoaHong),
       completion: Math.round((b.hoaHong / b.hoaHongKH) * 100),
-    }));
+    }))
+    .sort((a, b) => b.target - a.target);
 
   const topBrokersByOrders = [...mockBrokerChartData]
-    .sort((a, b) => b.soLenh - a.soLenh)
     .map(b => ({
       ...b,
-      actual: Math.min(b.soLenh, b.soLenhKH),
-      gap: Math.max(0, b.soLenhKH - b.soLenh),
+      actual: b.soLenh,
+      target: b.soLenhKH,
+      remaining: Math.max(0, b.soLenhKH - b.soLenh),
       completion: Math.round((b.soLenh / b.soLenhKH) * 100),
-    }));
+    }))
+    .sort((a, b) => b.target - a.target);
 
   const topBrokersByCustomers = [...mockBrokerChartData]
-    .sort((a, b) => b.khachHang - a.khachHang)
     .map(b => ({
       ...b,
-      actual: Math.min(b.khachHang, b.khachHangKH),
-      gap: Math.max(0, b.khachHangKH - b.khachHang),
+      actual: b.khachHang,
+      target: b.khachHangKH,
+      remaining: Math.max(0, b.khachHangKH - b.khachHang),
       completion: Math.round((b.khachHang / b.khachHangKH) * 100),
-    }));
+    }))
+    .sort((a, b) => b.target - a.target);
 
   const topBrokersByMarginDebt = [...mockBrokerChartData]
-    .sort((a, b) => b.duNoMargin - a.duNoMargin)
     .map(b => ({
       ...b,
-      actual: Math.min(b.duNoMargin, b.duNoMarginKH),
-      gap: Math.max(0, b.duNoMarginKH - b.duNoMargin),
+      actual: b.duNoMargin,
+      target: b.duNoMarginKH,
+      remaining: Math.max(0, b.duNoMarginKH - b.duNoMargin),
       completion: Math.round((b.duNoMargin / b.duNoMarginKH) * 100),
-    }));
+    }))
+    .sort((a, b) => b.target - a.target);
 
   // Customer performance data
   const filteredCustomers = role === 'Broker'
@@ -120,23 +124,26 @@ export function PerformanceTabContent() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 Doanh thu phí hoa hồng môi giới theo Broker
               </h3>
-              <div className="space-y-3">
-                {[...topBrokersByRevenue].sort((a, b) => b.completion - a.completion).map(broker => {
+              <div className="space-y-4">
+                {topBrokersByRevenue.map(broker => {
                   const rate = broker.completion;
                   const barColor = getProgressBarColor(rate);
-                  const missing = (broker.hoaHongKH - broker.hoaHong).toFixed(2);
+                  const actualPct = (broker.actual / broker.target) * 100;
                   return (
-                    <div key={broker.name} className="flex items-center gap-3">
-                      <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-32 truncate">{broker.name}</span>
+                    <div key={broker.name}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-700 dark:text-gray-300 truncate">{broker.name}</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">{broker.actual.toFixed(2)}B / {broker.target.toFixed(2)}B</span>
+                      </div>
                       <div
-                        className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden cursor-help"
-                        title={`Thực hiện: ${(broker.hoaHong).toFixed(2)}B | Kế hoạch: ${(broker.hoaHongKH).toFixed(2)}B | Còn thiếu: ${missing}B`}
+                        className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-lg h-6 overflow-hidden cursor-help"
+                        title={`Thực hiện: ${broker.actual.toFixed(2)}B | Kế hoạch: ${broker.target.toFixed(2)}B | Hoàn thành: ${rate}%`}
                       >
                         <div
-                          className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
-                          style={{ width: `${Math.max(rate, 5)}%` }}
+                          className={`${barColor} h-full flex items-center px-2 transition-all duration-500 rounded-lg`}
+                          style={{ width: `${Math.min(actualPct, 100)}%` }}
                         >
-                          <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                          {actualPct >= 15 && <span className="text-white text-xs font-semibold">{rate}%</span>}
                         </div>
                       </div>
                     </div>
@@ -150,23 +157,26 @@ export function PerformanceTabContent() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 Số lệnh giao dịch theo Broker
               </h3>
-              <div className="space-y-3">
-                {[...topBrokersByOrders].sort((a, b) => b.completion - a.completion).map(broker => {
+              <div className="space-y-4">
+                {topBrokersByOrders.map(broker => {
                   const rate = broker.completion;
                   const barColor = getProgressBarColor(rate);
-                  const missing = broker.soLenhKH - broker.soLenh;
+                  const actualPct = (broker.actual / broker.target) * 100;
                   return (
-                    <div key={broker.name} className="flex items-center gap-3">
-                      <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-32 truncate">{broker.name}</span>
+                    <div key={broker.name}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-700 dark:text-gray-300 truncate">{broker.name}</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">{broker.actual} / {broker.target}</span>
+                      </div>
                       <div
-                        className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden cursor-help"
-                        title={`Thực hiện: ${broker.soLenh} | Kế hoạch: ${broker.soLenhKH} | Còn thiếu: ${missing}`}
+                        className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-lg h-6 overflow-hidden cursor-help"
+                        title={`Thực hiện: ${broker.actual} | Kế hoạch: ${broker.target} | Hoàn thành: ${rate}%`}
                       >
                         <div
-                          className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
-                          style={{ width: `${Math.max(rate, 5)}%` }}
+                          className={`${barColor} h-full flex items-center px-2 transition-all duration-500 rounded-lg`}
+                          style={{ width: `${Math.min(actualPct, 100)}%` }}
                         >
-                          <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                          {actualPct >= 15 && <span className="text-white text-xs font-semibold">{rate}%</span>}
                         </div>
                       </div>
                     </div>
@@ -183,23 +193,26 @@ export function PerformanceTabContent() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 Số khách hàng theo Broker
               </h3>
-              <div className="space-y-3">
-                {[...topBrokersByCustomers].sort((a, b) => b.completion - a.completion).map(broker => {
+              <div className="space-y-4">
+                {topBrokersByCustomers.map(broker => {
                   const rate = broker.completion;
                   const barColor = getProgressBarColor(rate);
-                  const missing = broker.khachHangKH - broker.khachHang;
+                  const actualPct = (broker.actual / broker.target) * 100;
                   return (
-                    <div key={broker.name} className="flex items-center gap-3">
-                      <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-32 truncate">{broker.name}</span>
+                    <div key={broker.name}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-700 dark:text-gray-300 truncate">{broker.name}</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">{broker.actual} / {broker.target}</span>
+                      </div>
                       <div
-                        className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden cursor-help"
-                        title={`Thực hiện: ${broker.khachHang} | Kế hoạch: ${broker.khachHangKH} | Còn thiếu: ${missing}`}
+                        className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-lg h-6 overflow-hidden cursor-help"
+                        title={`Thực hiện: ${broker.actual} | Kế hoạch: ${broker.target} | Hoàn thành: ${rate}%`}
                       >
                         <div
-                          className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
-                          style={{ width: `${Math.max(rate, 5)}%` }}
+                          className={`${barColor} h-full flex items-center px-2 transition-all duration-500 rounded-lg`}
+                          style={{ width: `${Math.min(actualPct, 100)}%` }}
                         >
-                          <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                          {actualPct >= 15 && <span className="text-white text-xs font-semibold">{rate}%</span>}
                         </div>
                       </div>
                     </div>
@@ -213,23 +226,26 @@ export function PerformanceTabContent() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 Dư nợ margin theo Broker
               </h3>
-              <div className="space-y-3">
-                {[...topBrokersByMarginDebt].sort((a, b) => b.completion - a.completion).map(broker => {
+              <div className="space-y-4">
+                {topBrokersByMarginDebt.map(broker => {
                   const rate = broker.completion;
                   const barColor = getProgressBarColor(rate);
-                  const missing = (broker.duNoMarginKH - broker.duNoMargin).toFixed(2);
+                  const actualPct = (broker.actual / broker.target) * 100;
                   return (
-                    <div key={broker.name} className="flex items-center gap-3">
-                      <span className="text-sm text-gray-700 dark:text-gray-300 text-right shrink-0 w-32 truncate">{broker.name}</span>
+                    <div key={broker.name}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-700 dark:text-gray-300 truncate">{broker.name}</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">{broker.actual.toFixed(2)}B / {broker.target.toFixed(2)}B</span>
+                      </div>
                       <div
-                        className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-7 overflow-hidden cursor-help"
-                        title={`Thực hiện: ${(broker.duNoMargin).toFixed(2)}B | Kế hoạch: ${(broker.duNoMarginKH).toFixed(2)}B | Còn thiếu: ${missing}B`}
+                        className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-lg h-6 overflow-hidden cursor-help"
+                        title={`Thực hiện: ${broker.actual.toFixed(2)}B | Kế hoạch: ${broker.target.toFixed(2)}B | Hoàn thành: ${rate}%`}
                       >
                         <div
-                          className={`${barColor} h-full rounded-full flex items-center px-2 transition-all duration-500`}
-                          style={{ width: `${Math.max(rate, 5)}%` }}
+                          className={`${barColor} h-full flex items-center px-2 transition-all duration-500 rounded-lg`}
+                          style={{ width: `${Math.min(actualPct, 100)}%` }}
                         >
-                          <span className="text-white text-xs font-semibold whitespace-nowrap">{rate}%</span>
+                          {actualPct >= 15 && <span className="text-white text-xs font-semibold">{rate}%</span>}
                         </div>
                       </div>
                     </div>
