@@ -1,12 +1,8 @@
 import { useState } from 'react';
 import { StatCard } from '../shared/StatCard';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { Building2, Users, DollarSign, Zap, BarChart2, Briefcase, UserPlus, UserCheck } from 'lucide-react';
 import { mockCustomers, mockTransactions, mockStaff } from '../../data/mockData';
 import { useUser } from '../../context/UserContext';
-
-const AXIS_LABEL = '#6b7280';
-const CHART_HIGHLIGHT = '#f59e0b';
 
 const formatCompactNumber = (num: number): string => {
   if (num >= 1000) {
@@ -95,25 +91,6 @@ export function KPIManagementTabContent() {
   const managerCustomerProjectedValue = calculateProjectedValue(managerOwnCustomers, 8);
   const managerCustomerCompletion = (managerOwnCustomers / targets.managerCustomerPlanTarget) * 100;
   const managerCustomerMissing = Math.max(0, targets.managerCustomerPlanTarget - managerCustomerProjectedValue);
-
-  const chartData = [
-    { month: 'Jan', revenue: 120, orders: 2400, customers: 150, churnRate: 4 },
-    { month: 'Feb', revenue: 150, orders: 2210, customers: 155, churnRate: 5 },
-    { month: 'Mar', revenue: 180, orders: 2290, customers: 160, churnRate: 4 },
-    { month: 'Apr', revenue: 170, orders: 2000, customers: 158, churnRate: 6 },
-    { month: 'May', revenue: 190, orders: 2181, customers: 165, churnRate: 3 },
-    { month: 'Jun', revenue: 210, orders: 2500, customers: 170, churnRate: 2 },
-  ];
-
-  const peakMonth = 'Jun';
-  const maxRevenue = '210';
-
-  const renderCustomDot = (props: any) => {
-    const { cx, cy } = props;
-    return (
-      <circle cx={cx} cy={cy} r={4} fill="#f59e0b" stroke="#fff" strokeWidth={2} />
-    );
-  };
 
   return (
     <div className="space-y-6">
@@ -278,100 +255,6 @@ export function KPIManagementTabContent() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Doanh thu & Số lệnh giao dịch
-          </h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-              <XAxis dataKey="month" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} interval={1} />
-              <YAxis stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#f9fafb',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  color: '#1f2937'
-                }}
-              />
-              <Legend />
-              <ReferenceLine
-                x={peakMonth}
-                stroke={CHART_HIGHLIGHT}
-                strokeDasharray="4 4"
-                label={{
-                  value: `Đỉnh: ${maxRevenue} tỷ đ`,
-                  position: 'top',
-                  fill: CHART_HIGHLIGHT,
-                  fontWeight: 'bold',
-                  fontSize: 12,
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="revenue"
-                stroke="#ef4444"
-                strokeWidth={2}
-                name="Doanh thu (tỷ đ)"
-                dot={renderCustomDot}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="orders"
-                stroke="#fbbf24"
-                strokeWidth={2}
-                name="Số lệnh"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Số lượng khách hàng Active & Churn Rate
-          </h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="5 5" stroke="#e5e7eb" strokeWidth={1.5} />
-              <XAxis dataKey="month" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} interval={1} />
-              <YAxis yAxisId="left" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
-              <YAxis yAxisId="right" orientation="right" stroke={AXIS_LABEL} tick={{ fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#f9fafb',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  color: '#1f2937'
-                }}
-              />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="customers"
-                stroke="#fbbf24"
-                strokeWidth={2}
-                name="Số khách hàng"
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="churnRate"
-                stroke="#ef4444"
-                strokeWidth={2}
-                name="Churn Rate (%)"
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
     </div>
   );
 }
