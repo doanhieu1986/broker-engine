@@ -80,10 +80,13 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
     let score = 0;
 
     // Classification (max 30)
-    if (c.classification === 'VIP') score += 30;
-    else if (c.classification === 'Affluent') score += 22;
-    else if (c.classification === 'Mass Affluent') score += 12;
-    else score += 4;
+    if (c.classification === 'S1') score += 30;
+    else if (c.classification === 'S2') score += 27;
+    else if (c.classification === 'S3') score += 24;
+    else if (c.classification === 'S4') score += 18;
+    else if (c.classification === 'S5') score += 12;
+    else if (c.classification === 'S6') score += 6;
+    else score += 2;
 
     // NAV Group (max 25)
     if (c.navGroup.includes('>2B') || c.navGroup.includes('Nhóm A')) score += 25;
@@ -123,10 +126,13 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
 
   // Combined stack bar chart data (Classification by Status)
   const classificationsByStatus = {
-    'VIP': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
-    'Affluent': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
-    'Mass Affluent': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
-    'Mass': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'S1': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'S2': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'S3': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'S4': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'S5': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'S6': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
+    'S7': { Prospect: 0, Active: 0, Inactive: 0, Dormant: 0, Churn: 0 },
   };
 
   // Calculate Churn count (5% of total)
@@ -136,12 +142,12 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
   // Determine status for each customer based on statusData logic
   filteredCustomers.forEach((c) => {
     const classification = c.classification as keyof typeof classificationsByStatus;
-    let status: keyof typeof classificationsByStatus['VIP'];
+    let status: keyof typeof classificationsByStatus['S1'];
 
     // Use same logic as statusData
-    if (c.classification === 'Mass Affluent') {
+    if (c.classification === 'S7') {
       status = 'Dormant';
-    } else if (c.classification === 'Affluent' && !c.activeStatus) {
+    } else if (c.classification === 'S6' && !c.activeStatus) {
       status = 'Prospect';
     } else if (c.activeStatus) {
       status = 'Active';
@@ -159,10 +165,13 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
   });
 
   const stackedChartData = [
-    { name: 'VIP', ...classificationsByStatus['VIP'] },
-    { name: 'Affluent', ...classificationsByStatus['Affluent'] },
-    { name: 'Mass Affluent', ...classificationsByStatus['Mass Affluent'] },
-    { name: 'Mass', ...classificationsByStatus['Mass'] },
+    { name: 'S1', ...classificationsByStatus['S1'] },
+    { name: 'S2', ...classificationsByStatus['S2'] },
+    { name: 'S3', ...classificationsByStatus['S3'] },
+    { name: 'S4', ...classificationsByStatus['S4'] },
+    { name: 'S5', ...classificationsByStatus['S5'] },
+    { name: 'S6', ...classificationsByStatus['S6'] },
+    { name: 'S7', ...classificationsByStatus['S7'] },
   ];
 
   // Calculate status distribution across all classifications
@@ -206,9 +215,9 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
     const broker = c.brokerName;
     let status: 'Prospect' | 'Active' | 'Inactive' | 'Dormant' | 'Churn';
 
-    if (c.classification === 'Mass Affluent') {
+    if (c.classification === 'S7') {
       status = 'Dormant';
-    } else if (c.classification === 'Affluent' && !c.activeStatus) {
+    } else if (c.classification === 'S6' && !c.activeStatus) {
       status = 'Prospect';
     } else if (c.activeStatus) {
       status = 'Active';
@@ -458,7 +467,7 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
 
                     // Determine main reasons for score
                     const reasons = [];
-                    if (c.classification === 'VIP' || c.classification === 'Affluent') reasons.push('Khách hàng cao cấp');
+                    if (c.classification === 'S1' || c.classification === 'S2') reasons.push('Khách hàng cao cấp');
                     if (c.navGroup.includes('>2B') || c.navGroup.includes('Nhóm A')) reasons.push('Tài chính mạnh');
                     if (c.riskAppetite === 'Cao') reasons.push('Khẩu vị Cao');
                     if (c.preferredProducts.includes('Chứng khoán')) reasons.push('Ưa thích CK');
@@ -483,9 +492,12 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
-                            c.classification === 'VIP' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
-                            : c.classification === 'Affluent' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                            : c.classification === 'Mass Affluent' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300'
+                            c.classification === 'S1' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                            : c.classification === 'S2' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                            : c.classification === 'S3' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300'
+                            : c.classification === 'S4' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                            : c.classification === 'S5' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+                            : c.classification === 'S6' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
                             : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
                           }`}>
                             {c.classification}
@@ -2230,10 +2242,12 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
                             <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{customer.phone}</td>
                             <td className="px-6 py-4 text-sm">
                               <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                customer.classification === 'VIP' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
-                                customer.classification === 'Affluent' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                customer.classification === 'Mass Affluent' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
-                                customer.classification === 'Mass' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                                customer.classification === 'S1' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
+                                customer.classification === 'S2' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                                customer.classification === 'S3' ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200' :
+                                customer.classification === 'S4' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                customer.classification === 'S5' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
+                                customer.classification === 'S6' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
                                 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
                               }`}>
                                 {customer.classification}

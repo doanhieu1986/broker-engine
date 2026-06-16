@@ -11,10 +11,13 @@ export function OpportunitiesTabContent() {
 
   const scoreForVCK = (c: any): number => {
     let score = 0;
-    if (c.classification === 'VIP') score += 25;
-    else if (c.classification === 'Affluent') score += 19;
-    else if (c.classification === 'Mass Affluent') score += 10;
-    else score += 3;
+    if (c.classification === 'S1') score += 25;
+    else if (c.classification === 'S2') score += 23;
+    else if (c.classification === 'S3') score += 20;
+    else if (c.classification === 'S4') score += 15;
+    else if (c.classification === 'S5') score += 10;
+    else if (c.classification === 'S6') score += 5;
+    else score += 2;
     if (c.navGroup.includes('>2B') || c.navGroup.includes('Nhóm A')) score += 21;
     else if (c.navGroup.includes('500M') || c.navGroup.includes('Nhóm B')) score += 13;
     else score += 5;

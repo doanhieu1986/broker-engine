@@ -85,7 +85,7 @@ export type Customer = {
   accountNumber: string;
   accountOpenDate: string;
   nav: number;
-  classification: 'VIP' | 'Affluent' | 'Mass Affluent' | 'Mass';
+  classification: 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7';
   totalBalance: number;
   profit: number;
   totalTrades: number;
@@ -221,7 +221,7 @@ export type NextBestAction = {
 };
 
 const regions = ['Hà Nội', 'Thành phố Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Hải Dương', 'Hưng Yên', 'Quảng Ninh'];
-const classifications: Array<'VIP' | 'Affluent' | 'Mass Affluent' | 'Mass'> = ['VIP', 'Affluent', 'Mass Affluent', 'Mass'];
+const classifications: Array<'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7'> = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7'];
 const stocks = ['VNM', 'HPG', 'FPT', 'BID', 'ACB', 'MBB', 'CTG', 'VIC', 'MSN', 'VJC'];
 const brokerMapping = [
   { code: 'BRK000', name: 'Nguyễn Quản Lý' },
@@ -249,7 +249,7 @@ const hobbiesList = ['Du lịch', 'Hiking', 'Đọc sách', 'Chơi thể thao', 
 const idCardIssuedPlaces = ['Công an Hà Nội', 'Công an TP.HCM', 'Công an Đà Nẵng', 'Công an Hải Phòng', 'Công an Cần Thơ'];
 
 function generateNextBestActions(customer: Partial<Customer> & {
-  classification: 'VIP' | 'Affluent' | 'Mass Affluent' | 'Mass';
+  classification: 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7';
   nav: number;
   aum: number;
   profit: number;
@@ -297,11 +297,11 @@ function generateNextBestActions(customer: Partial<Customer> & {
   }
 
   // Action 4: Upgrade classification if NAV is high
-  if (customer.classification === 'Mass' && customer.nav > 500000000) {
+  if (customer.classification === 'S3' && customer.nav > 500000000) {
     actions.push({
       id: faker.string.uuid(),
-      title: 'Nâng cấp tài khoản lên VIP',
-      description: 'Khách hàng có NAV cao, đủ điều kiện nâng cấp để nhận các ưu đãi VIP',
+      title: 'Nâng cấp tài khoản lên S1',
+      description: 'Khách hàng có NAV cao, đủ điều kiện nâng cấp để nhận các ưu đãi cao cấp',
       priority: 'high',
       icon: '⭐',
     });
@@ -351,8 +351,8 @@ function generateNextBestActions(customer: Partial<Customer> & {
     });
   }
 
-  // Action 9: Affluent customer care
-  if (customer.classification === 'Affluent') {
+  // Action 9: S2 customer care
+  if (customer.classification === 'S2') {
     actions.push({
       id: faker.string.uuid(),
       title: 'Hỗ trợ giáo dục tài chính',
