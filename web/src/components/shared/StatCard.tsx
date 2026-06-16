@@ -130,7 +130,7 @@ export function StatCard({
               <div className="flex items-center justify-between">
                 <span className="text-xs text-slate-500 dark:text-slate-400">Hoàn thành kế hoạch:</span>
                 <span className={`text-sm font-semibold ${planCompletion >= 100 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                  {planCompletion}%
+                  {planCompletion.toFixed(2)}%
                 </span>
               </div>
               <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
