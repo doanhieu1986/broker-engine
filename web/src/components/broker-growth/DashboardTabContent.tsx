@@ -103,7 +103,7 @@ export function DashboardTabContent() {
   // - rútNeg: withdrawals rendered as negative so the red bar grows downward.
   // - net: the full Net value drawn as a single line, color-coded by sign via
   //   an SVG gradient (green above the zero line, red below it).
-  const netChartData = monthData.map((d) => ({
+  const netChartData = (periodFilter === 'month' ? currentData : individualMonthData).map((d: any) => ({
     period: d.period,
     nộp: d.nộp,
     rút: d.rút,
@@ -276,7 +276,7 @@ export function DashboardTabContent() {
             👥 Khách hàng (Active & Inactive & Mở mới)
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={monthData}>
+            <ComposedChart data={currentData}>
               <XAxis dataKey="period" stroke="#9ca3af" tick={{ fontSize: 12 }} />
               <YAxis stroke="#9ca3af" yAxisId="left" tick={{ fontSize: 12 }} />
               <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" tick={{ fontSize: 12 }} />
@@ -296,7 +296,7 @@ export function DashboardTabContent() {
             💰 NAV & Tổng Dư nợ
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={monthData}>
+            <ComposedChart data={currentData}>
               <XAxis dataKey="period" stroke="#9ca3af" tick={{ fontSize: 12 }} />
               <YAxis stroke="#9ca3af" yAxisId="left" tick={{ fontSize: 12 }} />
               <YAxis stroke="#9ca3af" yAxisId="right" orientation="right" tick={{ fontSize: 12 }} />
@@ -391,7 +391,7 @@ export function DashboardTabContent() {
             📊 Giá trị giao dịch - Cơ sở & Phái sinh
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={monthData}>
+            <ComposedChart data={currentData}>
               <XAxis dataKey="period" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
               <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
