@@ -213,7 +213,7 @@ export function DashboardTabContent() {
                     : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                 }`}
               >
-                {mode === 'company' ? 'Công ty' : 'Đội nhóm'}
+                {mode === 'company' ? 'Cá nhân' : 'Team'}
               </button>
             ))}
           </div>
