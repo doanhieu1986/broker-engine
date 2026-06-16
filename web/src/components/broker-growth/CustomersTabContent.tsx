@@ -411,12 +411,9 @@ export function CustomersTabContent({ initialTab = 'recommendation', hideTabNavi
         <div className="space-y-6">
           {/* Header Card */}
           <div className="bg-gradient-to-r from-accent-50 to-blue-50 dark:from-accent-900/20 dark:to-blue-900/20 rounded-xl border border-accent-200 dark:border-accent-800 p-6">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Gợi ý mua cổ phiếu VCK
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              Chấm điểm khách hàng tiềm năng mua VCK
             </h3>
-            <p className="text-sm text-accent-700 dark:text-accent-300 mb-3">
-              Ngành: Dịch vụ Tài chính • Sàn: HOSE
-            </p>
             <p className="text-gray-700 dark:text-gray-300">
               Danh sách khách hàng có tiềm năng cao để tiếp cận tư vấn mua VCK, xếp hạng theo điểm phù hợp.
             </p>
