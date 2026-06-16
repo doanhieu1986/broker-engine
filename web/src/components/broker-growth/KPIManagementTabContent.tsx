@@ -39,8 +39,8 @@ export function KPIManagementTabContent() {
     company: {
       customerPlanTarget: 155,
       activeCustomerPlanTarget: 115,
-      commissionPlanTarget: 3000000000,
-      tradingValuePlanTarget: 200000000000,
+      commissionPlanTarget: 60000000000,
+      tradingValuePlanTarget: 3000000000000,
       navPlanTarget: 400000000000,
       aumPlanTarget: 950000000000,
       staffPlanTarget: 11,
@@ -49,8 +49,8 @@ export function KPIManagementTabContent() {
     team: {
       customerPlanTarget: 160,
       activeCustomerPlanTarget: 115,
-      commissionPlanTarget: 2500000000,
-      tradingValuePlanTarget: 150000000000,
+      commissionPlanTarget: 55000000000,
+      tradingValuePlanTarget: 2800000000000,
       navPlanTarget: 400000000000,
       aumPlanTarget: 900000000000,
       staffPlanTarget: 11,
