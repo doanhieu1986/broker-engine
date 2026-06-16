@@ -138,7 +138,7 @@ export function KPIManagementTabContent() {
             }`}
           >
             <Building2 size={16} />
-            <span>Công ty</span>
+            <span>Cá nhân</span>
           </button>
           <button
             onClick={() => setKpiType('team')}
@@ -149,7 +149,7 @@ export function KPIManagementTabContent() {
             }`}
           >
             <Users size={16} />
-            <span>Đội nhóm</span>
+            <span>Team</span>
           </button>
         </div>
       </div>
