@@ -10,17 +10,30 @@ const weekData = Array.from({ length: 52 }, (_, i) => {
   const trend = Math.floor(i / 4) * 30;
   const wave = Math.sin((i * Math.PI) / 8) * 80;
   const noise = (Math.random() - 0.5) * 60;
+  const customers = Math.round(1100 + trend + wave + noise);
+  const active = Math.round(980 + Math.floor(trend * 0.85) + wave + noise);
+  const tradingValue = Math.round(1200 + trend * 0.8 + wave * 1.2 + noise);
+  const nav = Math.round(450 + trend * 0.6 + wave + noise);
+  const debt = Math.round(250 - Math.floor(i * 0.8) + (Math.sin((i * Math.PI) / 6) * 80) + ((Math.random() - 0.5) * 60));
+  const nộp = Math.round(85 + Math.floor(i / 2) + (Math.sin((i * Math.PI) / 12) * 50) + ((Math.random() - 0.5) * 40));
+  const rút = Math.round(20 + Math.floor(i / 10) + (Math.sin((i * Math.PI) / 16) * 25) + ((Math.random() - 0.5) * 15));
   return {
     period: `W${i + 1}`,
-    customers: 1100 + trend + wave + noise,
-    active: 980 + Math.floor(trend * 0.85) + wave + noise,
-    newCustomers: 45 + Math.floor(i / 6) + (Math.sin((i * Math.PI) / 10) * 40) + ((Math.random() - 0.5) * 30),
-    nav: 450 + trend * 0.6 + wave + noise,
-    tradingValue: 1200 + trend * 0.8 + wave * 1.2 + noise,
-    nộp: 85 + Math.floor(i / 2) + (Math.sin((i * Math.PI) / 12) * 50) + ((Math.random() - 0.5) * 40),
-    rút: 20 + Math.floor(i / 10) + (Math.sin((i * Math.PI) / 16) * 25) + ((Math.random() - 0.5) * 15),
-    debt: 250 - Math.floor(i * 0.8) + (Math.sin((i * Math.PI) / 6) * 80) + ((Math.random() - 0.5) * 60),
-    commission: 7.5 + trend * 0.05 + wave * 0.06 + ((Math.random() - 0.5) * 1.5),
+    customers,
+    active,
+    inactive: customers - active,
+    newCustomers: Math.round(45 + Math.floor(i / 6) + (Math.sin((i * Math.PI) / 10) * 40) + ((Math.random() - 0.5) * 30)),
+    churn: Math.round((Math.sin((i * Math.PI) / 12) * 30)),
+    nav,
+    tradingValue,
+    tradingValueBase: Math.round(tradingValue * 0.6),
+    tradingValueDerivative: Math.round(tradingValue * 0.4),
+    nộp,
+    rút,
+    net: nộp - rút,
+    debt,
+    debtToNavRatio: parseFloat(((debt / nav) * 100).toFixed(1)),
+    commission: parseFloat((7.5 + trend * 0.05 + wave * 0.06 + ((Math.random() - 0.5) * 1.5)).toFixed(1)),
   };
 });
 
@@ -61,29 +74,85 @@ const teamMonthData = individualMonthData.map(d => ({
 
 const monthData = individualMonthData;
 
+// Team data for week
+const weekTeamData = weekData.map(d => ({
+  ...d,
+  customers: Math.round(d.customers * 2),
+  active: Math.round(d.active * 2),
+  newCustomers: Math.round(d.newCustomers * 2),
+  nav: Math.round(d.nav * 2),
+  tradingValue: Math.round(d.tradingValue * 2),
+  tradingValueBase: Math.round(d.tradingValueBase * 2),
+  tradingValueDerivative: Math.round(d.tradingValueDerivative * 2),
+  nộp: Math.round(d.nộp * 2),
+  rút: Math.round(d.rút * 2),
+  debt: Math.round(d.debt * 2),
+  commission: parseFloat((d.commission * 2).toFixed(1)),
+}));
+
 const quarterData = [
-  { period: 'Q1', customers: 1113, active: 995, newCustomers: 48, nav: 463, tradingValue: 1300, nộp: 92, rút: 23, debt: 251, commission: 27.5 },
-  { period: 'Q2', customers: 1197, active: 1075, newCustomers: 68, nav: 560, tradingValue: 1573, nộp: 140, rút: 30, debt: 220, commission: 33.9 },
-  { period: 'Q3', customers: 1297, active: 1173, newCustomers: 81, nav: 680, tradingValue: 1750, nộp: 173, rút: 35, debt: 188, commission: 39.2 },
-  { period: 'Q4', customers: 1403, active: 1270, newCustomers: 98, nav: 850, tradingValue: 2033, nộp: 222, rút: 35, debt: 143, commission: 45.6 },
+  { period: 'Q1', customers: 1113, active: 995, inactive: 118, newCustomers: 48, churn: -48, nav: 463, tradingValue: 1300, tradingValueBase: 780, tradingValueDerivative: 520, nộp: 92, rút: 23, net: 69, debt: 251, debtToNavRatio: 54.2, commission: 27.5 },
+  { period: 'Q2', customers: 1197, active: 1075, inactive: 122, newCustomers: 68, churn: 68, nav: 560, tradingValue: 1573, tradingValueBase: 944, tradingValueDerivative: 629, nộp: 140, rút: 30, net: 110, debt: 220, debtToNavRatio: 39.3, commission: 33.9 },
+  { period: 'Q3', customers: 1297, active: 1173, inactive: 124, newCustomers: 81, churn: -81, nav: 680, tradingValue: 1750, tradingValueBase: 1050, tradingValueDerivative: 700, nộp: 173, rút: 35, net: 138, debt: 188, debtToNavRatio: 27.6, commission: 39.2 },
+  { period: 'Q4', customers: 1403, active: 1270, inactive: 133, newCustomers: 98, churn: 98, nav: 850, tradingValue: 2033, tradingValueBase: 1220, tradingValueDerivative: 813, nộp: 222, rút: 35, net: 187, debt: 143, debtToNavRatio: 16.8, commission: 45.6 },
 ];
 
 const yearData = [
-  { period: '2024', customers: 1202, active: 1078, newCustomers: 66, nav: 590, tradingValue: 1604, nộp: 149, rút: 32, debt: 205, commission: 128.4 },
-  { period: '2025', customers: 1375, active: 1229, newCustomers: 92, nav: 795, tradingValue: 1890, nộp: 209, rút: 35, debt: 165, commission: 146.2 },
+  { period: '2024', customers: 1202, active: 1078, inactive: 124, newCustomers: 66, churn: -66, nav: 590, tradingValue: 1604, tradingValueBase: 962, tradingValueDerivative: 642, nộp: 149, rút: 32, net: 117, debt: 205, debtToNavRatio: 34.7, commission: 128.4 },
+  { period: '2025', customers: 1375, active: 1229, inactive: 146, newCustomers: 92, churn: 92, nav: 795, tradingValue: 1890, tradingValueBase: 1134, tradingValueDerivative: 756, nộp: 209, rút: 35, net: 174, debt: 165, debtToNavRatio: 20.8, commission: 146.2 },
 ];
+
+// Team data for quarter
+const quarterTeamData = quarterData.map(d => ({
+  ...d,
+  customers: Math.round(d.customers * 2),
+  active: Math.round(d.active * 2),
+  inactive: Math.round(d.inactive * 2),
+  newCustomers: Math.round(d.newCustomers * 2),
+  churn: Math.round(d.churn * 2),
+  nav: Math.round(d.nav * 2),
+  tradingValue: Math.round(d.tradingValue * 2),
+  tradingValueBase: Math.round(d.tradingValueBase * 2),
+  tradingValueDerivative: Math.round(d.tradingValueDerivative * 2),
+  nộp: Math.round(d.nộp * 2),
+  rút: Math.round(d.rút * 2),
+  net: Math.round(d.net * 2),
+  debt: Math.round(d.debt * 2),
+  debtToNavRatio: parseFloat((d.debtToNavRatio).toFixed(1)),
+  commission: parseFloat((d.commission * 2).toFixed(1)),
+}));
+
+// Team data for year
+const yearTeamData = yearData.map(d => ({
+  ...d,
+  customers: Math.round(d.customers * 2),
+  active: Math.round(d.active * 2),
+  inactive: Math.round(d.inactive * 2),
+  newCustomers: Math.round(d.newCustomers * 2),
+  churn: Math.round(d.churn * 2),
+  nav: Math.round(d.nav * 2),
+  tradingValue: Math.round(d.tradingValue * 2),
+  tradingValueBase: Math.round(d.tradingValueBase * 2),
+  tradingValueDerivative: Math.round(d.tradingValueDerivative * 2),
+  nộp: Math.round(d.nộp * 2),
+  rút: Math.round(d.rút * 2),
+  net: Math.round(d.net * 2),
+  debt: Math.round(d.debt * 2),
+  debtToNavRatio: parseFloat((d.debtToNavRatio).toFixed(1)),
+  commission: parseFloat((d.commission * 2).toFixed(1)),
+}));
 
 const getChartData = (period: PeriodFilter, view: ViewMode = 'company') => {
   const data = (() => {
     switch (period) {
       case 'week':
-        return weekData;
+        return view === 'company' ? weekData : weekTeamData;
       case 'month':
         return view === 'company' ? monthData : teamMonthData;
       case 'quarter':
-        return quarterData;
+        return view === 'company' ? quarterData : quarterTeamData;
       case 'year':
-        return yearData;
+        return view === 'company' ? yearData : yearTeamData;
     }
   })();
   return data;
@@ -103,7 +172,7 @@ export function DashboardTabContent() {
   // - rútNeg: withdrawals rendered as negative so the red bar grows downward.
   // - net: the full Net value drawn as a single line, color-coded by sign via
   //   an SVG gradient (green above the zero line, red below it).
-  const netChartData = (periodFilter === 'month' ? currentData : individualMonthData).map((d: any) => ({
+  const netChartData = currentData.map((d: any) => ({
     period: d.period,
     nộp: d.nộp,
     rút: d.rút,
